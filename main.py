@@ -727,7 +727,20 @@ def choose_topic_for_category(category, slot_idx):
         title, link = fetch_top_me_news(n=slot_idx)
         if title: return (title, link)
         return ("خبر وتحليل راهن", "https://news.google.com/")
-    return propose_topic_by_ai(category)
+    # Fallback مضمون:
+    if category == "tech":
+        return random.choice(TOPICS_TECH)
+    elif category == "science":
+        return random.choice(TOPICS_SCIENCE)
+    elif category == "economy":
+        return random.choice(TOPICS_ECON)
+    else:
+        # news fallback: عنوان + رابط
+        title, link = fetch_top_me_news(n=0)
+        if title:
+            return (title, link)
+        return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية", "https://news.google.com/")
+
 
 
 def build_article_for(category, topic):
