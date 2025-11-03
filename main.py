@@ -76,7 +76,7 @@ def diversify_topic_request(category: str) -> str:
     return base
 
 # وضع التشغيل
-PUBLISH_MODE = os.getenv("PUBLISH_MODE", "draft").lower()  # draft | live
+PUBLISH_MODE = os.getenv("PUBLISH_MODE", "Live").lower()  # draft | live
 RUN_ONCE = os.getenv("RUN_ONCE", "0") == "1"
 
 # هل نُحدّث المنشور إذا تكرر العنوان
