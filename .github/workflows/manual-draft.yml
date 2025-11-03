@@ -14,36 +14,35 @@ jobs:
     timeout-minutes: 30
 
     env:
-      # إجبار النشر المباشر
+      # إجبار النشر المباشر دائماً
       PUBLISH_MODE: live
-      # اختياري: شغّل المحاولة الواحدة لمسار main.py (ينشر الفتحتين)
       RUN_ONCE: "1"
       USE_EXTERNAL_CRON: "0"
 
-      # مفاتيح الصور (اختياري)
-      PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
-      PIXABAY_API_KEY: ${{ secrets.PIXABAY_API_KEY }}
-      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
-      FEATURED_IMAGE_URL: ${{ secrets.FEATURED_IMAGE_URL }}
-
-      # إعدادات الترند (اختياري)
-      TREND_GEO: ${{ secrets.TREND_GEO }}
-      TREND_GEO_LIST: ${{ secrets.TREND_GEO_LIST }}
-      TOPIC_WINDOW_DAYS: ${{ secrets.TOPIC_WINDOW_DAYS }}
-      TOPIC_POLICY: ${{ secrets.TOPIC_POLICY }}
-
-      # ضبطات أخرى (اختياري)
-      SAFE_CALLS_PER_MIN: "3"
-      AI_MAX_RETRIES: "3"
-      AI_BACKOFF_BASE: "4"
-      TITLE_WINDOW: "40"
-
       # أسرار أساسية (إلزامية)
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-      BLOG_URL: ${{ secrets.BLOG_URL }}
-      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-      REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+      BLOG_URL:       ${{ secrets.BLOG_URL }}
+      CLIENT_ID:      ${{ secrets.CLIENT_ID }}
+      CLIENT_SECRET:  ${{ secrets.CLIENT_SECRET }}
+      REFRESH_TOKEN:  ${{ secrets.REFRESH_TOKEN }}
+
+      # مفاتيح الصور (اختياري)
+      PEXELS_API_KEY:      ${{ secrets.PEXELS_API_KEY }}
+      PIXABAY_API_KEY:     ${{ secrets.PIXABAY_API_KEY }}
+      UNSPLASH_ACCESS_KEY: ${{ secrets.UNSPLASH_ACCESS_KEY }}
+      FEATURED_IMAGE_URL:  ${{ secrets.FEATURED_IMAGE_URL }}
+
+      # إعدادات الترند + منع التكرار (مع قيم افتراضية آمنة)
+      TREND_GEO:         ${{ secrets.TREND_GEO || 'IQ' }}
+      TREND_GEO_LIST:    ${{ secrets.TREND_GEO_LIST }}   # يمكن تركه فارغاً
+      TOPIC_WINDOW_DAYS: ${{ secrets.TOPIC_WINDOW_DAYS || '14' }}
+      TOPIC_POLICY:      ${{ secrets.TOPIC_POLICY }}     # اختياري
+
+      # ضبطات أخرى
+      SAFE_CALLS_PER_MIN: "3"
+      AI_MAX_RETRIES:     "3"
+      AI_BACKOFF_BASE:    "4"
+      TITLE_WINDOW:       "80"   # نافذة أوسع للعناوين
 
     steps:
       - name: Checkout
@@ -57,7 +56,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # إن كان لديك requirements.txt استخدمه؛ وإلا ثبّت الحزم مباشرة:
           if [ -f requirements.txt ]; then
             pip install -r requirements.txt
           else
@@ -66,13 +64,31 @@ jobs:
                         markdown bleach
           fi
 
-      # خيار 1: تنفيذ فتحة واحدة حسب الإدخال (0 أو 1) بدون تعديل الكود
+      # ====== استرجاع كاش ملفات منع التكرار ======
+      - name: Restore dedupe cache
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            posted_titles.jsonl
+            used_topics.jsonl
+          key: dedupe-${{ github.repository }}
+          restore-keys: |
+            dedupe-${{ github.repository }}
+
+      # للتأكد من وجود الملفات حتى لو لم تكن موجودة في أول تشغيل
+      - name: Ensure dedupe files exist
+        run: |
+          touch posted_titles.jsonl
+          touch used_topics.jsonl
+
+      # ====== تنفيذ النشر ======
+      # خيار 1: تنفيذ فتحة واحدة (0 أو 1)
       - name: Publish single slot (0 or 1)
         if: ${{ inputs.slot != '2' }}
         run: |
           python - <<'PY'
           import os
-          os.environ["PUBLISH_MODE"] = "live"
+          os.environ["PUBLISH_MODE"] = "live"           # تأكيد إضافي
           from main import make_article_once
           slot = int("${{ inputs.slot }}")
           if slot not in (0,1):
@@ -80,8 +96,17 @@ jobs:
           make_article_once(slot)
           PY
 
-      # خيار 2: تنفيذ الفتحتين معًا (يستخدم منطق RUN_ONCE في main.py)
+      # خيار 2: تنفيذ الفتحتين معًا باستخدام منطق RUN_ONCE في main.py
       - name: Publish both slots (RUN_ONCE)
         if: ${{ inputs.slot == '2' }}
         run: |
           PUBLISH_MODE=live RUN_ONCE=1 USE_EXTERNAL_CRON=0 python main.py
+
+      # ====== حفظ كاش منع التكرار بعد النشر ======
+      - name: Save dedupe cache
+        uses: actions/cache/save@v4
+        with:
+          path: |
+            posted_titles.jsonl
+            used_topics.jsonl
+          key: dedupe-${{ github.repository }}-${{ github.run_id }}
