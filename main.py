@@ -39,7 +39,9 @@ FORCED_IMAGE = os.getenv("FEATURED_IMAGE_URL", "").strip()
 
 # ترند: دولة واحدة أو قائمة دول
 TREND_GEO = os.getenv("TREND_GEO", "IQ")
-TREND_GEO_LIST = [g.strip() for g in os.getenv("TREND_GEO_LIST", "").split(",") if g.strip()]
+TREND_GEO_LIST = [
+    g.strip() for g in os.getenv("TREND_GEO_LIST", "").split(",") if g.strip()
+]
 
 # منع التكرار موضوعيًا عبر عدد أيام
 TOPIC_WINDOW_D = int(os.getenv("TOPIC_WINDOW_DAYS", "14"))
@@ -47,24 +49,35 @@ TOPIC_WINDOW_D = int(os.getenv("TOPIC_WINDOW_DAYS", "14"))
 # =================== سياسة اختيار المواضيع (اختياري) ===================
 _TOPIC_POLICY = os.getenv("TOPIC_POLICY", "")
 POLICY = {
-    "avoid_repeat": "true" in _TOPIC_POLICY,
-    "diversification": "high" in _TOPIC_POLICY,
-    "allow_old_topics_after_days": int(re.search(r"after_days:(\d+)", _TOPIC_POLICY or "")[1]) if re.search(r"after_days:(\d+)", _TOPIC_POLICY or "") else 90,
-    "prefer_new_domains": "true" in _TOPIC_POLICY,
-    "trend_mix": float(re.search(r"trend_mix:(\d+(?:\.\d+)?)", _TOPIC_POLICY or "")[1]) if re.search(r"trend_mix:(\d+(?:\.\d+)?)", _TOPIC_POLICY or "") else 0.4
+    "avoid_repeat":
+    "true" in _TOPIC_POLICY,
+    "diversification":
+    "high" in _TOPIC_POLICY,
+    "allow_old_topics_after_days":
+    int(re.search(r"after_days:(\d+)", _TOPIC_POLICY or "")[1]) if re.search(
+        r"after_days:(\d+)", _TOPIC_POLICY or "") else 90,
+    "prefer_new_domains":
+    "true" in _TOPIC_POLICY,
+    "trend_mix":
+    float(re.search(r"trend_mix:(\d+(?:\.\d+)?)", _TOPIC_POLICY or "")[1])
+    if re.search(r"trend_mix:(\d+(?:\.\d+)?)", _TOPIC_POLICY or "") else 0.4
 }
+
 
 def should_skip_topic(topic_key: str) -> bool:
     if not POLICY["avoid_repeat"]:
         return False
-    cutoff = datetime.now(TZ) - timedelta(days=POLICY["allow_old_topics_after_days"])
+    cutoff = datetime.now(TZ) - timedelta(
+        days=POLICY["allow_old_topics_after_days"])
     for rec in load_jsonl(HISTORY_TOPICS_FILE):
         try:
-            if rec.get("topic_key") == topic_key and datetime.fromisoformat(rec["time"]) > cutoff:
+            if rec.get("topic_key") == topic_key and datetime.fromisoformat(
+                    rec["time"]) > cutoff:
                 return True
         except:
             pass
     return False
+
 
 def diversify_topic_request(category: str) -> str:
     base = f"فئة المقال: {category}\n"
@@ -73,6 +86,7 @@ def diversify_topic_request(category: str) -> str:
     if POLICY["prefer_new_domains"]:
         base += "اختر مواضيع من مجالات ناشئة أو متطورة حديثًا بدل المواضيع التقليدية.\n"
     return base
+
 
 # وضع التشغيل
 PUBLISH_MODE = os.getenv("PUBLISH_MODE", "draft").lower()  # draft | live
@@ -120,6 +134,7 @@ TOPICS_SOCIAL = [
     "الاقتصاد السلوكي Behavioral Economics وصنع السياسات"
 ]
 
+
 # =================== أدوات نص/HTML ===================
 def clamp_words_ar(text, min_words=1000, max_words=1400):
     words = text.split()
@@ -129,11 +144,13 @@ def clamp_words_ar(text, min_words=1000, max_words=1400):
     m = re.search(r"(.+[.!؟…])", clipped, flags=re.S)
     return m.group(1) if m else clipped
 
+
 def strip_code_fences(text):
     text = re.sub(r"```.*?```", "", text, flags=re.S)
     text = re.sub(r"<script.*?>.*?</script>", "", text, flags=re.I | re.S)
     text = re.sub(r"<style.*?>.*?</style>", "", text, flags=re.I | re.S)
     return text
+
 
 def markdown_to_clean_html(md_text):
     html_raw = md.markdown(md_text, extensions=["extra", "sane_lists"])
@@ -143,17 +160,22 @@ def markdown_to_clean_html(md_text):
     })
     attrs = {
         "a": ["href", "title", "rel", "target"],
-        "img": ["src", "alt", "title", "loading", "decoding", "width", "height"]
+        "img":
+        ["src", "alt", "title", "loading", "decoding", "width", "height"]
     }
-    clean = bleach.clean(
-        html_raw, tags=allowed, attributes=attrs,
-        protocols=["http", "https", "mailto"], strip=True
-    )
+    clean = bleach.clean(html_raw,
+                         tags=allowed,
+                         attributes=attrs,
+                         protocols=["http", "https", "mailto"],
+                         strip=True)
     clean = clean.replace("<a ", '<a target="_blank" rel="noopener" ')
     return clean
 
+
 def linkify_urls_md(text: str) -> str:
-    return re.sub(r'(?<!\()https?://[^\s)]+', lambda m: f"[المصدر]({m.group(0)})", text)
+    return re.sub(r'(?<!\()https?://[^\s)]+',
+                  lambda m: f"[المصدر]({m.group(0)})", text)
+
 
 # =================== تاريخ ومنع تكرار (محلي + Blogger) ===================
 def norm_topic_key(s: str) -> str:
@@ -162,6 +184,7 @@ def norm_topic_key(s: str) -> str:
     s = re.sub(r"[^\w\u0600-\u06FF]+", " ", s)
     s = re.sub(r"\s+", " ", s).strip()
     return s
+
 
 def load_jsonl(path):
     if not os.path.exists(path): return []
@@ -174,39 +197,44 @@ def load_jsonl(path):
                 pass
     return out
 
+
 def append_jsonl(path, obj):
     with open(path, "a", encoding="utf-8") as f:
         f.write(json.dumps(obj, ensure_ascii=False) + "\n")
 
+
 def get_blogger_service():
-    creds = Credentials(
-        None,
-        refresh_token=REFRESH_TOKEN,
-        client_id=CLIENT_ID,
-        client_secret=CLIENT_SECRET,
-        token_uri="https://oauth2.googleapis.com/token",
-        scopes=["https://www.googleapis.com/auth/blogger"]
-    )
+    creds = Credentials(None,
+                        refresh_token=REFRESH_TOKEN,
+                        client_id=CLIENT_ID,
+                        client_secret=CLIENT_SECRET,
+                        token_uri="https://oauth2.googleapis.com/token",
+                        scopes=["https://www.googleapis.com/auth/blogger"])
     return build("blogger", "v3", credentials=creds, cache_discovery=False)
+
 
 def get_blog_id(service, blog_url):
     return service.blogs().getByUrl(url=blog_url).execute()["id"]
+
 
 def recent_titles(limit=TITLE_WINDOW):
     titles = []
     try:
         service = get_blogger_service()
         blog_id = get_blog_id(service, BLOG_URL)
-        res = service.posts().list(
-            blogId=blog_id, fetchBodies=False, maxResults=limit, orderBy="PUBLISHED"
-        ).execute()
+        res = service.posts().list(blogId=blog_id,
+                                   fetchBodies=False,
+                                   maxResults=limit,
+                                   orderBy="PUBLISHED").execute()
         for it in (res.get("items") or []):
             t = (it.get("title", "") or "").strip()
             if t: titles.append(t)
     except Exception:
         pass
-    titles += [r.get("title", "") for r in load_jsonl(HISTORY_TITLES_FILE)][-limit:]
+    titles += [r.get("title", "")
+               for r in load_jsonl(HISTORY_TITLES_FILE)][-limit:]
     return set(titles)
+
 
 def recent_topics(days=TOPIC_WINDOW_D):
     cutoff = datetime.now(TZ) - timedelta(days=days)
@@ -219,12 +247,21 @@ def recent_topics(days=TOPIC_WINDOW_D):
             pass
     return set(used)
 
+
 def record_publish(title, topic_key):
-    append_jsonl(HISTORY_TITLES_FILE, {"title": title, "time": datetime.now(TZ).isoformat()})
-    append_jsonl(HISTORY_TOPICS_FILE, {"topic_key": topic_key, "time": datetime.now(TZ).isoformat()})
+    append_jsonl(HISTORY_TITLES_FILE, {
+        "title": title,
+        "time": datetime.now(TZ).isoformat()
+    })
+    append_jsonl(HISTORY_TOPICS_FILE, {
+        "topic_key": topic_key,
+        "time": datetime.now(TZ).isoformat()
+    })
+
 
 # -------- منع تكرار الصور بدون ليبلات: نفحص أول <img> في أحدث المنشورات --------
 _IMG_RE = re.compile(r'<img[^>]+src=["\']([^"\']+)["\']', re.I)
+
 
 def _url_for_hash(u: str) -> str:
     u = u or ""
@@ -234,17 +271,20 @@ def _url_for_hash(u: str) -> str:
     if u.startswith("http://"): u = "https://" + u[7:]
     return u
 
+
 def _img_hash(u: str) -> str:
     return hashlib.sha1((_url_for_hash(u)).encode("utf-8")).hexdigest()[:12]
+
 
 def recent_image_hashes(limit=60):
     hashes = set()
     try:
         svc = get_blogger_service()
         bid = get_blog_id(svc, BLOG_URL)
-        res = svc.posts().list(
-            blogId=bid, fetchBodies=True, maxResults=limit, orderBy="PUBLISHED"
-        ).execute()
+        res = svc.posts().list(blogId=bid,
+                               fetchBodies=True,
+                               maxResults=limit,
+                               orderBy="PUBLISHED").execute()
         for it in (res.get("items") or []):
             content = it.get("content", "") or ""
             m = _IMG_RE.search(content)
@@ -254,12 +294,17 @@ def recent_image_hashes(limit=60):
         pass
     return hashes
 
+
 # =================== Gemini REST ===================
 def _rest_generate(ver: str, model: str, prompt: str):
     if model.startswith("models/"): model = model.split("/", 1)[1]
     url = f"{GEMINI_API_ROOT}/{ver}/models/{model}:generateContent?key={GEMINI_API_KEY}"
     body = {
-        "contents": [{"parts": [{"text": prompt}]}],
+        "contents": [{
+            "parts": [{
+                "text": prompt
+            }]
+        }],
         "generationConfig": GEN_CONFIG
     }
     try:
@@ -271,7 +316,11 @@ def _rest_generate(ver: str, model: str, prompt: str):
     except Exception:
         return None
 
-@backoff.on_exception(backoff.expo, Exception, base=AI_BACKOFF_BASE, max_tries=AI_MAX_RETRIES)
+
+@backoff.on_exception(backoff.expo,
+                      Exception,
+                      base=AI_BACKOFF_BASE,
+                      max_tries=AI_MAX_RETRIES)
 def ask_gemini(prompt: str) -> str:
     attempts = [
         ("v1beta", "gemini-2.5-flash"),
@@ -289,24 +338,21 @@ def ask_gemini(prompt: str) -> str:
         last = f"{ver}/{model}"
     raise RuntimeError(f"Gemini REST error (last tried {last})")
 
+
 def build_prompt_ar(topic, kind="general", news_link=None):
-    base = f"""
-- اكتب مقالة عربية واضحة للقراء العامين.
-- الطول بين 1000 و1400 كلمة.
-- بنية: مقدمة موجزة، عناوين فرعية منظمة، أمثلة/شواهد، خاتمة مركّزة.
-- لا كود/سكريبت/أقواس ثلاثية.
-- أضف قسمًا نهائيًا بعنوان "المراجع" يحوي ≥4 مصادر بروابط Markdown قابلة للنقر.
-- لا تُدخل صورًا داخل النص (الصورة تُضاف برمجيًا في الأعلى).
-- تجنب الحشو والتكرار.
-""".strip()
-    extra = ""
-    if kind == "news":
-        extra = f"""
-- الموضوع مرتبط بترند/خبر حديث: "{topic}".
-- اربط التحليل بسياق المنطقة العربية عندما يكون مناسبًا.
-- أدرج رابط/روابط المصدر ضمن "المراجع": {news_link or "—"}.
-""".strip()
+        base = f"""
+        - اكتب مقالة عربية واضحة للقراء العامين.
+        - اجعل السطر الأول عنوان H1 بصيغة Markdown يبدأ بـ # ويعبّر بدقة عن موضوع المقال.
+        - الطول بين 1000 و1400 كلمة.
+        - بنية: مقدمة موجزة، عناوين فرعية منظمة، أمثلة/شواهد، خاتمة مركّزة.
+        - لا كود/سكريبت/أقواس ثلاثية.
+        - أضف قسمًا نهائيًا بعنوان "المراجع" يحوي ≥4 مصادر بروابط Markdown قابلة للنقر.
+        - لا تُدخل صورًا داخل النص (الصورة تُضاف برمجيًا في الأعلى).
+        - تجنب الحشو والتكرار.
+        """.strip()
+
     return f"الموضوع: «{topic}»\n{base}\n{extra}\nأنتج النص النهائي مباشرة."
+
 
 def ensure_references_clickable(article_md, category, topic, news_link=None):
     text = article_md.strip()
@@ -350,17 +396,19 @@ def ensure_references_clickable(article_md, category, topic, news_link=None):
             text += f"- [{name}]({url})\n"
     return text
 
+
 # =================== الصور ===================
 def wiki_lead_image(title, lang="ar"):
-    s = requests.get(
-        f"https://{lang}.wikipedia.org/w/api.php",
-        params={
-            "action": "query", "format": "json",
-            "prop": "pageimages", "piprop": "original|thumbnail",
-            "pithumbsize": "1200", "titles": title
-        },
-        timeout=20
-    )
+    s = requests.get(f"https://{lang}.wikipedia.org/w/api.php",
+                     params={
+                         "action": "query",
+                         "format": "json",
+                         "prop": "pageimages",
+                         "piprop": "original|thumbnail",
+                         "pithumbsize": "1200",
+                         "titles": title
+                     },
+                     timeout=20)
     if s.status_code != 200: return None
     pages = s.json().get("query", {}).get("pages", {})
     for _, p in pages.items():
@@ -368,20 +416,26 @@ def wiki_lead_image(title, lang="ar"):
         if "thumbnail" in p: return p["thumbnail"]["source"]
     return None
 
+
 def fetch_unsplash(topic):
     if not UNSPLASH_ACCESS_KEY: return None
     try:
         r = requests.get(
             "https://api.unsplash.com/search/photos",
             headers={"Authorization": f"Client-ID {UNSPLASH_ACCESS_KEY}"},
-            params={"query": topic, "per_page": 10, "orientation": "landscape"},
+            params={
+                "query": topic,
+                "per_page": 10,
+                "orientation": "landscape"
+            },
             timeout=30,
         )
         if not r.ok: return None
         results = (r.json().get("results") or [])
         if not results: return None
         p = random.choice(results)
-        url = (p.get("urls") or {}).get("regular") or (p.get("urls") or {}).get("full")
+        url = (p.get("urls") or {}).get("regular") or (p.get("urls")
+                                                       or {}).get("full")
         if not url: return None
         user = p.get("user") or {}
         credit = (
@@ -391,6 +445,7 @@ def fetch_unsplash(topic):
         return {"url": url, "credit": credit}
     except Exception:
         return None
+
 
 def fetch_image_general(topic):
     for lang in ("ar", "en"):
@@ -402,15 +457,18 @@ def fetch_image_general(topic):
             pass
     return None
 
+
 def fetch_pexels(topic):
     if not PEXELS_API_KEY: return None
     try:
-        r = requests.get(
-            "https://api.pexels.com/v1/search",
-            headers={"Authorization": PEXELS_API_KEY},
-            params={"query": topic, "per_page": 10, "orientation": "landscape"},
-            timeout=30
-        )
+        r = requests.get("https://api.pexels.com/v1/search",
+                         headers={"Authorization": PEXELS_API_KEY},
+                         params={
+                             "query": topic,
+                             "per_page": 10,
+                             "orientation": "landscape"
+                         },
+                         timeout=30)
         photos = r.json().get("photos", [])
         if photos:
             p = random.choice(photos)
@@ -420,18 +478,20 @@ def fetch_pexels(topic):
     except Exception:
         return None
 
+
 def fetch_pixabay(topic):
     if not PIXABAY_API_KEY: return None
     try:
-        r = requests.get(
-            "https://pixabay.com/api/",
-            params={
-                "key": PIXABAY_API_KEY, "q": topic,
-                "image_type": "photo", "per_page": 10,
-                "safesearch": "true", "orientation": "horizontal"
-            },
-            timeout=30
-        )
+        r = requests.get("https://pixabay.com/api/",
+                         params={
+                             "key": PIXABAY_API_KEY,
+                             "q": topic,
+                             "image_type": "photo",
+                             "per_page": 10,
+                             "safesearch": "true",
+                             "orientation": "horizontal"
+                         },
+                         timeout=30)
         hits = r.json().get("hits", [])
         if hits:
             p = random.choice(hits)
@@ -441,17 +501,20 @@ def fetch_pixabay(topic):
     except Exception:
         return None
 
+
 def _ensure_https(url: str) -> str:
     if not url: return url
     if url.startswith("//"): return "https:" + url
     if url.startswith("http://"): return "https://" + url[7:]
     return url
 
+
 def fetch_image(query):
     if FORCED_IMAGE:
         return {"url": _ensure_https(FORCED_IMAGE), "credit": "Featured image"}
 
-    topic = (query or "Research").split("،")[0].split(":")[0].strip() or "Research"
+    topic = (query
+             or "Research").split("،")[0].split(":")[0].strip() or "Research"
     used_hashes = recent_image_hashes(limit=60)
 
     candidates = []
@@ -463,11 +526,23 @@ def fetch_image(query):
         img = fn(topic)
         if img: candidates.append(img)
 
-    seed = hashlib.sha1((topic + datetime.now(TZ).strftime("%Y%m%d%H") + str(random.random())).encode("utf-8")).hexdigest()[:8]
+    seed = hashlib.sha1((topic + datetime.now(TZ).strftime("%Y%m%d%H") +
+                         str(random.random())).encode("utf-8")).hexdigest()[:8]
     free_candidates = [
-        {"url": f"https://source.unsplash.com/1200x630/?{requests.utils.quote(topic)}&sig={seed}", "credit": "Free image source"},
-        {"url": f"https://loremflickr.com/1200/630/{requests.utils.quote(topic)}?lock={seed}", "credit": "Free image source"},
-        {"url": f"https://picsum.photos/seed/{seed}/1200/630", "credit": "Free image source"},
+        {
+            "url":
+            f"https://source.unsplash.com/1200x630/?{requests.utils.quote(topic)}&sig={seed}",
+            "credit": "Free image source"
+        },
+        {
+            "url":
+            f"https://loremflickr.com/1200/630/{requests.utils.quote(topic)}?lock={seed}",
+            "credit": "Free image source"
+        },
+        {
+            "url": f"https://picsum.photos/seed/{seed}/1200/630",
+            "credit": "Free image source"
+        },
     ]
     candidates.extend(free_candidates)
 
@@ -478,9 +553,15 @@ def fetch_image(query):
         if h not in used_hashes:
             return {"url": u, "credit": c.get("credit", "")}
 
-    return {"url": "https://via.placeholder.com/1200x630.png?text=LoadingAPK", "credit": "Placeholder"}
+    return {
+        "url": "https://via.placeholder.com/1200x630.png?text=LoadingAPK",
+        "credit": "Placeholder"
+    }
 
-_BAD_SRC_RE = re.compile(r'(?:المصدر|source)\s*[:\-–]?\s*(pexels|pixabay|unsplash)', re.I)
+
+_BAD_SRC_RE = re.compile(
+    r'(?:المصدر|source)\s*[:\-–]?\s*(pexels|pixabay|unsplash)', re.I)
+
 
 def build_post_html(title, img, article_md):
     cover = _ensure_https((img or {}).get("url", "")) if img else ""
@@ -499,6 +580,7 @@ def build_post_html(title, img, article_md):
     body_html = _BAD_SRC_RE.sub("", body_html)
     return img_html + body_html
 
+
 # =================== Google Trends + Google News ===================
 def fetch_trends_list(geo: str, max_items=10):
     url = f"https://trends.google.com/trends/trendingsearches/daily/rss?geo={geo}"
@@ -509,6 +591,7 @@ def fetch_trends_list(geo: str, max_items=10):
         link = f"https://www.google.com/search?q={requests.utils.quote(t)}"
         out.append((t, link))
     return out
+
 
 def fetch_trends_region(geos, per_geo=10):
     bucket = {}
@@ -522,6 +605,7 @@ def fetch_trends_region(geos, per_geo=10):
     ranked = sorted(bucket.values(), key=lambda x: (-x["count"], x["title"]))
     return [(r["title"], r["link"]) for r in ranked]
 
+
 def fetch_top_me_news(n=0):
     url = "https://news.google.com/rss?hl=ar&gl=IQ&ceid=IQ:ar"
     feed = feedparser.parse(url)
@@ -531,33 +615,46 @@ def fetch_top_me_news(n=0):
         return e.title, e.link
     return None, None
 
+
 # =================== Blogger API + منطق التحديث/الإنشاء ===================
 def _norm_title(s: str) -> str:
     s = (s or "").strip().lower()
     return re.sub(r"\s+", " ", s)
 
+
 def _fingerprint(title: str, html_content: str) -> str:
     snippet = re.sub(r"<[^>]+>", " ", html_content or "")
     snippet = re.sub(r"\s+", " ", snippet).strip()[:100]
-    return hashlib.sha1((_norm_title(title) + "|" + snippet).encode("utf-8")).hexdigest()
+    return hashlib.sha1(
+        (_norm_title(title) + "|" + snippet).encode("utf-8")).hexdigest()
+
 
 def _find_existing_post_by_title(service, blog_id, title):
     norm = _norm_title(title)
     # live
     try:
-        resp = service.posts().list(blogId=blog_id, fetchBodies=False, maxResults=50, orderBy="UPDATED", status=["live"]).execute()
+        resp = service.posts().list(blogId=blog_id,
+                                    fetchBodies=False,
+                                    maxResults=50,
+                                    orderBy="UPDATED",
+                                    status=["live"]).execute()
         for it in (resp.get("items") or []):
             if _norm_title(it.get("title")) == norm: return it["id"]
     except Exception:
         pass
     # drafts
     try:
-        resp = service.posts().list(blogId=blog_id, fetchBodies=False, maxResults=50, orderBy="UPDATED", status=["draft"]).execute()
+        resp = service.posts().list(blogId=blog_id,
+                                    fetchBodies=False,
+                                    maxResults=50,
+                                    orderBy="UPDATED",
+                                    status=["draft"]).execute()
         for it in (resp.get("items") or []):
             if _norm_title(it.get("title")) == norm: return it["id"]
     except Exception:
         pass
     return None
+
 
 def post_to_blogger(title, html_content, labels=None):
     service = get_blogger_service()
@@ -569,17 +666,24 @@ def post_to_blogger(title, html_content, labels=None):
     existing_id = _find_existing_post_by_title(service, blog_id, title)
     if existing_id:
         if UPDATE_IF_TITLE_EXISTS:
-            upd = service.posts().update(blogId=blog_id, postId=existing_id, body=body).execute()
+            upd = service.posts().update(blogId=blog_id,
+                                         postId=existing_id,
+                                         body=body).execute()
             print("UPDATED:", upd.get("url", upd.get("id")))
             return upd
-        body["title"] = f"{title} — {datetime.now(TZ).strftime('%Y/%m/%d %H:%M')}"
-        ins = service.posts().insert(blogId=blog_id, body=body, isDraft=is_draft).execute()
+        body[
+            "title"] = f"{title} — {datetime.now(TZ).strftime('%Y/%m/%d %H:%M')}"
+        ins = service.posts().insert(blogId=blog_id,
+                                     body=body,
+                                     isDraft=is_draft).execute()
         print("CREATED (unique):", ins.get("url", ins.get("id")))
         return ins
 
-    ins = service.posts().insert(blogId=blog_id, body=body, isDraft=is_draft).execute()
+    ins = service.posts().insert(blogId=blog_id, body=body,
+                                 isDraft=is_draft).execute()
     print("CREATED:", ins.get("url", ins.get("id")))
     return ins
+
 
 # =================== اختيار الفئة الدورية ===================
 def current_cycle_index(today=None):
@@ -587,11 +691,13 @@ def current_cycle_index(today=None):
     anchor = date(2025, 1, 1)
     return ((d - anchor).days) % 3
 
+
 def slot_category_for_today(slot_idx, today=None):
     c = current_cycle_index(today)
     if c == 0: return "tech" if slot_idx == 0 else "science"
     if c == 1: return "social" if slot_idx == 0 else "tech"
     return "news" if slot_idx == 0 else "social"
+
 
 def labels_for_category(category):
     if category == "tech": return ["تكنولوجيا", "ابتكار", "رقمنة"]
@@ -599,6 +705,7 @@ def labels_for_category(category):
     if category == "social": return ["اجتماع", "تنمية", "سياسات"]
     if category == "news": return ["أخبار", "ترند"]
     return ["بحث"]
+
 
 # =================== توليد موضوع ومقال ===================
 def choose_topic_for_category(category, slot_idx):
@@ -628,13 +735,18 @@ def choose_topic_for_category(category, slot_idx):
         if title:
             return (title, link)
 
-        return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية", "https://news.google.com/")
+        return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية",
+                "https://news.google.com/")
+
 
 def build_article_for(category, topic):
     if isinstance(topic, tuple):  # news
         t, lnk = topic
         article = ask_gemini(build_prompt_ar(t, kind="news", news_link=lnk))
-        article = ensure_references_clickable(article, "news", t, news_link=lnk)
+        article = ensure_references_clickable(article,
+                                              "news",
+                                              t,
+                                              news_link=lnk)
         title = extract_title(article, t)
         search_query = t
     else:
@@ -645,13 +757,42 @@ def build_article_for(category, topic):
         search_query = t
     return title, article, search_query
 
-def extract_title(article_md, fallback_topic):
-    m = re.search(r"^\s*#+\s*(.+)$", article_md, flags=re.M)
-    if m: return m.group(1).strip()[:90]
-    for line in article_md.splitlines():
-        t = line.strip()
-        if t and not t.startswith("#"): return t[:90]
-    return (fallback_topic if isinstance(fallback_topic, str) else str(fallback_topic))[:90]
+
+    def _norm_simple(s: str) -> str:
+        # تطبيع بسيط للمقارنة: إزالة الرموز وتحويل لحروف صغيرة
+        return re.sub(r"[^\w\u0600-\u06FF]+", "", (s or "").strip()).lower()
+
+    def extract_title(article_md, fallback_topic):
+        """
+        يلتقط أول عنوان H1/H2 حقيقي (غير "المراجع/المصادر/الخاتمة/المقدمة")،
+        وإن لم يجد، يأخذ أول سطر نصّي معقول. وإلا يعود للموضوع الاحتياطي.
+        """
+        banned = {"المراجع", "المصادر", "references", "sources", "الخاتمة", "خاتمة", "المقدمة", "مقدمة"}
+
+        # 1) ابحث عن عناوين Markdown (# .. ######)
+        for m in re.finditer(r"^\s*#{1,6}\s*(.+?)\s*$", article_md or "", re.M):
+            t = (m.group(1) or "").strip()
+            x = _norm_simple(t)
+            if not x or x in banned or len(t) < 5:
+                continue
+            return t[:90]
+
+        # 2) ابحث عن أول سطر نصّي معقول
+        for ln in (article_md or "").splitlines():
+            t = (ln or "").strip()
+            if not t:
+                continue
+            if t.startswith("#") or t.startswith(("- ", "* ")):
+                continue
+            x = _norm_simple(t)
+            if x in banned or len(t) < 5:
+                continue
+            return t[:90]
+
+        # 3) fallback
+        return (fallback_topic if isinstance(fallback_topic, str) else str(fallback_topic))[:90]
+
+
 
 def regenerate_until_unique(category, slot_idx, max_tries=3):
     tried_keys = set()
@@ -660,7 +801,8 @@ def regenerate_until_unique(category, slot_idx, max_tries=3):
     last_title, last_article, last_query = "مقال", "", ""
     for _ in range(max_tries):
         picked = choose_topic_for_category(category, slot_idx)
-        topic_key = norm_topic_key(picked[0] if isinstance(picked, tuple) else picked)
+        topic_key = norm_topic_key(
+            picked[0] if isinstance(picked, tuple) else picked)
         if topic_key in used_topic_keys or topic_key in tried_keys:
             tried_keys.add(topic_key)
             continue
@@ -670,24 +812,31 @@ def regenerate_until_unique(category, slot_idx, max_tries=3):
             return title, article_md, search_query, topic_key
         tried_keys.add(topic_key)
     suffix = datetime.now(TZ).strftime(" — %Y/%m/%d %H:%M")
-    return f"{last_title}{suffix}", (last_article or "مقال تجريبي"), (last_query or "بحث"), norm_topic_key(last_query or "بحث")
+    return f"{last_title}{suffix}", (last_article or "مقال تجريبي"), (
+        last_query or "بحث"), norm_topic_key(last_query or "بحث")
+
 
 # =================== المسار الرئيسي للنشر ===================
 def make_article_once(slot_idx):
     cat = slot_category_for_today(slot_idx, date.today())
-    title, article_md, search_query, topic_key = regenerate_until_unique(cat, slot_idx)
+    title, article_md, search_query, topic_key = regenerate_until_unique(
+        cat, slot_idx)
     image = fetch_image(search_query)
     html_content = build_post_html(title, image, article_md)
     labels = labels_for_category(cat)
     result = post_to_blogger(title, html_content, labels=labels)
     record_publish(title, topic_key)
     state = "مسودة" if (PUBLISH_MODE != "live") else "منشور حي"
-    print(f"[{datetime.now(TZ)}] {state}: {result.get('url','(بدون رابط)')} | {cat} | {title}")
+    print(
+        f"[{datetime.now(TZ)}] {state}: {result.get('url','(بدون رابط)')} | {cat} | {title}"
+    )
+
 
 # =================== Webhook (اختياري) ===================
 @app.get("/")
 def health():
     return "OK", 200
+
 
 @app.get("/trigger")
 def trigger():
@@ -704,20 +853,30 @@ def trigger():
     except Exception as e:
         return jsonify({"ok": False, "error": str(e)}), 500
 
+
 # =================== الجدولة الداخلية ===================
 def schedule_jobs():
     sched = BackgroundScheduler(timezone=TZ)
     for idx, t in enumerate(POST_TIMES_LOCAL):
         hour, minute = map(int, t.split(":"))
-        sched.add_job(lambda i=idx: make_article_once(i), "cron", hour=hour, minute=minute, id=f"post_{t}")
+        sched.add_job(lambda i=idx: make_article_once(i),
+                      "cron",
+                      hour=hour,
+                      minute=minute,
+                      id=f"post_{t}")
     sched.start()
-    print(f"الجدولة فعّالة: {POST_TIMES_LOCAL} بتوقيت بغداد. وضع النشر: {PUBLISH_MODE.upper()}")
+    print(
+        f"الجدولة فعّالة: {POST_TIMES_LOCAL} بتوقيت بغداد. وضع النشر: {PUBLISH_MODE.upper()}"
+    )
+
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
     if USE_EXTERNAL_CRON:
         port = int(os.getenv("PORT", "8000"))
-        print(f"External-cron mode ON. Webhook: /trigger?slot=0|1&token=***  Port={port}")
+        print(
+            f"External-cron mode ON. Webhook: /trigger?slot=0|1&token=***  Port={port}"
+        )
         app.run(host="0.0.0.0", port=port)
     else:
         if RUN_ONCE:
