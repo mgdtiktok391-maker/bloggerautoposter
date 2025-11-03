@@ -746,8 +746,8 @@ def choose_topic_for_category(category, slot_idx):
             return (title, link)
 
         # fallback مضمون:
-        return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية", "https://news.google.com/")
-
+        return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية",
+                "https://news.google.com/")
 
 
 def build_article_for(category, topic):
