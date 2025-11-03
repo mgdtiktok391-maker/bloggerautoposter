@@ -716,29 +716,36 @@ def labels_for_category(category):
 
 # =================== توليد موضوع ومقال ===================
 def choose_topic_for_category(category, slot_idx):
+    # صباح/مساء مختلف دائماً بseed اليوم والفتحة
+    rnd = random.Random(f"{date.today().isoformat()}-{category}-{slot_idx}")
+
+    if category == "tech":
+        return rnd.choice(TOPICS_TECH)
+
+    if category == "science":
+        return rnd.choice(TOPICS_SCIENCE)
+
+    if category == "economy":
+        return rnd.choice(TOPICS_ECON)
+
     if category == "news":
-        trends = fetch_trends_region(
-            TREND_GEO_LIST,
-            per_geo=10) if TREND_GEO_LIST else fetch_trends_list(TREND_GEO,
-                                                                 max_items=10)
+        # ترند إقليمي من عدة دول إن توفر TREND_GEO_LIST، وإلا دولة واحدة
+        if TREND_GEO_LIST:
+            trends = fetch_trends_region(TREND_GEO_LIST, per_geo=10)
+        else:
+            trends = fetch_trends_list(TREND_GEO, max_items=10)
+
         if trends:
             idx = 0 if slot_idx == 0 else 1
-            if len(trends) > idx: return trends[idx]  # (title, link)
+            if len(trends) > idx:
+                return trends[idx]  # (title, link)
+
+        # خطة بديلة: Google News
         title, link = fetch_top_me_news(n=slot_idx)
-        if title: return (title, link)
-        return ("خبر وتحليل راهن", "https://news.google.com/")
-    # Fallback مضمون:
-    if category == "tech":
-        return random.choice(TOPICS_TECH)
-    elif category == "science":
-        return random.choice(TOPICS_SCIENCE)
-    elif category == "economy":
-        return random.choice(TOPICS_ECON)
-    else:
-        # news fallback: عنوان + رابط
-        title, link = fetch_top_me_news(n=0)
         if title:
             return (title, link)
+
+        # fallback مضمون:
         return ("تطورات مهمة في الشرق الأوسط — قراءة تحليلية", "https://news.google.com/")
 
 
