@@ -3,3 +3,4 @@ com.simejikeyboard
 com.alphainventor.filemanager
 us.flexswag.flexutilitypremium
 notes.notepad.checklist.calendar.todolist.notebook
+com.google.android.keep
