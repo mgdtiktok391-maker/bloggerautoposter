@@ -47,7 +47,6 @@ def get_fresh_app():
     
     for query in queries:
         try:
-            # استخدام n_hits الصحيح
             results = play_search(query, lang="en", country="us", n_hits=50)
             
             for app_summary in results:
@@ -56,7 +55,7 @@ def get_fresh_app():
                 if pkg in used_apps: continue
                 
                 score = app_summary.get('score', 0)
-                if score and score < 3.8: continue # رفعنا الجودة قليلاً لضمان تطبيقات جيدة
+                if score and score < 4.0: continue # نرفع المعيار لضمان الجودة
 
                 try: 
                     details = play_app(pkg, lang='en', country='us')
@@ -68,17 +67,20 @@ def get_fresh_app():
                 return details
                 
         except Exception as e: 
-            print(f"⚠️ Search error in '{query}': {e}")
+            # تجاهل أخطاء البحث البسيطة واستمرار العمل
             continue
             
     return None
 
 def _rest_generate(prompt):
-    # استخدام الموديل المستقر والسريع فقط
-    model = "gemini-1.5-flash"
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+    # قائمة الموديلات: نجرب الأحدث، ثم الأقدم والمستقر
+    models_to_try = [
+        "gemini-1.5-flash",
+        "gemini-1.5-pro",
+        "gemini-1.0-pro",
+        "gemini-pro" # هذا الموديل يعمل دائماً كخيار أخير
+    ]
     
-    # إعدادات لتعطيل فلاتر الأمان لضمان عدم رفض المقال
     safety_settings = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
         {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
@@ -86,33 +88,32 @@ def _rest_generate(prompt):
         {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
     ]
 
-    body = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "safetySettings": safety_settings,
-        "generationConfig": {
-            "temperature": 0.7,
-            "maxOutputTokens": 2000
+    for model in models_to_try:
+        url = f"{GEMINI_API_ROOT}/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        body = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "safetySettings": safety_settings
         }
-    }
 
-    try:
-        r = requests.post(url, json=body, timeout=60)
-        
-        # إذا حدث خطأ، نطبع تفاصيل الخطأ لنعرف السبب
-        if not r.ok:
-            print(f"❌ Gemini API Error: {r.status_code} - {r.text}")
-            return None
+        try:
+            print(f"🤖 Trying model: {model}...")
+            r = requests.post(url, json=body, timeout=60)
             
-        return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        
-    except Exception as e:
-        print(f"❌ Connection Error: {e}")
-        return None
+            if r.status_code == 200:
+                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            else:
+                print(f"⚠️ Model {model} failed with {r.status_code}. Trying next...")
+                
+        except Exception:
+            continue
+            
+    print("❌ All models failed.")
+    return None
 
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def ask_gemini_app_review(app_details):
     title = app_details['title']
-    desc = app_details.get('description', '')[:2500] # زيادة حجم النص المرسل
+    desc = app_details.get('description', '')[:2500]
     
     prompt = f"""
     تصرف كخبير تقني. اكتب مراجعة شاملة لتطبيق الأندرويد التالي باللغة العربية.
@@ -158,7 +159,7 @@ def post_to_blogger(title, content):
     return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
 
 if __name__ == "__main__":
-    print("🚀 Starting App Bot v4 (Stability Fixes)...")
+    print("🚀 Starting App Bot v5 (Final Model Fix)...")
     app_data = get_fresh_app()
     
     if app_data:
@@ -177,6 +178,6 @@ if __name__ == "__main__":
                 print(f"🎉 PUBLISHED SUCCESSFULLY! Check URL: {res.get('url')}")
             except Exception as e: print(f"❌ Publish Error: {e}")
         else:
-            print("❌ Failed to generate article content. Check API logs above.")
+            print("❌ Failed to generate article content. All models failed.")
     else: 
-        print("❌ No suitable app found despite extensive search.")
+        print("❌ No suitable app found.")
