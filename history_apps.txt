@@ -1,3 +1,4 @@
 
 com.simejikeyboard
 com.alphainventor.filemanager
+us.flexswag.flexutilitypremium
