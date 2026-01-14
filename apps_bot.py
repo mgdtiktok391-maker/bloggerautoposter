@@ -64,74 +64,42 @@ def get_fresh_app():
         except: continue  
     return None
 
-# =================== الدالة الذكية لاكتشاف الموديل ===================
+# =================== اكتشاف الموديل ===================
 def get_working_model():
-    """تتصل بجوجل وتجلب قائمة الموديلات المتاحة لحسابك وتختار أفضلها"""
     url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
     try:
-        print("🤖 Asking Google for available models...")
         r = requests.get(url, timeout=30)
-        
-        if r.status_code != 200:
-            print(f"⚠️ Failed to list models. Error: {r.status_code} - {r.text}")
-            return "gemini-pro" # محاولة أخيرة بالموديل القديم
-            
+        if r.status_code != 200: return "gemini-pro"
         data = r.json()
-        # نبحث عن أول موديل يدعم التوليد (generateContent)
         for model in data.get('models', []):
             name = model['name'].replace('models/', '')
-            methods = model.get('supportedGenerationMethods', [])
-            
-            # نفضل الموديلات السريعة (Flash) أو البرو (Pro)
-            if 'generateContent' in methods:
-                print(f"🌟 Auto-selected model: {name}")
+            if 'generateContent' in model.get('supportedGenerationMethods', []):
                 return name
-                
-        print("⚠️ No suitable model found in your account list. Defaulting to gemini-1.5-flash")
         return "gemini-1.5-flash"
-        
-    except Exception as e:
-        print(f"⚠️ Connection error while checking models: {e}")
-        return "gemini-pro"
+    except: return "gemini-pro"
 
 def _rest_generate(prompt):
-    # نستدعي الدالة الذكية لاختيار الموديل
     model_name = get_working_model()
-    
     url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
-    
     safety_settings = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
         {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
         {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
         {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
     ]
-
     try:
-        r = requests.post(url, json={
-            "contents": [{"parts": [{"text": prompt}]}],
-            "safetySettings": safety_settings
-        }, timeout=60)
-        
-        if r.status_code == 200:
-            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            print(f"❌ API Error ({model_name}): {r.status_code} - {r.text}")
-            return None
-            
-    except Exception as e:
-        print(f"❌ Connection Failed: {e}")
+        r = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "safetySettings": safety_settings}, timeout=60)
+        if r.status_code == 200: return r.json()["candidates"][0]["content"]["parts"][0]["text"]
         return None
+    except: return None
 
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def ask_gemini_app_review(app_details):
     title = app_details['title']
     desc = app_details.get('description', '')[:2500]
-    
     prompt = f"""
-    تصرف كخبير تقني. اكتب مراجعة لتطبيق الأندرويد: {title}
+    تصرف كخبير تقني. اكتب مراجعة لتطبيق: {title}
     الوصف: {desc}
-    
     المطلوب (Markdown):
     1. **عنوان المقال**: (H1) جذاب.
     2. **مقدمة**: بسيطة.
@@ -143,11 +111,36 @@ def ask_gemini_app_review(app_details):
     """
     return _rest_generate(prompt)
 
+# =================== تعديل الزر الذكي ===================
 def build_app_post_html(app_details, article_html):
     image_url = app_details.get('headerImage') or app_details.get('icon')
     title = app_details['title']
+    pkg_id = app_details['appId']
+    
+    # رابط المتجر الحقيقي
+    real_play_store_url = f"https://play.google.com/store/apps/details?id={pkg_id}"
+    
     header = f'<div style="text-align:center;margin-bottom:20px;"><img src="{image_url}" alt="{title}" style="max-width:100%;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);"></div>'
-    button = f"""<div style="text-align:center; margin-top:40px; margin-bottom:40px; padding: 20px; background: #f0fdf4; border: 2px solid #2ecc71; border-radius: 15px;"><h3 style="margin:0 0 15px 0; color:#145a32;">🚀 حمل التطبيق الآن</h3><a href="{MONETAG_DIRECT_LINK}" class="app-download-btn" target="_blank" rel="nofollow noopener" style="display:inline-block; padding:15px 40px; background:#27ae60; color:white; text-decoration:none; border-radius:50px; font-weight:bold; font-size:20px; box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);">تحميل التطبيق (APK) 📥</a><p style="margin-top:10px; font-size:13px; color:#555;">رابط مباشر آمن 100%</p></div>"""
+    
+    # الزر الذكي:
+    # href: يوجه للرابط الحقيقي (المتجر)
+    # onclick: يفتح الإعلان في نافذة جديدة فور الضغط
+    button = f"""
+    <div style="text-align:center; margin-top:40px; margin-bottom:40px; padding: 20px; background: #f0fdf4; border: 2px solid #2ecc71; border-radius: 15px;">
+        <h3 style="margin:0 0 15px 0; color:#145a32;">🚀 تحميل التطبيق</h3>
+        
+        <a href="{real_play_store_url}" 
+           onclick="window.open('{MONETAG_DIRECT_LINK}', '_blank');" 
+           class="app-download-btn" 
+           target="_self" 
+           rel="nofollow noopener" 
+           style="display:inline-block; padding:15px 40px; background:#27ae60; color:white; text-decoration:none; border-radius:50px; font-weight:bold; font-size:20px; box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4); cursor:pointer;">
+            اضغط هنا للتحميل (APK) 📥
+        </a>
+        
+        <p style="margin-top:10px; font-size:13px; color:#555;">سيتم توجيهك للمتجر الرسمي فوراً</p>
+    </div>
+    """
     return header + md.markdown(article_html, extensions=['extra']) + button
 
 def post_to_blogger(title, content):
@@ -158,7 +151,7 @@ def post_to_blogger(title, content):
     return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
 
 if __name__ == "__main__":
-    print("🚀 Starting App Bot v6 (Auto-Discovery Mode)...")
+    print("🚀 Starting App Bot v7 (Smart Button)...")
     app_data = get_fresh_app()
     if app_data:
         print(f"📝 Generating content for: {app_data['title']}...")
