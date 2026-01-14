@@ -1,0 +1,42 @@
+name: Apps Auto Publisher
+
+on:
+  schedule:
+    # تشغيل 4 مرات يومياً (الأوقات بتقريب توقيت بغداد/مكة)
+    # 06:00, 10:00, 14:00, 18:00 UTC
+    # والتي تعادل 09:00, 13:00, 17:00, 21:00 بتوقيت بغداد
+    - cron: '0 6,10,14,18 * * *'
+  workflow_dispatch: # للسماح بالتشغيل اليدوي للتجربة
+
+jobs:
+  run-apps-bot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run App Bot Script
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BLOG_URL: ${{ secrets.BLOG_URL }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: python apps_bot.py
+        
+      - name: Commit history (Prevent duplicates)
+        run: |
+          git config --global user.name "AppBot"
+          git config --global user.email "bot@github.com"
+          git add history_apps.txt
+          git commit -m "Update app history" || exit 0
+          git push
