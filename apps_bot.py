@@ -21,7 +21,7 @@ REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 HISTORY_APPS_FILE = "history_apps.txt"
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
 
-# قائمة بحث موسعة جداً لضمان العثور على نتائج
+# قائمة كلمات مفتاحية واسعة
 SEARCH_QUERIES = [
     "Tool", "Utility", "AI", "Photo", "Video", "Maker", "Editor", 
     "Scanner", "PDF", "Cleaner", "Battery", "VPN", "Security", 
@@ -42,33 +42,29 @@ def save_used_app(package_name):
 def get_fresh_app():
     used_apps = load_used_apps()
     queries = SEARCH_QUERIES[:]
-    random.shuffle(queries) # خلط عشوائي للكلمات
+    random.shuffle(queries)
     
     print(f"Checking {len(queries)} categories...")
     
     for query in queries:
         try:
-            # زيادة عدد النتائج إلى 100 بدلاً من 20 لضمان العثور على تطبيق
-            results = play_search(query, lang="en", country="us", n=100)
+            # التصحيح هنا: استخدام n_hits بدلاً من n
+            results = play_search(query, lang="en", country="us", n_hits=50)
             
             for app_summary in results:
                 pkg = app_summary['appId']
                 
-                # تخطي التطبيقات المستخدمة سابقاً
                 if pkg in used_apps: continue
                 
-                # تخطي التطبيقات ذات التقييم المنخفض جداً (أقل من 3.0)
+                # تخطي التطبيقات ذات التقييم المنخفض
                 score = app_summary.get('score', 0)
-                if score and score < 3.0: continue 
+                if score and score < 3.5: continue 
 
-                # جلب التفاصيل
                 try: 
-                    # نحاول جلب التفاصيل (لا يهم اللغة، البوت سيترجم)
                     details = play_app(pkg, lang='en', country='us')
                 except: 
                     continue
                 
-                # إذا لم يكن هناك أيقونة، نتجاوزه (نادر جداً)
                 if not details.get('icon'): continue
                 
                 print(f"Found suitable app: {details['title']}")
@@ -113,13 +109,11 @@ def ask_gemini_app_review(app_details):
     return _rest_generate(prompt)
 
 def build_app_post_html(app_details, article_html):
-    # استخدام صورة الغلاف إذا وجدت، وإلا استخدام الأيقونة بحجم كبير
     image_url = app_details.get('headerImage') or app_details.get('icon')
     title = app_details['title']
     
     header = f'<div style="text-align:center;margin-bottom:20px;"><img src="{image_url}" alt="{title}" style="max-width:100%;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);"></div>'
     
-    # تحسين تصميم الزر وجعله أكثر وضوحاً
     button = f"""
     <div style="text-align:center; margin-top:50px; margin-bottom:50px; padding: 20px; background: #f9f9f9; border-radius: 10px;">
         <h3 style="margin-bottom:15px;">📥 روابط التحميل</h3>
@@ -135,18 +129,16 @@ def post_to_blogger(title, content):
     creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
     service = build("blogger", "v3", credentials=creds)
     blog_id = service.blogs().getByUrl(url=BLOG_URL).execute()["id"]
-    # نشر مباشر (isDraft=False)
     body = {"kind": "blogger#post", "title": title, "content": content, "labels": APP_LABELS}
     return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
 
 if __name__ == "__main__":
-    print("Starting App Bot v2 (Relaxed Filters)...")
+    print("Starting App Bot v3 (Fix n_hits)...")
     app_data = get_fresh_app()
     if app_data:
         print(f"Selected App: {app_data['title']}")
         article = ask_gemini_app_review(app_data)
         if article:
-            # تنظيف العنوان
             lines = article.strip().split('\n')
             title = lines[0].replace('#', '').replace('*', '').strip()
             if len(title) < 5: title = f"تحميل تطبيق {app_data['title']}"
@@ -155,9 +147,9 @@ if __name__ == "__main__":
             try:
                 post_to_blogger(title, final_html)
                 save_used_app(app_data['appId'])
-                print("App Published Successfully ✅ Check your blog now.")
+                print("App Published Successfully ✅")
             except Exception as e: print(f"Publish Error: {e}")
         else:
             print("Error: Gemini returned empty article.")
     else: 
-        print("STILL No app found! (Try checking internet or library)")
+        print("STILL No app found! (Library issue solved, checking results...)")
