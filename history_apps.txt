@@ -7,3 +7,4 @@ com.google.android.keep
 video.downloader.videodownloader
 com.google.android.apps.translate
 com.google.android.calculator
+com.spaceman.verticonspro
