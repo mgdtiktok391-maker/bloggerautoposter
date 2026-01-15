@@ -5,3 +5,4 @@ us.flexswag.flexutilitypremium
 notes.notepad.checklist.calendar.todolist.notebook
 com.google.android.keep
 video.downloader.videodownloader
+com.google.android.apps.translate
