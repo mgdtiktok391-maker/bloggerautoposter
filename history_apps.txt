@@ -9,3 +9,4 @@ com.google.android.apps.translate
 com.google.android.calculator
 com.spaceman.verticonspro
 com.wsc.scm_mobile
+com.gamma.scan
