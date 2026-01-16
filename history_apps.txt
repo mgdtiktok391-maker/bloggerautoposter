@@ -10,3 +10,4 @@ com.google.android.calculator
 com.spaceman.verticonspro
 com.wsc.scm_mobile
 com.gamma.scan
+com.samsung.android.wear.shealth
