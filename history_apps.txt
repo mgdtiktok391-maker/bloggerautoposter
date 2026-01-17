@@ -13,3 +13,4 @@ com.gamma.scan
 com.samsung.android.wear.shealth
 antivirus.virus.cleaner.clean.vpn.booster
 com.sec.android.app.popupcalculator
+video.player.videoplayer
