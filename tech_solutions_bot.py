@@ -58,12 +58,12 @@ except:
     published_history = []
 
 # =========================================================
-# 🧠 الاتصال بـ Gemini (معدلة مع فلاتر الأمان + طباعة الأخطاء)
+# 🧠 الاتصال بـ Gemini (تم التبديل إلى gemini-pro المستقر)
 # =========================================================
 def call_gemini(prompt):
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_API_KEY}"
+    # التغيير هنا: استخدام gemini-pro لأنه الأكثر استقراراً
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
     
-    # إعدادات لتقليل الحظر العشوائي
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "safetySettings": [
@@ -79,7 +79,7 @@ def call_gemini(prompt):
         if response.status_code == 200:
             return response.json()['candidates'][0]['content']['parts'][0]['text']
         else:
-            # هنا سيطبع لك سبب الخطأ بالضبط في السجلات
+            # طباعة الخطأ بوضوح للمساعدة في الحل
             print(f"⚠️ Gemini API Error: {response.status_code} - {response.text}")
             return None
     except Exception as e:
@@ -129,8 +129,9 @@ def write_article(title):
 def post_to_blogger(title, content, access_token):
     url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts"
     
-    img_keywords = ["technology", "coding", "mobile", "ai", "software"]
-    img_url = f"https://source.unsplash.com/800x400/?{random.choice(img_keywords)}"
+    # استخدام صور Picsum لأنها أكثر استقراراً من Unsplash Source حالياً
+    random_id = random.randint(1, 1000)
+    img_url = f"https://picsum.photos/seed/{random_id}/800/400"
     
     final_html = f"""
     <div style="text-align:center; margin-bottom:20px;">
@@ -177,7 +178,7 @@ if __name__ == "__main__":
                 break
             else:
                 print("⚠️ Duplicate or empty, retrying...")
-                time.sleep(2) # انتظار بسيط
+                time.sleep(2) 
         
         if new_topic:
             print(f"💡 Topic Found: {new_topic}")
@@ -196,6 +197,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to generate article body.")
         else:
-            print("❌ No Unique Topic Found (Check Gemini API/Quota).")
+            print("❌ No Unique Topic Found (Gemini Error).")
     else:
         print("❌ Critical: Token Failed.")
