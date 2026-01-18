@@ -135,24 +135,24 @@ def write_tech_article(topic):
     """
     return _rest_generate(prompt)
 
-# =================== التصميم والحقن (Fixed Layout v2) ===================
+# =================== التصميم البسيط (Simple Layout) ===================
 def build_styled_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
     
     content_html = md.markdown(markdown_content, extensions=['extra'])
     
-    # ستايل الأزرار
+    # ستايل الأزرار (متجاوب مع الموبايل)
     btn_style = """
-    display: block; margin: 30px auto; padding: 12px 25px; 
+    display: block; margin: 30px auto; padding: 12px 20px; 
     text-align: center; font-weight: bold; color: #fff; border-radius: 50px; 
-    text-decoration: none; font-size: 18px; width: fit-content; max-width: 90%;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+    text-decoration: none; font-size: 16px; width: fit-content; max-width: 90%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2); transition: transform 0.2s;
     animation: glow 2s infinite;
     """
     
     btn1_html = f"""
-    <div style="text-align:center; margin: 20px 0;">
+    <div style="text-align:center; margin: 25px 0;">
         <a href="{DIRECT_LINK}" target="_blank" style="{btn_style} background: linear-gradient(45deg, #ff416c, #ff4b2b);">
             👀 شاهد من هنا
         </a>
@@ -167,6 +167,7 @@ def build_styled_html(title, markdown_content):
     </div>
     """
     
+    # حقن الأزرار
     if "<h2>" in content_html:
         parts = content_html.split("<h2>", 1)
         content_html = parts[0] + btn1_html + "<h2>" + parts[1]
@@ -175,131 +176,88 @@ def build_styled_html(title, markdown_content):
 
     content_html += btn2_html
 
-    # 🔥 التحديث الجذري للـ CSS لإصلاح مشكلة الموبايل
+    # القالب البسيط (بدون صناديق معقدة)
     styled_template = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
         
+        /* ضبط شامل لكل العناصر لتبقى داخل الحدود */
         * {{
             box-sizing: border-box !important;
+            max-width: 100% !important;
         }}
 
         @keyframes glow {{
             0% {{ box-shadow: 0 0 5px rgba(0,0,0,0.2); transform: scale(1); }}
-            50% {{ box-shadow: 0 0 20px rgba(255, 75, 43, 0.6); transform: scale(1.05); }}
+            50% {{ box-shadow: 0 0 15px rgba(255, 75, 43, 0.5); transform: scale(1.02); }}
             100% {{ box-shadow: 0 0 5px rgba(0,0,0,0.2); transform: scale(1); }}
         }}
 
         .tech-article {{
             font-family: 'Tajawal', sans-serif;
             line-height: 1.8;
-            color: #333;
+            color: #222;
             background: #fff;
             text-align: right;
             direction: rtl;
-            
-            /* هذه الأسطر تجبر النص على البقاء داخل الشاشة */
-            width: 100% !important;
-            max-width: 100vw !important;
-            overflow-x: hidden !important;
-            
-            /* كسر الكلمات الطويلة إجبارياً */
-            word-wrap: break-word !important;
-            overflow-wrap: anywhere !important;
-            word-break: break-word !important;
+            width: 100%;
+            overflow-wrap: break-word; /* كسر الكلمات الطويلة */
+            word-wrap: break-word;
         }}
         
         .tech-header-img {{
             width: 100%;
             height: auto;
-            border-radius: 15px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            margin-bottom: 30px;
+            border-radius: 10px;
+            margin-bottom: 20px;
         }}
         
         .tech-article h1 {{
             color: #2c3e50;
             font-size: 24px;
             font-weight: 800;
-            margin-bottom: 20px;
-            border-bottom: 3px solid #3498db;
-            display: inline-block;
-            padding-bottom: 10px;
+            margin-bottom: 15px;
             line-height: 1.4;
         }}
         
         .tech-article h2 {{
-            background: #f0f8ff;
-            color: #2980b9;
-            padding: 10px 15px;
-            border-radius: 10px;
-            border-right: 5px solid #2980b9;
-            margin-top: 30px;
-            margin-bottom: 15px;
+            color: #0d47a1; /* لون أزرق غامق بسيط */
+            margin-top: 25px;
+            margin-bottom: 10px;
             font-size: 20px;
             font-weight: 700;
-            
-            /* إصلاح العناوين */
-            width: 100%;
-            overflow-wrap: break-word;
+            border-bottom: 1px solid #ddd; /* خط بسيط أسفل العنوان */
+            padding-bottom: 5px;
         }}
         
         .tech-article ul, .tech-article ol {{
-            background: #fdfdfd;
-            padding: 15px 35px 15px 15px;
-            border: 1px solid #eee;
-            border-radius: 10px;
-            max-width: 100%;
+            padding-right: 20px; /* مسافة بسيطة للقوائم */
+        }}
+
+        .tech-article li {{
+            margin-bottom: 8px;
         }}
         
-        /* إصلاح الصناديق التي تخرج عن الشاشة */
+        /* إزالة الصناديق تماماً - تحويل الاقتباسات لنص عادي مائل */
         blockquote {{
-            background-color: #fff8e1;
-            border-right: 5px solid #ffc107;
-            margin: 20px 0 !important;
-            padding: 15px !important;
-            border-radius: 8px;
-            color: #856404;
-            font-weight: bold;
-            
-            /* هام جداً للموبايل */
-            width: auto !important;
-            max-width: 100% !important;
-            word-break: break-word !important; 
+            background: none !important;
+            border: none !important;
+            padding: 10px 0 !important;
+            margin: 15px 0 !important;
+            color: #555;
+            font-style: italic;
+            border-right: 3px solid #ccc !important; /* خط رمادي بسيط جداً على اليمين */
+            padding-right: 15px !important;
         }}
         
         .tech-footer {{
-            margin-top: 50px;
-            padding: 20px;
-            background: #222;
-            color: #fff;
+            margin-top: 40px;
+            padding: 15px;
+            background: #f1f1f1;
+            color: #333;
             text-align: center;
-            border-radius: 12px;
-            font-size: 14px;
-        }}
-
-        /* 📱 تحسينات الموبايل القصوى */
-        @media only screen and (max-width: 600px) {{
-            .tech-article {{
-                padding: 10px !important;
-            }}
-            
-            /* تقليص حجم الخط قليلاً ليناسب الشاشة */
-            .tech-article p, .tech-article li {{
-                font-size: 16px !important;
-            }}
-            
-            /* إجبار الصناديق على احترام حدود الشاشة مع هامش */
-            blockquote {{
-                margin-left: 0 !important;
-                margin-right: 0 !important;
-                width: 100% !important;
-            }}
-            
-            .tech-article ul, .tech-article ol {{ 
-                padding-right: 25px !important; 
-                padding-left: 5px !important;
-            }}
+            border-radius: 8px;
+            font-size: 13px;
         }}
     </style>
 
@@ -326,7 +284,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🚀 Starting Tech Solutions Bot (Final CSS Fix)...")
+    print("🚀 Starting Tech Solutions Bot (Clean Layout)...")
     
     raw_topic = None
     for i in range(3):
@@ -343,7 +301,7 @@ if __name__ == "__main__":
         article_md = write_tech_article(raw_topic)
         
         if article_md:
-            print("📝 Content Generated. Applying CSS Fixes...")
+            print("📝 Content Generated. Styling...")
             final_html = build_styled_html(raw_topic, article_md)
             
             try:
