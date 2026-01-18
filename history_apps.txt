@@ -18,3 +18,4 @@ org.khanacademy.android
 com.finch.finch
 com.quadpay.quadpay
 com.spocky.projengmenu
+com.microsoft.launcher
