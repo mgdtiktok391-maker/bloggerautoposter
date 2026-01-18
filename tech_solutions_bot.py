@@ -15,12 +15,14 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
+# 🔗 رابط الإعلان (الكنز)
+DIRECT_LINK = "https://otieu.com/4/10481709"
+
 HISTORY_FILE = "history_tech_solutions.json"
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
 LABELS = ["شروحات_تقنية", "صيانة", "Technology", "دليل_شامل"]
 
-# =================== مجالات التفكير الواسعة (Broad Niches) ===================
-# نضع هنا "التصنيفات" فقط، ونترك للبوت حرية اختيار الموضوع الدقيق
+# =================== مجالات التفكير (NICHES) ===================
 NICHES = [
     "صيانة الهواتف الذكية (Android & iOS)",
     "أدوات ومواقع الذكاء الاصطناعي (AI Tools)",
@@ -86,22 +88,18 @@ def _rest_generate(prompt):
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def invent_topic():
     history = load_history()
-    # نرسل له آخر 15 عنوان لضمان عدم التكرار القريب
     recent = history[-15:] if len(history) > 15 else history
-    
-    # نختار مجالاً عشوائياً
     niche = random.choice(NICHES)
     
-    # البرومبت الذكي: يطلب موضوعاً "محدداً" وليس عاماً
     prompt = f"""
     تصرف كمدير تحرير لموقع تقني عالمي.
     أحتاج منك ابتكار "عنوان مقال تقني" واحد فقط في مجال: "{niche}".
     
     الشروط الصارمة:
     1. العنوان يجب أن يكون عن **مشكلة محددة جداً** أو **أداة معينة** أو **حيلة ذكية**.
-    2. تجنب العناوين العامة مثل "كيف تحمي هاتفك". بل قل "كيف تحمي صورك من التشفير في iOS 18".
-    3. العنوان يجب أن يكون جذاباً (Clicky) وباللغة العربية.
-    4. ممنوع منعاً باتاً اقتراح أي عنوان يشبه هذه العناوين السابقة: {recent}
+    2. تجنب العناوين العامة. كن محدداً وجذاباً (Clicky).
+    3. اللغة العربية.
+    4. ممنوع تكرار هذه المواضيع: {recent}
     5. الرد يكون العنوان فقط.
     """
     return _rest_generate(prompt)
@@ -114,7 +112,7 @@ def write_tech_article(topic):
     تعليمات التنسيق (Markdown):
     1. استخدم العناوين (#, ##) لتقسيم المقال.
     2. استخدم الايموجي 📱💻🔧 لتزيين الفقرات.
-    3. الأسلوب يجب أن يكون سهلاً ومباشراً (موجه للمبتدئين).
+    3. الأسلوب يجب أن يكون سهلاً ومباشراً.
     
     الهيكل المطلوب:
     # {topic}
@@ -137,17 +135,67 @@ def write_tech_article(topic):
     """
     return _rest_generate(prompt)
 
-# =================== التصميم (CSS + HTML) ===================
+# =================== التصميم والحقن (Design & Injection) ===================
 def build_styled_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
     
+    # 1. تحويل المحتوى الأساسي
     content_html = md.markdown(markdown_content, extensions=['extra'])
     
+    # 2. تصميم الأزرار المتوهجة
+    btn_style = """
+    display: block; margin: 30px auto; padding: 15px 30px; 
+    text-align: center; font-weight: bold; color: #fff; border-radius: 50px; 
+    text-decoration: none; font-size: 18px; width: fit-content;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
+    animation: glow 2s infinite;
+    """
+    
+    # زر 1: شاهد من هنا (أحمر)
+    btn1_html = f"""
+    <div style="text-align:center; margin: 20px 0;">
+        <a href="{DIRECT_LINK}" target="_blank" style="{btn_style} background: linear-gradient(45deg, #ff416c, #ff4b2b);">
+            👀 شاهد من هنا
+        </a>
+    </div>
+    """
+    
+    # زر 2: كورسات تقنية (أزرق/بنفسجي)
+    btn2_html = f"""
+    <div style="text-align:center; margin: 40px 0;">
+        <a href="{DIRECT_LINK}" target="_blank" style="{btn_style} background: linear-gradient(45deg, #2193b0, #6dd5ed);">
+            🎓 كورسات تقنية
+        </a>
+    </div>
+    """
+    
+    # 3. حقن الأزرار في الأماكن الصحيحة
+    # الحقن الأول: بعد المقدمة (نبحث عن أول عنوان فرعي H2 ونضع الزر قبله)
+    if "<h2>" in content_html:
+        # نقسم النص عند أول H2
+        parts = content_html.split("<h2>", 1)
+        # نضع الزر الأول بين المقدمة والعنوان الأول
+        content_html = parts[0] + btn1_html + "<h2>" + parts[1]
+    else:
+        # إذا لم نجد عنواناً، نضعه في البداية
+        content_html = btn1_html + content_html
+
+    # الحقن الثاني: في النهاية (نضيف الزر الثاني قبل الخاتمة)
+    content_html += btn2_html
+
+    # 4. القالب والتصميم النهائي (مع إصلاح الموبايل)
     styled_template = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
         
+        /* أنيميشن التوهج */
+        @keyframes glow {{
+            0% {{ box-shadow: 0 0 5px rgba(0,0,0,0.2); transform: scale(1); }}
+            50% {{ box-shadow: 0 0 20px rgba(255, 75, 43, 0.6); transform: scale(1.05); }}
+            100% {{ box-shadow: 0 0 5px rgba(0,0,0,0.2); transform: scale(1); }}
+        }}
+
         .tech-article {{
             font-family: 'Tajawal', sans-serif;
             line-height: 1.8;
@@ -155,13 +203,16 @@ def build_styled_html(title, markdown_content):
             background: #fff;
             text-align: right;
             direction: rtl;
+            overflow-x: hidden; /* لمنع التمرير الأفقي في الموبايل */
         }}
+        
         .tech-header-img {{
             width: 100%;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             margin-bottom: 30px;
         }}
+        
         .tech-article h1 {{
             color: #2c3e50;
             font-size: 26px;
@@ -171,6 +222,7 @@ def build_styled_html(title, markdown_content):
             display: inline-block;
             padding-bottom: 10px;
         }}
+        
         .tech-article h2 {{
             background: #f0f8ff;
             color: #2980b9;
@@ -182,13 +234,14 @@ def build_styled_html(title, markdown_content):
             font-size: 20px;
             font-weight: 700;
         }}
+        
         .tech-article ul, .tech-article ol {{
             background: #fdfdfd;
             padding: 20px 40px 20px 20px;
             border: 1px solid #eee;
             border-radius: 10px;
         }}
-        .tech-article li {{ margin-bottom: 10px; }}
+        
         blockquote {{
             background-color: #fff8e1;
             border-right: 5px solid #ffc107;
@@ -198,6 +251,7 @@ def build_styled_html(title, markdown_content):
             color: #856404;
             font-weight: bold;
         }}
+        
         .tech-footer {{
             margin-top: 50px;
             padding: 20px;
@@ -206,6 +260,17 @@ def build_styled_html(title, markdown_content):
             text-align: center;
             border-radius: 12px;
             font-size: 14px;
+        }}
+
+        /* 📱 إصلاح الموبايل (Mobile Responsive) */
+        @media only screen and (max-width: 600px) {{
+            .tech-article {{
+                padding: 10px !important;
+                font-size: 16px;
+            }}
+            .tech-article h1 {{ font-size: 22px; }}
+            .tech-article h2 {{ font-size: 18px; padding: 10px; }}
+            .tech-article ul, .tech-article ol {{ padding: 15px 30px 15px 15px; }}
         }}
     </style>
 
@@ -232,16 +297,14 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🚀 Starting Tech Solutions Bot (Creative Mode)...")
+    print("🚀 Starting Tech Solutions Bot (Ads & Responsive Mode)...")
     
-    # 3 محاولات لابتكار عنوان فريد
     raw_topic = None
     for i in range(3):
         print(f"🧠 Brainstorming attempt {i+1}...")
         temp_topic = invent_topic()
         if temp_topic:
             clean_topic = temp_topic.strip().replace('"', '').replace('*', '')
-            # تحقق بسيط من الطول للتأكد أنه عنوان وليس جملة طويلة
             if len(clean_topic) > 10 and len(clean_topic) < 100: 
                 raw_topic = clean_topic
                 break
@@ -251,7 +314,7 @@ if __name__ == "__main__":
         article_md = write_tech_article(raw_topic)
         
         if article_md:
-            print("📝 Content Generated. Styling...")
+            print("📝 Content Generated. Injecting Ads & Styling...")
             final_html = build_styled_html(raw_topic, article_md)
             
             try:
@@ -263,4 +326,4 @@ if __name__ == "__main__":
         else:
             print("❌ Content generation failed.")
     else:
-        print("❌ Failed to invent a valid topic after 3 tries.")
+        print("❌ Failed to invent a valid topic.")
