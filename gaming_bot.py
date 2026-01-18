@@ -25,12 +25,12 @@ HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
 
-# قائمة الموديلات التي سيجربها البوت بالترتيب (خطة أ، خطة ب، خطة ج)
+# ⚠️ التعديل الجذري: استخدام الموديلات المستقرة على القناة v1
+# هذا الترتيب يضمن المحاولة بالأذكى ثم الأسرع ثم الأقدم والأكثر استقراراً
 MODELS_TO_TRY = [
-    "gemini-1.5-flash",       # الخيار الأول: سريع جداً ومجاني
-    "gemini-1.5-flash-8b",    # الخيار الثاني: نسخة خفيفة وسريعة
-    "gemini-1.5-pro",         # الخيار الثالث: ذكي جداً
-    "gemini-1.0-pro"          # الخيار الأخير: الموديل القديم المستقر
+    "gemini-1.5-flash",  # سريع وجديد
+    "gemini-1.5-pro",    # ذكي جداً
+    "gemini-pro"         # (Legacy) الموديل القديم الذي يعمل دائماً ولا يتعطل
 ]
 
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
@@ -48,10 +48,10 @@ PROBLEMS = [
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        # البحث عن كلمات عامة لضمان نتائج دائماً
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games"]
         chosen_query = random.choice(queries)
         
+        # استخدام دالة search المضمونة
         results = search(chosen_query, lang='ar', country='sa', n_hits=30)
         games_list = [game['title'] for game in results]
         
@@ -61,7 +61,6 @@ def get_real_trending_games():
         raise Exception("Zero results found")
     except Exception as e:
         print(f"⚠️ Scraper Warning: {e}")
-        # قائمة احتياطية من الألعاب الشهيرة فقط إذا فشل الاتصال بالمتجر
         return ["PUBG Mobile", "Free Fire", "Call of Duty Mobile", "Roblox", "Minecraft", "Subway Surfers", "Ludo King"]
 
 # =================== دوال المساعدة ===================
@@ -92,9 +91,9 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الاتصال الذكي بـ Gemini (Model Rotation) ===================
+# =================== الاتصال الذكي بـ Gemini (v1 Stable) ===================
 def generate_with_retry(prompt):
-    """تحاول الكتابة باستخدام عدة موديلات حتى ينجح أحدها"""
+    """يحاول الاتصال بعدة موديلات باستخدام الإصدار المستقر v1"""
     
     safety_settings = [
         {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
@@ -104,27 +103,31 @@ def generate_with_retry(prompt):
     ]
 
     for model in MODELS_TO_TRY:
-        print(f"🤖 Trying to write with model: {model}...")
-        url = f"{GEMINI_API_ROOT}/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        print(f"🤖 Trying model: {model} (on v1)...")
+        
+        # ⚠️ التغيير هنا: استخدام v1 بدلاً من v1beta
+        url = f"{GEMINI_API_ROOT}/v1/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        
         payload = {
             "contents": [{"parts": [{"text": prompt}]}],
             "safetySettings": safety_settings
         }
         
         try:
-            r = requests.post(url, json=payload, timeout=40)
+            r = requests.post(url, json=payload, timeout=50)
             if r.status_code == 200:
-                text = r.json()["candidates"][0]["content"]["parts"][0]["text"]
                 print("✅ Success!")
-                return text
+                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
             else:
-                print(f"⚠️ Failed ({model}): {r.status_code} - {r.text[:100]}")
-                time.sleep(2) # انتظار بسيط قبل المحاولة التالية
+                # طباعة تفاصيل الخطأ للمساعدة في التشخيص
+                print(f"⚠️ Failed ({model}): Code {r.status_code}")
+                # print(f"Error Details: {r.text}") # قم بإلغاء التعليق إذا احتجت تفاصيل أكثر
+                time.sleep(1)
         except Exception as e:
             print(f"⚠️ Error ({model}): {e}")
-            time.sleep(2)
+            time.sleep(1)
             
-    print("❌ All models failed.")
+    print("❌ All models failed to generate content.")
     return None
 
 # =================== المنطق الرئيسي ===================
@@ -137,7 +140,6 @@ def discover_game_trend():
     
     prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{selected_game}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط بدون علامات تنصيص."
     
-    # نستخدم نظام التبديل هنا أيضاً
     title = generate_with_retry(prompt)
     
     if title: 
@@ -222,7 +224,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Smart Model Rotation) Starting...")
+    print("🎮 Gaming Bot (v1 Stable Channel) Starting...")
     
     topic, game_name = discover_game_trend()
     
@@ -238,6 +240,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to post to Blogger.")
         else:
-            print("❌ Failed to write content (All AI models failed).")
+            print("❌ Failed to write content (Check API Key or Quota).")
     else:
         print("❌ Failed to find a topic/game.")
