@@ -24,9 +24,6 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-# ⚠️ عدنا للموديل المستقر الذي نجح معك سابقاً
-MODEL_NAME = "gemini-1.5-flash"
-
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -38,33 +35,33 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# =================== 1. المستشعر: جلب الألعاب وصورها ===================
+# =================== 1. المستشعر: جلب الألعاب + الصور الحقيقية ===================
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        # نبحث عن كلمات تضمن وجود نتائج
-        queries = ["Action Games", "Racing Games", "Shooting Games", "Zombie Games"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games"]
         chosen_query = random.choice(queries)
-        
+        # جلب النتائج
         results = search(chosen_query, lang='ar', country='sa', n_hits=30)
         
+        # استخراج الاسم + الصورة (Icon)
         games_data = []
         for game in results:
             games_data.append({
                 "title": game['title'],
-                "image": game['icon'] # رابط الصورة الحقيقي
+                "image": game['icon'] # رابط أيقونة اللعبة من سيرفرات جوجل
             })
             
         if games_data:
-            print(f"✅ Found {len(games_data)} games.")
+            print(f"✅ Found {len(games_data)} games with images.")
             return games_data
         raise Exception("Zero results found")
     except Exception as e:
         print(f"⚠️ Scraper Warning: {e}")
-        # بيانات احتياطية
+        # في حال الفشل نستخدم صور ثابتة لأشهر الألعاب
         return [
-            {"title": "PUBG Mobile", "image": "https://play-lh.googleusercontent.com/JRd05pyBH41qjgsJuWduRJpDeZG0Hnb0yjf2nWqO7VaGKL10-G5UIygxED-WNOc3pg"},
-            {"title": "Free Fire", "image": "https://play-lh.googleusercontent.com/l4Zdf0hNq2123233e7eH_7nL1e15g2_6w2332"}
+            {"title": "PUBG Mobile", "image": "https://play-lh.googleusercontent.com/JRd05pyBH41qjgsJuWduRJpTcVc0wYq-G8qD2dF2X_X6v_5qg1q_5q_5q_5q_5q"},
+            {"title": "Free Fire", "image": "https://play-lh.googleusercontent.com/h6_g1_g1_g1_g1_g1_g1_g1_g1_g1"} 
         ]
 
 # =================== دوال المساعدة ===================
@@ -85,22 +82,45 @@ def get_product_recommendation():
     products = load_json(PRODUCTS_FILE)
     if products:
         p = random.choice(products)
-        # تصميم نظيف جداً للمنتج (بدون ألوان فاقعة)
+        # تصميم نظيف للصندوق
         return f"""
-        <div style="border: 1px solid #eee; padding: 20px; margin: 30px 0; text-align: center; border-radius: 10px; background-color: #f9f9f9;">
+        <div style="background:#f9f9f9; border:1px solid #ddd; padding:20px; margin:30px 0; text-align:center; border-radius:10px;">
             <h3 style="margin:0 0 10px 0; color:#e67e22;">🛠️ عتاد المحترفين:</h3>
-            <p style="color:#666;">لأفضل أداء، جرب: <strong>{p['name_ar']}</strong>.</p>
-            <div style="margin:15px 0;"><img src="{p['image_url']}" style="width:100px;height:100px;object-fit:contain;border-radius:8px;background:#fff;"></div>
-            <a href="{p['affiliate_link']}" target="_blank" style="display:inline-block; background:#e67e22; color:white; padding:10px 25px; text-decoration:none; border-radius:50px; font-weight:bold;">شاهد السعر 🛒</a>
+            <p style="color:#555;">لأفضل أداء، جرب: <strong>{p['name_ar']}</strong>.</p>
+            <div style="margin:10px 0;"><img src="{p['image_url']}" style="width:100px;height:100px;object-fit:contain;background:#fff;border-radius:8px;border:1px solid #eee;"></div>
+            <a href="{p['affiliate_link']}" target="_blank" style="display:inline-block; background:#e67e22; color:white; padding:8px 25px; text-decoration:none; border-radius:50px; font-weight:bold;">شاهد السعر 🛒</a>
         </div>
         """
     return ""
 
-# =================== الاتصال بـ Gemini (الطريقة القديمة المضمونة) ===================
-@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+# =================== الذكاء الاصطناعي (كما هو - لأنه يعمل) ===================
+def get_dynamic_model():
+    print("🔍 Auto-detecting available Gemini models...")
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
+    try:
+        resp = requests.get(url, timeout=30)
+        if resp.status_code == 200:
+            data = resp.json()
+            available_models = []
+            for m in data.get('models', []):
+                if 'generateContent' in m.get('supportedGenerationMethods', []):
+                    clean_name = m['name'].replace('models/', '')
+                    available_models.append(clean_name)
+            
+            # ترتيب الأفضلية
+            preferred_order = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+            for pref in preferred_order:
+                if pref in available_models:
+                    print(f"✅ Selected Model: {pref}")
+                    return pref
+            if available_models: return available_models[0]
+    except Exception as e:
+        print(f"⚠️ Model Discovery Failed: {e}")
+    return "gemini-1.5-flash"
+
 def generate_content(prompt):
-    # نستخدم v1beta مع الموديل الثابت 1.5-flash
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
+    model_name = get_dynamic_model()
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -112,30 +132,30 @@ def generate_content(prompt):
         ]
     }
     
-    print(f"🤖 Generating with {MODEL_NAME}...")
+    print(f"🤖 Generating with {model_name}...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
             return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            print(f"❌ API Error: {r.text}")
-            return None
+        return None
     except Exception as e:
         print(f"❌ Connection Error: {e}")
         return None
 
 # =================== المنطق الرئيسي ===================
 def discover_game_trend():
+    # الآن نجلب الاسم + الصورة
     games_data = get_real_trending_games()
-    selected = random.choice(games_data)
+    selected_game_data = random.choice(games_data)
     
-    game_name = selected['title']
-    game_image = selected['image']
-    problem = random.choice(PROBLEMS)
+    game_name = selected_game_data['title']
+    game_image = selected_game_data['image']
     
-    print(f"🎯 Target: {game_name} + {problem}")
+    selected_problem = random.choice(PROBLEMS)
     
-    prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_name}' وحل مشكلة '{problem}'. الرد بالعنوان فقط."
+    print(f"🎯 Target: {game_name} + {selected_problem}")
+    
+    prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_name}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
     title = generate_content(prompt)
     
     if title: 
@@ -150,17 +170,15 @@ def write_gaming_guide(title, game_name):
     prompt = f"""
     اكتب مقالاً تقنياً طويلاً واحترافياً للجيمرز بعنوان: "{title}"
     استخدم تنسيق Markdown.
-    
     الهيكل:
-    1. مقدمة عن {game_name}.
-    2. لماذا تحدث المشكلة؟
+    1. مقدمة عن {game_name} ولماذا هي مشهورة.
+    2. تحليل المشكلة.
     3. [AD_BUTTON_1]
-    4. خطوات الحل (إعدادات الجرافيك + خيارات المطور).
+    4. الخطوات العملية للحل.
     5. [PRODUCT_BOX]
     6. الخاتمة.
     7. [AD_BUTTON_2]
-    
-    استخدم الايموجي 🎮🔥. لا تستخدم العناوين الملونة أو الصناديق.
+    استخدم الايموجي 🎮🔥.
     """
     
     content = generate_content(prompt)
@@ -169,26 +187,28 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم النظيف (Clean Design) ===================
+# =================== التصميم (الأبيض + المتجاوب + الصورة الحقيقية) ===================
 def build_html(title, markdown_content, game_image_url):
     
-    # 1. صورة اللعبة الحقيقية في الأعلى
+    rand_id = random.randint(1, 1000)
+    
+    # 1. الهيدر: يحتوي على صورة اللعبة الحقيقية
     header_html = f"""
     <div style="text-align:center; margin-bottom: 25px;">
-        <img src="{game_image_url}" alt="{title}" style="width: 110px; height: 110px; border-radius: 22px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
+        <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); object-fit: cover;">
         <h1 style="color: #333; font-size: 22px; margin-top: 15px; line-height: 1.4;">{title}</h1>
     </div>
     """
-    
-    # أزرار مسطحة (Flat)
-    btn1 = f"""<div style="text-align:center; margin:30px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn download-btn"><span class="btn-icon">📥</span> اضغط هنا للتحميل وتفعيل الإعدادات</a><p style="color:#999; font-size:12px; margin-top:5px;">(تم الفحص: آمن 100% ✅)</p></div>"""
+
+    btn1 = f"""<div style="text-align:center; margin:35px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn download-btn"><span class="btn-icon">📥</span> اضغط هنا للتحميل وتفعيل الإعدادات</a><p style="color:#888; font-size:12px; margin-top:8px;">(آمن 100% ✅)</p></div>"""
     btn2 = f"""<div style="text-align:center; margin:40px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn gift-btn">💎 احصل على شدات/جواهر مجاناً</a></div>"""
     
     content = md.markdown(markdown_content, extensions=['extra'])
     content = content.replace("[AD_BUTTON_1]", btn1).replace("[AD_BUTTON_2]", btn2)
-    # تنظيف العنوان المكرر
-    content = content.replace(f"<h1>{title}</h1>", "")
+    # إزالة العنوان إذا كرره البوت في النص لأننا وضعناه في الهيدر
+    content = content.replace(f"<h1>{title}</h1>", "") 
 
+    # 2. CSS المتجاوب (Responsive) + الوضع الفاتح (White)
     return f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -198,15 +218,27 @@ def build_html(title, markdown_content, game_image_url):
             direction: rtl;
             text-align: right;
             line-height: 1.8;
-            color: #222;
-            background: #fff; /* خلفية بيضاء */
+            color: #333333;       /* لون نص داكن */
+            background: #ffffff;  /* خلفية بيضاء */
             padding: 15px;
+            border-radius: 8px;
+            
+            /* هذه الأسطر هي الحل السحري للمقاسات */
             width: 100%;
-            box-sizing: border-box; /* يمنع الخروج عن الحواف */
+            max-width: 100%;
+            box-sizing: border-box; /* يحسب الحواف داخل العرض */
             overflow-wrap: break-word; /* يكسر الكلمات الطويلة */
+            word-wrap: break-word;
         }}
         
-        /* تنسيق العناوين - بسيط جداً لمنع القص */
+        /* الصور داخل المقال */
+        .game-article img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }}
+        
+        /* العناوين */
         h1, h2, h3 {{
             color: #2c3e50;
             margin-top: 25px;
@@ -223,13 +255,13 @@ def build_html(title, markdown_content, game_image_url):
         strong {{ color: #e67e22; }}
         
         /* القوائم */
-        ul, ol {{ margin-right: 20px; }}
+        ul, ol {{ padding-right: 20px; }}
         li {{ margin-bottom: 8px; }}
         
         /* الأزرار */
         .gaming-btn {{
             display: inline-block;
-            padding: 12px 25px;
+            padding: 12px 20px;
             font-weight: 700;
             font-size: 16px;
             border-radius: 50px;
@@ -252,8 +284,8 @@ def build_html(title, markdown_content, game_image_url):
     <div class="game-article">
         {header_html}
         {content}
-        <div style="text-align:center; margin-top:40px; border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#aaa;">
-            🎮 Loading Gaming Zone © 2026
+        <div style="text-align:center; margin-top:40px; border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#999;">
+            🎮 Loading Gaming Zone © 2026 | <a href="{STORE_PAGE}" style="color:#e67e22; text-decoration:none;">المتجر</a>
         </div>
     </div>
     """
@@ -273,13 +305,16 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Restored Stability + Clean Design) Starting...")
+    print("🎮 Gaming Bot (White Theme + Real Images) Starting...")
     
+    # نستقبل 3 متغيرات الآن (العنوان، الاسم، الصورة)
     topic, game_name, game_image = discover_game_trend()
     
     if topic and game_name:
         article_md = write_gaming_guide(topic, game_name)
+        
         if article_md:
+            # نمرر الصورة لدالة البناء
             article_html = build_html(topic, article_md, game_image)
             res = post_to_blogger(topic, article_html)
             if res:
@@ -288,6 +323,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to post to Blogger.")
         else:
-            print("❌ Failed to write content.")
+            print("❌ Failed to write content (Check API response in logs).")
     else:
         print("❌ Failed to find a topic/game.")
