@@ -24,15 +24,6 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-
-# ⚠️ التعديل الجذري: استخدام الموديلات المستقرة على القناة v1
-# هذا الترتيب يضمن المحاولة بالأذكى ثم الأسرع ثم الأقدم والأكثر استقراراً
-MODELS_TO_TRY = [
-    "gemini-1.5-flash",  # سريع وجديد
-    "gemini-1.5-pro",    # ذكي جداً
-    "gemini-pro"         # (Legacy) الموديل القديم الذي يعمل دائماً ولا يتعطل
-]
-
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -50,18 +41,15 @@ def get_real_trending_games():
     try:
         queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games"]
         chosen_query = random.choice(queries)
-        
-        # استخدام دالة search المضمونة
         results = search(chosen_query, lang='ar', country='sa', n_hits=30)
         games_list = [game['title'] for game in results]
-        
         if games_list:
             print(f"✅ Found {len(games_list)} games.")
             return games_list
         raise Exception("Zero results found")
     except Exception as e:
         print(f"⚠️ Scraper Warning: {e}")
-        return ["PUBG Mobile", "Free Fire", "Call of Duty Mobile", "Roblox", "Minecraft", "Subway Surfers", "Ludo King"]
+        return ["PUBG Mobile", "Free Fire", "Call of Duty Mobile", "Roblox", "Minecraft"]
 
 # =================== دوال المساعدة ===================
 def load_json(filename):
@@ -84,51 +72,79 @@ def get_product_recommendation():
         return f"""
         <div style="background:#1e272e; border:2px dashed #ff9f43; padding:20px; margin:30px 0; text-align:center; border-radius:15px;">
             <h3 style="margin:0 0 10px 0; color:#ff9f43;">🛠️ عتاد المحترفين:</h3>
-            <p style="color:#d2dae2;">لأفضل أداء في اللعب، ننصحك باستخدام: <strong>{p['name_ar']}</strong>.</p>
-            <div style="margin:10px 0;"><img src="{p['image_url']}" style="width:80px;height:80px;object-fit:contain;background:#fff;border-radius:8px;"></div>
+            <p style="color:#d2dae2;">لأفضل أداء، جرب: <strong>{p['name_ar']}</strong>.</p>
             <a href="{p['affiliate_link']}" target="_blank" style="display:inline-block; background:#ff9f43; color:white; padding:8px 20px; text-decoration:none; border-radius:50px;">شاهد السعر 🛒</a>
         </div>
         """
     return ""
 
-# =================== الاتصال الذكي بـ Gemini (v1 Stable) ===================
-def generate_with_retry(prompt):
-    """يحاول الاتصال بعدة موديلات باستخدام الإصدار المستقر v1"""
+# =================== الذكاء الاصطناعي: الاكتشاف التلقائي للموديل ===================
+def get_dynamic_model():
+    """يتصل بجوجل لجلب قائمة الموديلات المتاحة لهذا المفتاح ويختار أفضلها"""
+    print("🔍 Auto-detecting available Gemini models...")
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
     
-    safety_settings = [
-        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-    ]
-
-    for model in MODELS_TO_TRY:
-        print(f"🤖 Trying model: {model} (on v1)...")
-        
-        # ⚠️ التغيير هنا: استخدام v1 بدلاً من v1beta
-        url = f"{GEMINI_API_ROOT}/v1/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        
-        payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "safetySettings": safety_settings
-        }
-        
-        try:
-            r = requests.post(url, json=payload, timeout=50)
-            if r.status_code == 200:
-                print("✅ Success!")
-                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-            else:
-                # طباعة تفاصيل الخطأ للمساعدة في التشخيص
-                print(f"⚠️ Failed ({model}): Code {r.status_code}")
-                # print(f"Error Details: {r.text}") # قم بإلغاء التعليق إذا احتجت تفاصيل أكثر
-                time.sleep(1)
-        except Exception as e:
-            print(f"⚠️ Error ({model}): {e}")
-            time.sleep(1)
+    try:
+        resp = requests.get(url, timeout=30)
+        if resp.status_code == 200:
+            data = resp.json()
+            # نبحث عن الموديلات التي تدعم 'generateContent'
+            available_models = []
+            for m in data.get('models', []):
+                if 'generateContent' in m.get('supportedGenerationMethods', []):
+                    # تنظيف الاسم (حذف models/)
+                    clean_name = m['name'].replace('models/', '')
+                    available_models.append(clean_name)
             
-    print("❌ All models failed to generate content.")
-    return None
+            print(f"📋 Available Models found: {available_models}")
+            
+            # ترتيب الأفضلية: فلاش (سريع) -> برو (ذكي) -> أي شيء آخر
+            preferred_order = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+            
+            for pref in preferred_order:
+                if pref in available_models:
+                    print(f"✅ Selected Model: {pref}")
+                    return pref
+            
+            # إذا لم نجد المفضل، نأخذ أول واحد متاح
+            if available_models:
+                print(f"⚠️ Using fallback available model: {available_models[0]}")
+                return available_models[0]
+                
+    except Exception as e:
+        print(f"⚠️ Model Discovery Failed: {e}")
+    
+    # شبكة أمان أخيرة
+    print("⚠️ Discovery failed, forcing 'gemini-1.5-flash'")
+    return "gemini-1.5-flash"
+
+def generate_content(prompt):
+    # 1. نحصل على اسم الموديل الصحيح تلقائياً
+    model_name = get_dynamic_model()
+    
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    
+    payload = {
+        "contents": [{"parts": [{"text": prompt}]}],
+        "safetySettings": [
+            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+        ]
+    }
+    
+    print(f"🤖 Generating with {model_name}...")
+    try:
+        r = requests.post(url, json=payload, timeout=60)
+        if r.status_code == 200:
+            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            print(f"❌ API Error ({r.status_code}): {r.text[:200]}")
+            return None
+    except Exception as e:
+        print(f"❌ Connection Error: {e}")
+        return None
 
 # =================== المنطق الرئيسي ===================
 def discover_game_trend():
@@ -138,9 +154,8 @@ def discover_game_trend():
     
     print(f"🎯 Target: {selected_game} + {selected_problem}")
     
-    prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{selected_game}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط بدون علامات تنصيص."
-    
-    title = generate_with_retry(prompt)
+    prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{selected_game}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
+    title = generate_content(prompt)
     
     if title: 
         return title.strip().replace('"', '').replace('*', ''), selected_game
@@ -154,23 +169,19 @@ def write_gaming_guide(title, game_name):
     
     prompt = f"""
     اكتب مقالاً تقنياً طويلاً واحترافياً للجيمرز بعنوان: "{title}"
-    استخدم تنسيق Markdown. اجعل المقال مفصلاً (أكثر من 500 كلمة).
-    
-    الهيكل المطلوب:
-    1. مقدمة حماسية جداً عن شهرة لعبة {game_name}.
-    2. تحليل سبب المشكلة (لماذا يحدث اللاغ أو التقطيع؟).
+    استخدم تنسيق Markdown.
+    الهيكل:
+    1. مقدمة عن {game_name}.
+    2. تحليل المشكلة.
     3. [AD_BUTTON_1]
-    4. الخطوات العملية للحل (إعدادات الجرافيك، خيارات المطور).
-    5. شرح طريقة استخدام الملفات أو الـ DNS.
-    6. [PRODUCT_BOX]
-    7. نصائح إضافية للاحتراف.
-    8. الخاتمة.
-    9. [AD_BUTTON_2]
-    
-    استخدم الايموجي 🎮🔥⚡ وتحدث بلغة تشجع اللاعبين.
+    4. الخطوات العملية للحل.
+    5. [PRODUCT_BOX]
+    6. الخاتمة.
+    7. [AD_BUTTON_2]
+    استخدم الايموجي 🎮🔥.
     """
     
-    content = generate_with_retry(prompt)
+    content = generate_content(prompt)
     if content:
         content = content.replace("[PRODUCT_BOX]", product_box)
         return content
@@ -181,7 +192,7 @@ def build_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/450?grayscale"
     
-    btn1 = f"""<div style="text-align:center; margin:35px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn download-btn"><span class="btn-icon">📥</span> اضغط هنا للتحميل وتفعيل الإعدادات</a><p style="color:#7f8fa6; font-size:12px; margin-top:8px;">(تم الفحص: آمن 100% ✅)</p></div>"""
+    btn1 = f"""<div style="text-align:center; margin:35px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn download-btn"><span class="btn-icon">📥</span> اضغط هنا للتحميل وتفعيل الإعدادات</a><p style="color:#7f8fa6; font-size:12px; margin-top:8px;">(آمن 100% ✅)</p></div>"""
     btn2 = f"""<div style="text-align:center; margin:40px 0;"><a href="{AD_LINK}" target="_blank" class="gaming-btn gift-btn">💎 احصل على شدات/جواهر مجاناً</a></div>"""
     
     content = md.markdown(markdown_content, extensions=['extra'])
@@ -224,7 +235,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (v1 Stable Channel) Starting...")
+    print("🎮 Gaming Bot (Auto-Detect Model) Starting...")
     
     topic, game_name = discover_game_trend()
     
@@ -240,6 +251,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to post to Blogger.")
         else:
-            print("❌ Failed to write content (Check API Key or Quota).")
+            print("❌ Failed to write content (Check API response in logs).")
     else:
         print("❌ Failed to find a topic/game.")
