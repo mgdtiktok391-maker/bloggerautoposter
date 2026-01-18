@@ -24,6 +24,9 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
+# ⚠️ تثبيت الموديل على النسخة المستقرة التي نجحت سابقاً
+MODEL_NAME = "gemini-1.5-flash"
+
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -79,8 +82,7 @@ def save_history(topic):
 
 def check_history(topic):
     history = load_json(HISTORY_FILE)
-    if topic in history:
-        return True
+    if topic in history: return True
     return False
 
 def get_product_recommendation():
@@ -97,33 +99,13 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي ===================
-def get_dynamic_model():
-    print("🔍 Auto-detecting available Gemini models...")
-    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
-    try:
-        resp = requests.get(url, timeout=30)
-        if resp.status_code == 200:
-            data = resp.json()
-            available_models = []
-            for m in data.get('models', []):
-                if 'generateContent' in m.get('supportedGenerationMethods', []):
-                    clean_name = m['name'].replace('models/', '')
-                    available_models.append(clean_name)
-            
-            preferred_order = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
-            for pref in preferred_order:
-                if pref in available_models:
-                    print(f"✅ Selected Model: {pref}")
-                    return pref
-            if available_models: return available_models[0]
-    except Exception as e:
-        print(f"⚠️ Discovery Failed: {e}")
-    return "gemini-1.5-flash"
-
+# =================== الذكاء الاصطناعي (الثابت) ===================
+# تم إزالة دالة الاكتشاف التلقائي لأنها تختار موديلات تجريبية فاشلة
+@backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def generate_content(prompt):
-    model_name = get_dynamic_model()
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    # نستخدم v1beta مع الموديل الثابت 1.5-flash
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
+    
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "safetySettings": [
@@ -133,21 +115,23 @@ def generate_content(prompt):
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
     }
-    print(f"🤖 Generating with {model_name}...")
+    
+    print(f"🤖 Generating with {MODEL_NAME}...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
             return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        return None
+        else:
+            print(f"❌ API Error: {r.text[:200]}")
+            return None
     except Exception as e:
         print(f"❌ Connection Error: {e}")
         return None
 
-# =================== المنطق الرئيسي (نظام المحاولات المتعددة) ===================
+# =================== المنطق الرئيسي (3 محاولات) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # سنحاول 3 مرات كحد أقصى
     for attempt in range(1, 4):
         print(f"🔄 Attempt #{attempt} to find a topic...")
         
@@ -201,7 +185,7 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم الجديد (إصلاح الخطأ هنا) ===================
+# =================== التصميم الجديد (الأبيض) ===================
 def build_html(title, markdown_content, game_image_url):
     rand_id = random.randint(1, 1000)
     
@@ -219,7 +203,6 @@ def build_html(title, markdown_content, game_image_url):
     content = content.replace("[AD_BUTTON_1]", btn1).replace("[AD_BUTTON_2]", btn2)
     content = content.replace(f"<h1>{title}</h1>", "") 
 
-    # تم التأكد من إغلاق العلامات بشكل صحيح هنا
     return f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -309,7 +292,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Retry System + Fixed Syntax) Starting...")
+    print("🎮 Gaming Bot (Stable Model 1.5-Flash) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
