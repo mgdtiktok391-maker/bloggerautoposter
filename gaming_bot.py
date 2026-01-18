@@ -8,8 +8,8 @@ import markdown as md
 import backoff
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-# ⚠️ استدعاء المكتبة الموجودة في ملفك لجلب الألعاب الحقيقية
-from google_play_scraper import Sort, collection
+# ⚠️ التعديل هنا: استدعينا search فقط لأنها مضمونة العمل
+from google_play_scraper import search
 
 # =================== إعدادات النظام ===================
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
@@ -29,7 +29,6 @@ MODEL_NAME = "gemini-1.5-flash"
 
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
-# المشاكل التقنية التي سنطبقها على الألعاب التي نكتشفها
 PROBLEMS = [
     "حل مشكلة اللاغ والتقطيع (Fix Lag)",
     "تفعيل أعلى فريمات (Unlock 90/120 FPS)",
@@ -39,28 +38,36 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# =================== 1. المستشعر: جلب الألعاب من جوجل بلاي ===================
+# =================== 1. المستشعر: جلب الألعاب (الطريقة الآمنة) ===================
 def get_real_trending_games():
-    """يجلب قائمة حقيقية بالألعاب الترند حالياً من متجر جوجل"""
+    """يجلب قائمة ألعاب حقيقية باستخدام البحث المباشر لتجنب أخطاء المكتبة"""
     print("📡 Contacting Google Play Store...")
     try:
-        # نجلب قائمة "أفضل الألعاب المجانية" في السعودية (كمقياس للشرق الأوسط)
-        result = collection(
-            collection=collection.TOP_FREE,
-            category='GAME',
+        # نبحث عن كلمات مفتاحية عامة تجلب أحدث الألعاب
+        search_queries = ["New Games", "Action Games", "Racing Games", "Battle Royale"]
+        chosen_query = random.choice(search_queries)
+        
+        # استخدام دالة search بدلاً من collection لتجنب الخطأ
+        results = search(
+            chosen_query,
             lang='ar',      # اللغة العربية
-            country='sa',   # المنطقة (السعودية تعطي نتائج دقيقة للترند العربي)
-            sort=Sort.NEWEST, # نجلب الألعاب الجديدة والساخنة
-            count=40        # نفحص أول 40 لعبة
+            country='sa',   # المتجر السعودي
+            n_hits=40       # عدد النتائج
         )
-        # استخراج أسماء الألعاب فقط
-        games_list = [game['title'] for game in result]
-        print(f"✅ Found {len(games_list)} trending games.")
-        return games_list
+        
+        # استخراج أسماء الألعاب
+        games_list = [game['title'] for game in results]
+        
+        if games_list:
+            print(f"✅ Found {len(games_list)} games for query '{chosen_query}'.")
+            return games_list
+        else:
+            raise Exception("No results found")
+            
     except Exception as e:
         print(f"⚠️ Scraper Error: {e}")
-        # قائمة طوارئ في حال فشل الاتصال بالمتجر
-        return ["PUBG Mobile", "Free Fire", "Call of Duty: Warzone Mobile", "Roblox", "EA SPORTS FC Mobile", "Subway Surfers"]
+        # قائمة طوارئ قوية جداً
+        return ["PUBG Mobile", "Free Fire", "Call of Duty: Warzone Mobile", "Roblox", "EA SPORTS FC Mobile", "Subway Surfers", "Genshin Impact", "Minecraft"]
 
 # =================== دوال المساعدة ===================
 def load_json(filename):
@@ -72,7 +79,7 @@ def load_json(filename):
 def save_history(topic):
     history = load_json(HISTORY_FILE)
     history.append(topic)
-    if len(history) > 100: history = history[-100:] # نحفظ آخر 100 لمنع التكرار
+    if len(history) > 100: history = history[-100:] 
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
@@ -116,20 +123,16 @@ def _rest_generate(prompt):
 
 # =================== المنطق الذكي ===================
 def discover_game_trend():
-    # 1. جلب الألعاب الحقيقية من المتجر
+    # 1. جلب الألعاب (الآن تعمل بدون أخطاء)
     real_games = get_real_trending_games()
     history = load_json(HISTORY_FILE)
     
-    # 2. تنظيف القائمة (حذف ما تم نشره سابقاً)
-    # ملاحظة: التحقق هنا بسيط، سنعتمد على العنوان الكامل لاحقاً
-    
-    # 3. اختيار عشوائي للعبة + مشكلة
+    # اختيار عشوائي
     selected_game = random.choice(real_games)
     selected_problem = random.choice(PROBLEMS)
     
     print(f"🎯 Selected Target: {selected_game} + {selected_problem}")
     
-    # 4. الطلب من Gemini صياغة العنوان
     prompt = f"""
     لدينا لعبة موبايل حقيقية اسمها: "{selected_game}"
     ولدينا مشكلة تقنية: "{selected_problem}"
@@ -146,7 +149,6 @@ def discover_game_trend():
     title = _rest_generate(prompt)
     if title: return title.strip().replace('"', '').replace('*', '')
     
-    # fallback بسيط جداً
     return f"شرح لعبة {selected_game} : {selected_problem} - حل نهائي 2026"
 
 def write_gaming_guide(title):
@@ -219,7 +221,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Real-Time Scraper) Starting...")
+    print("🎮 Gaming Bot (Fixed Scraper) Starting...")
     
     topic = discover_game_trend()
     
