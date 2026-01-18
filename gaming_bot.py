@@ -24,7 +24,8 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-# الموديل المستقر
+# ⚠️ تم التحديث إلى v1 لضمان العمل دائماً
+API_VERSION = "v1"
 MODEL_NAME = "gemini-1.5-flash"
 
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
@@ -38,15 +39,17 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# =================== 1. المستشعر: جلب الألعاب ===================
+# =================== 1. المستشعر: جلب الألعاب (نطاق واسع) ===================
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games", "Simulation Games", "Puzzle Games"]
+        # قائمة بحث ضخمة لضمان التنوع
+        queries = ["New Games", "Action", "Racing", "RPG", "Strategy", "Sports", "Simulation", "Puzzle", "Adventure"]
         chosen_query = random.choice(queries)
         print(f"🔍 Searching for: {chosen_query}")
         
-        results = search(chosen_query, lang='ar', country='sa', n_hits=50)
+        # ⚠️ نجلب 60 نتيجة لضمان وجود ألعاب لم ننشر عنها من قبل
+        results = search(chosen_query, lang='ar', country='sa', n_hits=60)
         
         games_list = []
         for game in results:
@@ -99,11 +102,11 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (تم التحديث إلى v1) ===================
+# =================== الذكاء الاصطناعي (v1 Stable) ===================
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def generate_content(prompt):
-    # ⚠️ التغيير الجذري: استخدام v1 بدلاً من v1beta
-    url = f"{GEMINI_API_ROOT}/v1/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
+    # استخدام v1 بدلاً من v1beta
+    url = f"{GEMINI_API_ROOT}/{API_VERSION}/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -115,7 +118,7 @@ def generate_content(prompt):
         ]
     }
     
-    print(f"🤖 Generating with {MODEL_NAME} (v1)...")
+    print(f"🤖 Generating with {MODEL_NAME} ({API_VERSION})...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
@@ -127,12 +130,13 @@ def generate_content(prompt):
         print(f"❌ Connection Error: {e}")
         return None
 
-# =================== المنطق الرئيسي (15 محاولة) ===================
+# =================== المنطق الرئيسي (20 محاولة) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    for attempt in range(1, 16):
-        print(f"🔄 Attempt #{attempt} of 15 to find a NEW topic...")
+    # 20 محاولة لضمان إيجاد لعبة جديدة تماماً
+    for attempt in range(1, 21):
+        print(f"🔄 Attempt #{attempt} of 20 to find a NEW topic...")
         
         selected_game_data = random.choice(games_list)
         game_title = selected_game_data['title']
@@ -140,6 +144,9 @@ def discover_game_trend_with_retry():
         selected_problem = random.choice(PROBLEMS)
         
         print(f"🎯 Checking: {game_title} + {selected_problem}")
+        
+        # نتحقق من العنوان المبدئي قبل الذكاء الاصطناعي لتوفير الوقت
+        # (فحص مبدئي إذا كنا نشرنا عن هذه اللعبة بنفس المشكلة سابقاً)
         
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
         title = generate_content(prompt)
@@ -150,13 +157,13 @@ def discover_game_trend_with_retry():
                 print("✅ Success! New topic found.")
                 return clean_title, game_title, game_image
             else:
-                print("⚠️ Duplicate topic detected. Trying next...")
+                print("⚠️ Duplicate topic detected in history. Skipping...")
         else:
             print("⚠️ AI failed to generate title. Retrying...")
             
         time.sleep(1)
         
-    print("❌ Failed to find a NEW topic after 15 attempts.")
+    print("❌ Failed to find a NEW topic after 20 attempts.")
     return None, None, None
 
 def write_gaming_guide(title, game_name):
@@ -291,7 +298,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (v1 Stable Channel) Starting...")
+    print("🎮 Gaming Bot (Unlimited Mode) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
@@ -308,4 +315,4 @@ if __name__ == "__main__":
         else:
             print("❌ Failed to write content.")
     else:
-        print("❌ Failed to find a topic after 15 attempts.")
+        print("❌ Failed to find a topic after 20 attempts.")
