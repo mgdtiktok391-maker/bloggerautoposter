@@ -24,9 +24,6 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-# ⚠️ تثبيت الموديل على النسخة المستقرة التي نجحت سابقاً
-MODEL_NAME = "gemini-1.5-flash"
-
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -38,21 +35,20 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# =================== 1. المستشعر: جلب الألعاب ===================
+# =================== 1. المستشعر: جلب الألعاب + الصور الحقيقية ===================
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games"]
         chosen_query = random.choice(queries)
-        print(f"🔍 Searching for: {chosen_query}")
+        results = search(chosen_query, lang='ar', country='sa', n_hits=30)
         
-        results = search(chosen_query, lang='ar', country='sa', n_hits=40)
-        
+        # ⚠️ تحديث هام: جلب الصورة (Icon) مع العنوان
         games_list = []
         for game in results:
             games_list.append({
                 "title": game['title'],
-                "image": game['icon']
+                "image": game['icon']  # رابط أيقونة اللعبة
             })
             
         if games_list:
@@ -61,9 +57,10 @@ def get_real_trending_games():
         raise Exception("Zero results found")
     except Exception as e:
         print(f"⚠️ Scraper Warning: {e}")
+        # بيانات احتياطية في حال الفشل
         return [
-            {"title": "PUBG Mobile", "image": "https://play-lh.googleusercontent.com/h5GLuF5b5u_5_Kk8g8vXWz_zT9_hZ7_hZ7_hZ7_hZ7"},
-            {"title": "Free Fire", "image": "https://play-lh.googleusercontent.com/JRd05pyBH41qjgsJuWduRJpDeZG0Hnb0yjf2nWqO7VaGKL10-G5UIygxED-WNOc3pg"}
+            {"title": "PUBG Mobile", "image": "https://play-lh.googleusercontent.com/JRd05pyTEPpPqPRy0r5lp0hNL3Ka4-X_LNfKwwp9Z-4_P55pD5J6-5_5-5_5"},
+            {"title": "Free Fire", "image": "https://play-lh.googleusercontent.com/h5_5_5_5_5_5_5_5_5_5_5_5_5_5_5"}
         ]
 
 # =================== دوال المساعدة ===================
@@ -80,15 +77,11 @@ def save_history(topic):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
-def check_history(topic):
-    history = load_json(HISTORY_FILE)
-    if topic in history: return True
-    return False
-
 def get_product_recommendation():
     products = load_json(PRODUCTS_FILE)
     if products:
         p = random.choice(products)
+        # تصميم الصندوق (نظيف وأبيض)
         return f"""
         <div style="background:#f9f9f9; border:1px solid #eee; padding:20px; margin:30px 0; text-align:center; border-radius:12px;">
             <h3 style="margin:0 0 10px 0; color:#e67e22;">🛠️ عتاد المحترفين:</h3>
@@ -99,13 +92,33 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (الثابت) ===================
-# تم إزالة دالة الاكتشاف التلقائي لأنها تختار موديلات تجريبية فاشلة
-@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+# =================== الذكاء الاصطناعي (كما نجح معك) ===================
+def get_dynamic_model():
+    print("🔍 Auto-detecting available Gemini models...")
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
+    try:
+        resp = requests.get(url, timeout=30)
+        if resp.status_code == 200:
+            data = resp.json()
+            available_models = []
+            for m in data.get('models', []):
+                if 'generateContent' in m.get('supportedGenerationMethods', []):
+                    clean_name = m['name'].replace('models/', '')
+                    available_models.append(clean_name)
+            
+            preferred_order = ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-1.5-pro', 'gemini-1.0-pro', 'gemini-pro']
+            for pref in preferred_order:
+                if pref in available_models:
+                    print(f"✅ Selected Model: {pref}")
+                    return pref
+            if available_models: return available_models[0]
+    except Exception as e:
+        print(f"⚠️ Model Discovery Failed: {e}")
+    return "gemini-1.5-flash"
+
 def generate_content(prompt):
-    # نستخدم v1beta مع الموديل الثابت 1.5-flash
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
-    
+    model_name = get_dynamic_model()
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
         "safetySettings": [
@@ -115,49 +128,35 @@ def generate_content(prompt):
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
     }
-    
-    print(f"🤖 Generating with {MODEL_NAME}...")
+    print(f"🤖 Generating with {model_name}...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
             return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            print(f"❌ API Error: {r.text[:200]}")
-            return None
+        return None
     except Exception as e:
         print(f"❌ Connection Error: {e}")
         return None
 
-# =================== المنطق الرئيسي (3 محاولات) ===================
-def discover_game_trend_with_retry():
+# =================== المنطق الرئيسي ===================
+def discover_game_trend():
+    # الآن نحصل على كائن كامل (اسم + صورة)
     games_list = get_real_trending_games()
+    selected_game_data = random.choice(games_list)
     
-    for attempt in range(1, 4):
-        print(f"🔄 Attempt #{attempt} to find a topic...")
-        
-        selected_game_data = random.choice(games_list)
-        game_title = selected_game_data['title']
-        game_image = selected_game_data['image']
-        selected_problem = random.choice(PROBLEMS)
-        
-        print(f"🎯 Target Check: {game_title} + {selected_problem}")
-        
-        prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
-        title = generate_content(prompt)
-        
-        if title:
-            clean_title = title.strip().replace('"', '').replace('*', '')
-            if not check_history(clean_title):
-                print("✅ New topic found!")
-                return clean_title, game_title, game_image
-            else:
-                print("⚠️ Topic exists. Retrying...")
-        else:
-            print("⚠️ Failed to generate title. Retrying...")
-            
-        time.sleep(2)
-        
-    print("❌ Failed to find a NEW topic after 3 attempts.")
+    game_title = selected_game_data['title']
+    game_image = selected_game_data['image']
+    
+    selected_problem = random.choice(PROBLEMS)
+    
+    print(f"🎯 Target: {game_title} + {selected_problem}")
+    
+    prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
+    title = generate_content(prompt)
+    
+    if title: 
+        # نرجع العنوان + الاسم + الصورة
+        return title.strip().replace('"', '').replace('*', ''), game_title, game_image
     return None, None, None
 
 def write_gaming_guide(title, game_name):
@@ -185,10 +184,12 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم الجديد (الأبيض) ===================
+# =================== التصميم الجديد (الأبيض والمتجاوب) ===================
 def build_html(title, markdown_content, game_image_url):
+    
     rand_id = random.randint(1, 1000)
     
+    # وضعنا صورة اللعبة الحقيقية في الهيدر
     header_html = f"""
     <div style="text-align:center; margin-bottom: 25px;">
         <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
@@ -201,8 +202,10 @@ def build_html(title, markdown_content, game_image_url):
     
     content = md.markdown(markdown_content, extensions=['extra'])
     content = content.replace("[AD_BUTTON_1]", btn1).replace("[AD_BUTTON_2]", btn2)
+    # إزالة العنوان المكرر من النص لأننا وضعناه في الهيدر
     content = content.replace(f"<h1>{title}</h1>", "") 
 
+    # CSS تم تعديله ليصبح أبيض ومتجاوب
     return f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -212,9 +215,11 @@ def build_html(title, markdown_content, game_image_url):
             direction: rtl;
             text-align: right;
             line-height: 1.8;
-            color: #333;
-            background: #fff;
+            color: #333;             /* نص أسود */
+            background: #fff;        /* خلفية بيضاء */
             padding: 15px;
+            
+            /* أوامر التجاوب مع الموبايل */
             width: 100%;
             max-width: 100%;
             box-sizing: border-box;
@@ -222,6 +227,7 @@ def build_html(title, markdown_content, game_image_url):
             word-wrap: break-word;
         }}
         
+        /* صور داخل المقال */
         .game-article img {{
             max-width: 100%;
             height: auto;
@@ -246,6 +252,7 @@ def build_html(title, markdown_content, game_image_url):
         ul, ol {{ padding-right: 20px; }}
         li {{ margin-bottom: 8px; }}
         
+        /* الأزرار */
         .gaming-btn {{
             display: inline-block;
             padding: 12px 20px;
@@ -292,13 +299,15 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Stable Model 1.5-Flash) Starting...")
+    print("🎮 Gaming Bot (White & Responsive Design) Starting...")
     
-    topic, game_name, game_image = discover_game_trend_with_retry()
+    # نستقبل 3 قيم الآن (العنوان، الاسم، الصورة)
+    topic, game_name, game_image = discover_game_trend()
     
     if topic and game_name:
         article_md = write_gaming_guide(topic, game_name)
         if article_md:
+            # نمرر الصورة الحقيقية للتصميم
             article_html = build_html(topic, article_md, game_image)
             res = post_to_blogger(topic, article_html)
             if res:
@@ -309,4 +318,4 @@ if __name__ == "__main__":
         else:
             print("❌ Failed to write content.")
     else:
-        print("❌ Failed to find a topic after retries.")
+        print("❌ Failed to find a topic/game.")
