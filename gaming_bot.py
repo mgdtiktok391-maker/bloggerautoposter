@@ -35,19 +35,11 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# قائمة المحاولات (الموديل + الإصدار) - خطة أ، ب، ج، د
-MODEL_CONFIGS = [
-    ("v1beta", "gemini-1.5-flash"),      # الخيار الأول: الأسرع
-    ("v1", "gemini-1.5-flash"),          # الخيار الثاني: المستقر
-    ("v1beta", "gemini-pro"),            # الخيار الثالث: القديم المضمون
-    ("v1", "gemini-1.0-pro")             # الخيار الرابع: الطوارئ
-]
-
 # =================== 1. المستشعر: جلب الألعاب ===================
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games", "Simulation Games", "Puzzle Games"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games"]
         chosen_query = random.choice(queries)
         print(f"🔍 Searching for: {chosen_query}")
         
@@ -104,8 +96,38 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (نظام "الدبابة" متعدد المحاولات) ===================
-def generate_content_with_fallback(prompt):
+# =================== الذكاء الاصطناعي (الاكتشاف التلقائي - الحل السحري) ===================
+def get_working_model():
+    """يتصل بجوجل ويسأله: ما هي الموديلات المتاحة لهذا الحساب؟"""
+    print("🕵️ Asking Google for available models...")
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
+    
+    try:
+        response = requests.get(url, timeout=30)
+        if response.status_code == 200:
+            data = response.json()
+            # نبحث عن أي موديل يدعم الكتابة (generateContent)
+            for model in data.get('models', []):
+                if 'generateContent' in model.get('supportedGenerationMethods', []):
+                    # نأخذ الاسم كما هو من جوجل (مثلاً models/gemini-1.5-flash)
+                    raw_name = model['name']
+                    # نحذف كلمة models/ من البداية لأن الرابط يحتاجها نظيفة أحياناً
+                    clean_name = raw_name.replace("models/", "")
+                    print(f"✅ FOUND WORKING MODEL: {clean_name}")
+                    return clean_name
+    except Exception as e:
+        print(f"⚠️ Auto-discovery failed: {e}")
+    
+    # إذا فشل الاكتشاف، نعود للموديل القديم جداً كخيار أخير
+    return "gemini-pro"
+
+@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+def generate_content(prompt):
+    # 1. احصل على الموديل الشغال حالياً
+    model_name = get_working_model()
+    
+    # 2. استخدمه فوراً
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -116,38 +138,24 @@ def generate_content_with_fallback(prompt):
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
     }
-
-    # نجرب كل التكوينات الممكنة حتى ينجح واحد
-    for version, model in MODEL_CONFIGS:
-        url = f"{GEMINI_API_ROOT}/{version}/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        print(f"🤖 Trying AI: {model} on ({version})...")
-        
-        try:
-            r = requests.post(url, json=payload, timeout=50)
-            if r.status_code == 200:
-                print(f"✅ SUCCESS with {model}!")
-                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-            elif r.status_code == 404:
-                print(f"⚠️ Model not found on {version}, switching...")
-                continue # جرب اللي بعده فوراً
-            elif r.status_code == 429:
-                print("⚠️ Quota limit, waiting 5s...")
-                time.sleep(5)
-                continue
-            else:
-                print(f"❌ Error {r.status_code}: {r.text[:100]}")
-        except Exception as e:
-            print(f"❌ Connection Error: {e}")
-            time.sleep(1)
-            
-    print("❌ ALL AI MODELS FAILED.")
-    return None
+    
+    print(f"🤖 Generating using auto-detected: {model_name}...")
+    try:
+        r = requests.post(url, json=payload, timeout=60)
+        if r.status_code == 200:
+            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+        else:
+            print(f"❌ API Error ({r.status_code}): {r.text[:200]}")
+            return None
+    except Exception as e:
+        print(f"❌ Connection Error: {e}")
+        return None
 
 # =================== المنطق الرئيسي (الإصرار) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # 20 محاولة لإيجاد لعبة جديدة
+    # 20 محاولة
     for attempt in range(1, 21):
         print(f"🔄 Check #{attempt}/20...")
         
@@ -156,15 +164,14 @@ def discover_game_trend_with_retry():
         game_image = selected_game_data['image']
         selected_problem = random.choice(PROBLEMS)
         
-        # فحص سريع للسجل قبل الكتابة
         if check_history(f"{game_title} {selected_problem}"):
-             print("⚠️ Check: Already in history (Local check). Skipping.")
+             print("⚠️ Skipping duplicate (Local check).")
              continue
 
         print(f"🎯 Target: {game_title} + {selected_problem}")
         
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
-        title = generate_content_with_fallback(prompt)
+        title = generate_content(prompt)
         
         if title:
             clean_title = title.strip().replace('"', '').replace('*', '')
@@ -200,7 +207,7 @@ def write_gaming_guide(title, game_name):
     استخدم الايموجي 🎮🔥.
     """
     
-    content = generate_content_with_fallback(prompt)
+    content = generate_content(prompt)
     if content:
         content = content.replace("[PRODUCT_BOX]", product_box)
         return content
@@ -313,7 +320,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Tank Mode: Multi-Model Fallback) Starting...")
+    print("🎮 Gaming Bot (Auto-Discovery Mode) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
