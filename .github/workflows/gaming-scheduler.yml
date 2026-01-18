@@ -2,9 +2,9 @@ name: Gaming Bot 🎮
 
 on:
   schedule:
-    # يعمل يومياً مرة واحدة الساعة 14:00 UTC (تقريباً 5 مساءً بتوقيت العراق)
-    - cron: '0 14 * * *'
-  workflow_dispatch: # زر للتشغيل اليدوي
+    # التوقيت: الدقيقة 23، الساعة 11 UTC (أي 2:23 ظهراً بتوقيت العراق)
+    - cron: '23 11 * * *'
+  workflow_dispatch: # زر للتشغيل اليدوي في أي وقت
 
 permissions:
   contents: write
@@ -23,7 +23,7 @@ jobs:
           python-version: '3.9'
 
       - name: Install dependencies
-        # نستخدم المكتبات المثبتة مسبقاً في ملفك لضمان عدم حدوث مشاكل
+        # نستخدم نفس المكتبات الموجودة لضمان التوافق
         run: pip install -r requirements.txt
 
       - name: Run Gaming Bot
@@ -36,7 +36,7 @@ jobs:
         run: python gaming_bot.py
 
       - name: Commit History
-        # حفظ سجل المواضيع حتى لا يكرر البوت نفس اللعبة غداً
+        # حفظ السجل لمنع تكرار المواضيع
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
