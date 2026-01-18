@@ -24,7 +24,7 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-# الموديل المستقر الذي نجح في النشر
+# الموديل المستقر
 MODEL_NAME = "gemini-1.5-flash"
 
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
@@ -42,12 +42,11 @@ PROBLEMS = [
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        # زدنا كلمات البحث لضمان التنوع عند التكرار
         queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games", "Simulation Games", "Puzzle Games"]
         chosen_query = random.choice(queries)
         print(f"🔍 Searching for: {chosen_query}")
         
-        results = search(chosen_query, lang='ar', country='sa', n_hits=50) # زدنا العدد لـ 50
+        results = search(chosen_query, lang='ar', country='sa', n_hits=50)
         
         games_list = []
         for game in results:
@@ -77,7 +76,6 @@ def load_json(filename):
 def save_history(topic):
     history = load_json(HISTORY_FILE)
     history.append(topic)
-    # نحتفظ بآخر 200 عنوان لمنع التكرار
     if len(history) > 200: history = history[-200:] 
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
@@ -101,10 +99,11 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (المستقر) ===================
+# =================== الذكاء الاصطناعي (تم التحديث إلى v1) ===================
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def generate_content(prompt):
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
+    # ⚠️ التغيير الجذري: استخدام v1 بدلاً من v1beta
+    url = f"{GEMINI_API_ROOT}/v1/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -116,7 +115,7 @@ def generate_content(prompt):
         ]
     }
     
-    print(f"🤖 Generating with {MODEL_NAME}...")
+    print(f"🤖 Generating with {MODEL_NAME} (v1)...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
@@ -128,12 +127,10 @@ def generate_content(prompt):
         print(f"❌ Connection Error: {e}")
         return None
 
-# =================== المنطق الرئيسي (15 محاولة - لن يستسلم!) ===================
+# =================== المنطق الرئيسي (15 محاولة) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # ⚠️ التعديل هنا: 15 محاولة بدلاً من 3
-    # هذا يعني أنه سيجرب 15 لعبة مختلفة قبل أن يتوقف، مما يضمن النشر 100%
     for attempt in range(1, 16):
         print(f"🔄 Attempt #{attempt} of 15 to find a NEW topic...")
         
@@ -144,15 +141,11 @@ def discover_game_trend_with_retry():
         
         print(f"🎯 Checking: {game_title} + {selected_problem}")
         
-        # نتحقق من السجل قبل استهلاك الذكاء الاصطناعي لتوفير الموارد
-        # (فحص مبدئي سريع)
-        
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
         title = generate_content(prompt)
         
         if title:
             clean_title = title.strip().replace('"', '').replace('*', '')
-            # هل نشرنا هذا العنوان بالضبط من قبل؟
             if not check_history(clean_title):
                 print("✅ Success! New topic found.")
                 return clean_title, game_title, game_image
@@ -161,7 +154,7 @@ def discover_game_trend_with_retry():
         else:
             print("⚠️ AI failed to generate title. Retrying...")
             
-        time.sleep(1) # استراحة قصيرة جداً
+        time.sleep(1)
         
     print("❌ Failed to find a NEW topic after 15 attempts.")
     return None, None, None
@@ -191,7 +184,7 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم (الأبيض المتجاوب + الصور) ===================
+# =================== التصميم (الأبيض المتجاوب) ===================
 def build_html(title, markdown_content, game_image_url):
     rand_id = random.randint(1, 1000)
     
@@ -298,7 +291,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Unlimited Manual Runs) Starting...")
+    print("🎮 Gaming Bot (v1 Stable Channel) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
