@@ -5,7 +5,7 @@ import os
 import time
 
 # =========================================================
-# 🔐 الإعدادات والأسرار
+# 🔐 الإعدادات
 # =========================================================
 BLOG_ID = os.environ["BLOG_ID"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
@@ -14,6 +14,17 @@ CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
 HISTORY_FILE = 'history_tech_solutions.json'
+
+# =========================================================
+# 🧬 قائمة الموديلات (سيجربها البوت بالترتيب حتى ينجح)
+# =========================================================
+# هذا هو الحل السحري لتجاوز خطأ 404
+AVAILABLE_MODELS = [
+    "gemini-1.5-flash",       # الأسرع والأحدث
+    "gemini-1.5-flash-latest",
+    "gemini-1.0-pro",         # الأكثر استقراراً (الخيار الآمن)
+    "gemini-pro"              # القديم
+]
 
 # =========================================================
 # 🔄 دالة تجديد التوكن
@@ -38,7 +49,47 @@ def get_access_token():
         return None
 
 # =========================================================
-# 🎯 مجالات التفكير
+# 🧠 الاتصال بـ Gemini (نظام المحاولات المتعددة)
+# =========================================================
+def call_gemini(prompt):
+    # نحاول مع كل موديل في القائمة
+    for model in AVAILABLE_MODELS:
+        # نستخدم النسخة المستقرة v1beta
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "safetySettings": [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+            ]
+        }
+        
+        try:
+            response = requests.post(url, json=payload)
+            
+            if response.status_code == 200:
+                # نجاح! نعيد النص
+                print(f"✅ Connected using model: {model}")
+                return response.json()['candidates'][0]['content']['parts'][0]['text']
+            elif response.status_code == 404:
+                # الموديل غير موجود، نجرب التالي بصمت
+                continue
+            else:
+                # خطأ آخر (ليس 404)، نطبعه
+                print(f"⚠️ Error with {model}: {response.status_code}")
+                
+        except Exception as e:
+            print(f"⚠️ Connection failed for {model}: {e}")
+            
+    # إذا فشلت كل الموديلات
+    print("❌ All Gemini models failed.")
+    return None
+
+# =========================================================
+# 💡 ابتكار العنوان
 # =========================================================
 NICHES = [
     "شرح مواقع الذكاء الاصطناعي (أدوات التصميم، الكتابة)",
@@ -50,45 +101,12 @@ NICHES = [
     "مراجعة إضافات ومواقع خدمية نادرة"
 ]
 
-# تحميل الذاكرة
 try:
     with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
         published_history = json.load(f)
 except:
     published_history = []
 
-# =========================================================
-# 🧠 الاتصال بـ Gemini (تم التبديل إلى gemini-pro المستقر)
-# =========================================================
-def call_gemini(prompt):
-    # التغيير هنا: استخدام gemini-pro لأنه الأكثر استقراراً
-    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key={GEMINI_API_KEY}"
-    
-    payload = {
-        "contents": [{"parts": [{"text": prompt}]}],
-        "safetySettings": [
-            {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-            {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-        ]
-    }
-    
-    try:
-        response = requests.post(url, json=payload)
-        if response.status_code == 200:
-            return response.json()['candidates'][0]['content']['parts'][0]['text']
-        else:
-            # طباعة الخطأ بوضوح للمساعدة في الحل
-            print(f"⚠️ Gemini API Error: {response.status_code} - {response.text}")
-            return None
-    except Exception as e:
-        print(f"⚠️ Connection Error (Gemini): {e}")
-        return None
-
-# =========================================================
-# 💡 ابتكار العنوان
-# =========================================================
 def invent_new_topic():
     niche = random.choice(NICHES)
     recent = published_history[-10:] if len(published_history) > 10 else published_history
@@ -129,7 +147,6 @@ def write_article(title):
 def post_to_blogger(title, content, access_token):
     url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts"
     
-    # استخدام صور Picsum لأنها أكثر استقراراً من Unsplash Source حالياً
     random_id = random.randint(1, 1000)
     img_url = f"https://picsum.photos/seed/{random_id}/800/400"
     
@@ -162,14 +179,12 @@ def post_to_blogger(title, content, access_token):
 # 🏁 التشغيل
 # =========================================================
 if __name__ == "__main__":
-    print("🤖 Tech Solutions Bot Started...")
+    print("🤖 Tech Solutions Bot Started (Multi-Model Mode)...")
     
-    # 1. جلب التوكن
     token = get_access_token()
     
     if token:
         new_topic = ""
-        # نحاول 3 مرات لضمان الحصول على عنوان
         for i in range(3):
             print(f"🔄 Attempt {i+1} to invent topic...")
             suggested = invent_new_topic()
@@ -178,7 +193,7 @@ if __name__ == "__main__":
                 break
             else:
                 print("⚠️ Duplicate or empty, retrying...")
-                time.sleep(2) 
+                time.sleep(2)
         
         if new_topic:
             print(f"💡 Topic Found: {new_topic}")
@@ -188,15 +203,14 @@ if __name__ == "__main__":
                 print("📝 Content Generated. Publishing...")
                 if post_to_blogger(new_topic, content, token):
                     print("✅ PUBLISHED SUCCESSFULLY!")
-                    
                     published_history.append(new_topic)
                     with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
                         json.dump(published_history, f, ensure_ascii=False, indent=2)
                 else:
-                    print("❌ Failed to Publish (Blogger Error).")
+                    print("❌ Failed to Publish.")
             else:
-                print("❌ Failed to generate article body.")
+                print("❌ Failed to generate body.")
         else:
-            print("❌ No Unique Topic Found (Gemini Error).")
+            print("❌ No Unique Topic Found (Check API Quota).")
     else:
         print("❌ Critical: Token Failed.")
