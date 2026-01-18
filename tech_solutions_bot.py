@@ -1,3 +1,4 @@
+import google.generativeai as genai
 import requests
 import json
 import random
@@ -15,19 +16,11 @@ REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
 HISTORY_FILE = 'history_tech_solutions.json'
 
-# =========================================================
-# 🧬 قائمة الموديلات (سيجربها البوت بالترتيب حتى ينجح)
-# =========================================================
-# هذا هو الحل السحري لتجاوز خطأ 404
-AVAILABLE_MODELS = [
-    "gemini-1.5-flash",       # الأسرع والأحدث
-    "gemini-1.5-flash-latest",
-    "gemini-1.0-pro",         # الأكثر استقراراً (الخيار الآمن)
-    "gemini-pro"              # القديم
-]
+# إعداد مكتبة جوجل الرسمية
+genai.configure(api_key=GEMINI_API_KEY)
 
 # =========================================================
-# 🔄 دالة تجديد التوكن
+# 🔄 دالة تجديد التوكن (Blogger)
 # =========================================================
 def get_access_token():
     url = "https://oauth2.googleapis.com/token"
@@ -49,43 +42,29 @@ def get_access_token():
         return None
 
 # =========================================================
-# 🧠 الاتصال بـ Gemini (نظام المحاولات المتعددة)
+# 🧠 الاتصال بـ Gemini (بالمكتبة الرسمية - الحل المضمون)
 # =========================================================
 def call_gemini(prompt):
-    # نحاول مع كل موديل في القائمة
-    for model in AVAILABLE_MODELS:
-        # نستخدم النسخة المستقرة v1beta
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        
-        payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "safetySettings": [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-            ]
-        }
-        
+    # قائمة الموديلات التي سنجربها بالترتيب
+    models_to_try = ['gemini-1.5-flash', 'gemini-pro', 'gemini-1.0-pro']
+    
+    for model_name in models_to_try:
         try:
-            response = requests.post(url, json=payload)
+            # إعداد الموديل
+            model = genai.GenerativeModel(model_name)
             
-            if response.status_code == 200:
-                # نجاح! نعيد النص
-                print(f"✅ Connected using model: {model}")
-                return response.json()['candidates'][0]['content']['parts'][0]['text']
-            elif response.status_code == 404:
-                # الموديل غير موجود، نجرب التالي بصمت
-                continue
-            else:
-                # خطأ آخر (ليس 404)، نطبعه
-                print(f"⚠️ Error with {model}: {response.status_code}")
+            # إرسال الطلب
+            response = model.generate_content(prompt)
+            
+            # استخراج النص
+            if response.text:
+                return response.text
                 
         except Exception as e:
-            print(f"⚠️ Connection failed for {model}: {e}")
+            # إذا فشل موديل، نجرب التالي بصمت
+            continue
             
-    # إذا فشلت كل الموديلات
-    print("❌ All Gemini models failed.")
+    print("❌ Failed to generate content with all models.")
     return None
 
 # =========================================================
@@ -119,10 +98,7 @@ def invent_new_topic():
     3. اكتب العنوان فقط بدون مقدمات.
     """
     
-    topic = call_gemini(prompt)
-    if topic:
-        return topic.strip().replace('"', '').replace('*', '')
-    return None
+    return call_gemini(prompt)
 
 # =========================================================
 # ✍️ كتابة المحتوى
@@ -147,6 +123,7 @@ def write_article(title):
 def post_to_blogger(title, content, access_token):
     url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts"
     
+    # استخدام صور Picsum لأنها مستقرة
     random_id = random.randint(1, 1000)
     img_url = f"https://picsum.photos/seed/{random_id}/800/400"
     
@@ -179,20 +156,24 @@ def post_to_blogger(title, content, access_token):
 # 🏁 التشغيل
 # =========================================================
 if __name__ == "__main__":
-    print("🤖 Tech Solutions Bot Started (Multi-Model Mode)...")
+    print("🤖 Tech Solutions Bot Started (Official SDK Mode)...")
     
     token = get_access_token()
     
     if token:
         new_topic = ""
+        # محاولات الابتكار
         for i in range(3):
             print(f"🔄 Attempt {i+1} to invent topic...")
-            suggested = invent_new_topic()
-            if suggested and suggested not in published_history:
-                new_topic = suggested
-                break
+            # تنظيف العنوان من أي علامات
+            raw_topic = invent_new_topic()
+            if raw_topic:
+                clean_topic = raw_topic.strip().replace('"', '').replace('*', '')
+                if clean_topic not in published_history:
+                    new_topic = clean_topic
+                    break
             else:
-                print("⚠️ Duplicate or empty, retrying...")
+                print("⚠️ Empty response from AI, retrying...")
                 time.sleep(2)
         
         if new_topic:
@@ -211,6 +192,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to generate body.")
         else:
-            print("❌ No Unique Topic Found (Check API Quota).")
+            print("❌ No Unique Topic Found (Check Quota or Region).")
     else:
         print("❌ Critical: Token Failed.")
