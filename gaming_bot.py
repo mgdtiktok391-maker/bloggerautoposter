@@ -24,6 +24,9 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
+# الموديل الذي نجح في نشر مقال Brain Test
+MODEL_NAME = "gemini-1.5-flash"
+
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -39,11 +42,10 @@ PROBLEMS = [
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games"]
         chosen_query = random.choice(queries)
-        print(f"🔍 Searching for: {chosen_query}")
         
-        results = search(chosen_query, lang='ar', country='sa', n_hits=60)
+        results = search(chosen_query, lang='ar', country='sa', n_hits=40)
         
         games_list = []
         for game in results:
@@ -73,7 +75,7 @@ def load_json(filename):
 def save_history(topic):
     history = load_json(HISTORY_FILE)
     history.append(topic)
-    if len(history) > 200: history = history[-200:] 
+    if len(history) > 100: history = history[-100:] 
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
@@ -96,38 +98,11 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (الاكتشاف التلقائي - الحل السحري) ===================
-def get_working_model():
-    """يتصل بجوجل ويسأله: ما هي الموديلات المتاحة لهذا الحساب؟"""
-    print("🕵️ Asking Google for available models...")
-    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
-    
-    try:
-        response = requests.get(url, timeout=30)
-        if response.status_code == 200:
-            data = response.json()
-            # نبحث عن أي موديل يدعم الكتابة (generateContent)
-            for model in data.get('models', []):
-                if 'generateContent' in model.get('supportedGenerationMethods', []):
-                    # نأخذ الاسم كما هو من جوجل (مثلاً models/gemini-1.5-flash)
-                    raw_name = model['name']
-                    # نحذف كلمة models/ من البداية لأن الرابط يحتاجها نظيفة أحياناً
-                    clean_name = raw_name.replace("models/", "")
-                    print(f"✅ FOUND WORKING MODEL: {clean_name}")
-                    return clean_name
-    except Exception as e:
-        print(f"⚠️ Auto-discovery failed: {e}")
-    
-    # إذا فشل الاكتشاف، نعود للموديل القديم جداً كخيار أخير
-    return "gemini-pro"
-
+# =================== الذكاء الاصطناعي (الثابت والمضمون) ===================
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def generate_content(prompt):
-    # 1. احصل على الموديل الشغال حالياً
-    model_name = get_working_model()
-    
-    # 2. استخدمه فوراً
-    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    # نستخدم v1beta لأنه هو الذي نجح معك في البداية
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -139,36 +114,30 @@ def generate_content(prompt):
         ]
     }
     
-    print(f"🤖 Generating using auto-detected: {model_name}...")
+    print(f"🤖 Generating with {MODEL_NAME}...")
     try:
         r = requests.post(url, json=payload, timeout=60)
         if r.status_code == 200:
             return r.json()["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            print(f"❌ API Error ({r.status_code}): {r.text[:200]}")
+            print(f"❌ API Error: {r.text[:200]}")
             return None
     except Exception as e:
         print(f"❌ Connection Error: {e}")
         return None
 
-# =================== المنطق الرئيسي (الإصرار) ===================
+# =================== المنطق الرئيسي (محاولات هادئة) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # 20 محاولة
-    for attempt in range(1, 21):
-        print(f"🔄 Check #{attempt}/20...")
+    # 5 محاولات فقط لكي لا نحرق الكود (Quota)
+    for attempt in range(1, 6):
+        print(f"🔄 Attempt #{attempt} to find a topic...")
         
         selected_game_data = random.choice(games_list)
         game_title = selected_game_data['title']
         game_image = selected_game_data['image']
         selected_problem = random.choice(PROBLEMS)
-        
-        if check_history(f"{game_title} {selected_problem}"):
-             print("⚠️ Skipping duplicate (Local check).")
-             continue
-
-        print(f"🎯 Target: {game_title} + {selected_problem}")
         
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
         title = generate_content(prompt)
@@ -176,22 +145,22 @@ def discover_game_trend_with_retry():
         if title:
             clean_title = title.strip().replace('"', '').replace('*', '')
             if not check_history(clean_title):
-                print("✅ Valid New Topic Found!")
+                print("✅ New topic found!")
                 return clean_title, game_title, game_image
             else:
-                print("⚠️ Title generated but exists in history.")
+                print("⚠️ Topic exists. Retrying...")
         else:
-            print("⚠️ AI failed generation.")
+            print("⚠️ Failed to generate title. Retrying...")
             
-        time.sleep(1)
+        time.sleep(2)
         
-    print("❌ Failed to find a NEW topic after 20 attempts.")
+    print("❌ Failed to find a NEW topic after 5 attempts.")
     return None, None, None
 
 def write_gaming_guide(title, game_name):
     if not title: return None
     product_box = get_product_recommendation()
-    print(f"✍️ Writing Body: {title}")
+    print(f"✍️ Writing Article: {title}")
     
     prompt = f"""
     اكتب مقالاً تقنياً طويلاً واحترافياً للجيمرز بعنوان: "{title}"
@@ -213,13 +182,13 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم (الأبيض المتجاوب) ===================
+# =================== التصميم (الأبيض المتجاوب + صور حقيقية) ===================
 def build_html(title, markdown_content, game_image_url):
     rand_id = random.randint(1, 1000)
     
     header_html = f"""
     <div style="text-align:center; margin-bottom: 25px;">
-        <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); object-fit: cover;">
+        <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
         <h1 style="color: #333; font-size: 20px; margin-top: 20px; line-height: 1.5;">{title}</h1>
     </div>
     """
@@ -320,7 +289,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Auto-Discovery Mode) Starting...")
+    print("🎮 Gaming Bot (Final Version) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
@@ -337,4 +306,4 @@ if __name__ == "__main__":
         else:
             print("❌ Failed to write content.")
     else:
-        print("❌ Failed to find a topic after 20 attempts.")
+        print("❌ Failed to find a topic after retries.")
