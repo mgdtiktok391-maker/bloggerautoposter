@@ -15,7 +15,7 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
-# 🔗 رابط الإعلان (الكنز)
+# 🔗 رابط الإعلان
 DIRECT_LINK = "https://otieu.com/4/10481709"
 
 HISTORY_FILE = "history_tech_solutions.json"
@@ -135,24 +135,22 @@ def write_tech_article(topic):
     """
     return _rest_generate(prompt)
 
-# =================== التصميم والحقن (Design & Injection) ===================
+# =================== التصميم والحقن (Fixed Layout) ===================
 def build_styled_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
     
-    # 1. تحويل المحتوى الأساسي
     content_html = md.markdown(markdown_content, extensions=['extra'])
     
-    # 2. تصميم الأزرار المتوهجة
+    # ستايل الأزرار
     btn_style = """
-    display: block; margin: 30px auto; padding: 15px 30px; 
+    display: block; margin: 30px auto; padding: 12px 25px; 
     text-align: center; font-weight: bold; color: #fff; border-radius: 50px; 
-    text-decoration: none; font-size: 18px; width: fit-content;
+    text-decoration: none; font-size: 18px; width: fit-content; max-width: 90%;
     box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: transform 0.2s;
     animation: glow 2s infinite;
     """
     
-    # زر 1: شاهد من هنا (أحمر)
     btn1_html = f"""
     <div style="text-align:center; margin: 20px 0;">
         <a href="{DIRECT_LINK}" target="_blank" style="{btn_style} background: linear-gradient(45deg, #ff416c, #ff4b2b);">
@@ -161,7 +159,6 @@ def build_styled_html(title, markdown_content):
     </div>
     """
     
-    # زر 2: كورسات تقنية (أزرق/بنفسجي)
     btn2_html = f"""
     <div style="text-align:center; margin: 40px 0;">
         <a href="{DIRECT_LINK}" target="_blank" style="{btn_style} background: linear-gradient(45deg, #2193b0, #6dd5ed);">
@@ -170,26 +167,24 @@ def build_styled_html(title, markdown_content):
     </div>
     """
     
-    # 3. حقن الأزرار في الأماكن الصحيحة
-    # الحقن الأول: بعد المقدمة (نبحث عن أول عنوان فرعي H2 ونضع الزر قبله)
     if "<h2>" in content_html:
-        # نقسم النص عند أول H2
         parts = content_html.split("<h2>", 1)
-        # نضع الزر الأول بين المقدمة والعنوان الأول
         content_html = parts[0] + btn1_html + "<h2>" + parts[1]
     else:
-        # إذا لم نجد عنواناً، نضعه في البداية
         content_html = btn1_html + content_html
 
-    # الحقن الثاني: في النهاية (نضيف الزر الثاني قبل الخاتمة)
     content_html += btn2_html
 
-    # 4. القالب والتصميم النهائي (مع إصلاح الموبايل)
+    # القالب المصحح (Responsive Fixes)
     styled_template = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
         
-        /* أنيميشن التوهج */
+        /* أهم سطر: هذا يمنع أي عنصر من الخروج عن الشاشة */
+        * {{
+            box-sizing: border-box;
+        }}
+
         @keyframes glow {{
             0% {{ box-shadow: 0 0 5px rgba(0,0,0,0.2); transform: scale(1); }}
             50% {{ box-shadow: 0 0 20px rgba(255, 75, 43, 0.6); transform: scale(1.05); }}
@@ -203,11 +198,16 @@ def build_styled_html(title, markdown_content):
             background: #fff;
             text-align: right;
             direction: rtl;
-            overflow-x: hidden; /* لمنع التمرير الأفقي في الموبايل */
+            width: 100%;
+            max-width: 100%;
+            overflow-x: hidden; /* يقطع أي شيء زائد */
+            word-wrap: break-word; /* يجبر الكلمات الطويلة على النزول لسطر */
+            overflow-wrap: break-word;
         }}
         
         .tech-header-img {{
             width: 100%;
+            height: auto;
             border-radius: 15px;
             box-shadow: 0 5px 20px rgba(0,0,0,0.15);
             margin-bottom: 30px;
@@ -215,18 +215,19 @@ def build_styled_html(title, markdown_content):
         
         .tech-article h1 {{
             color: #2c3e50;
-            font-size: 26px;
+            font-size: 24px;
             font-weight: 800;
             margin-bottom: 20px;
             border-bottom: 3px solid #3498db;
             display: inline-block;
             padding-bottom: 10px;
+            line-height: 1.4;
         }}
         
         .tech-article h2 {{
             background: #f0f8ff;
             color: #2980b9;
-            padding: 12px 15px;
+            padding: 10px 15px;
             border-radius: 10px;
             border-right: 5px solid #2980b9;
             margin-top: 30px;
@@ -237,11 +238,13 @@ def build_styled_html(title, markdown_content):
         
         .tech-article ul, .tech-article ol {{
             background: #fdfdfd;
-            padding: 20px 40px 20px 20px;
+            padding: 15px 35px 15px 15px;
             border: 1px solid #eee;
             border-radius: 10px;
+            max-width: 100%;
         }}
         
+        /* إصلاح الصناديق الصفراء */
         blockquote {{
             background-color: #fff8e1;
             border-right: 5px solid #ffc107;
@@ -250,6 +253,7 @@ def build_styled_html(title, markdown_content):
             border-radius: 8px;
             color: #856404;
             font-weight: bold;
+            width: 100%; /* ضمان عدم تجاوز العرض */
         }}
         
         .tech-footer {{
@@ -262,15 +266,21 @@ def build_styled_html(title, markdown_content):
             font-size: 14px;
         }}
 
-        /* 📱 إصلاح الموبايل (Mobile Responsive) */
+        /* 📱 تحسينات الموبايل القصوى */
         @media only screen and (max-width: 600px) {{
             .tech-article {{
-                padding: 10px !important;
+                padding: 5px !important;
                 font-size: 16px;
             }}
-            .tech-article h1 {{ font-size: 22px; }}
-            .tech-article h2 {{ font-size: 18px; padding: 10px; }}
-            .tech-article ul, .tech-article ol {{ padding: 15px 30px 15px 15px; }}
+            .tech-article h1 {{ font-size: 20px; }}
+            .tech-article h2 {{ font-size: 18px; }}
+            .tech-article ul, .tech-article ol {{ padding-right: 30px; }}
+            
+            /* تصغير هوامش الصناديق في الموبايل */
+            blockquote {{
+                margin: 15px 0;
+                padding: 10px;
+            }}
         }}
     </style>
 
@@ -297,7 +307,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🚀 Starting Tech Solutions Bot (Ads & Responsive Mode)...")
+    print("🚀 Starting Tech Solutions Bot (Responsive Fix)...")
     
     raw_topic = None
     for i in range(3):
@@ -314,7 +324,7 @@ if __name__ == "__main__":
         article_md = write_tech_article(raw_topic)
         
         if article_md:
-            print("📝 Content Generated. Injecting Ads & Styling...")
+            print("📝 Content Generated. Applying CSS Fixes...")
             final_html = build_styled_html(raw_topic, article_md)
             
             try:
