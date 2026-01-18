@@ -1,0 +1,45 @@
+name: Gaming Bot 🎮
+
+on:
+  schedule:
+    # يعمل يومياً مرة واحدة الساعة 14:00 UTC (تقريباً 5 مساءً بتوقيت العراق)
+    - cron: '0 14 * * *'
+  workflow_dispatch: # زر للتشغيل اليدوي
+
+permissions:
+  contents: write
+
+jobs:
+  run-gaming-bot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        # نستخدم المكتبات المثبتة مسبقاً في ملفك لضمان عدم حدوث مشاكل
+        run: pip install -r requirements.txt
+
+      - name: Run Gaming Bot
+        env:
+          BLOG_URL: ${{ secrets.BLOG_URL }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CLIENT_ID: ${{ secrets.CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        run: python gaming_bot.py
+
+      - name: Commit History
+        # حفظ سجل المواضيع حتى لا يكرر البوت نفس اللعبة غداً
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add history_gaming.json
+          git commit -m "🎮 Gaming Bot history update [skip ci]" || echo "No changes"
+          git push
