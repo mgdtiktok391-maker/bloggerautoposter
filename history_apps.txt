@@ -16,3 +16,4 @@ com.sec.android.app.popupcalculator
 video.player.videoplayer
 org.khanacademy.android
 com.finch.finch
+com.quadpay.quadpay
