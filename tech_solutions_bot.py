@@ -1,4 +1,3 @@
-import google.generativeai as genai
 import requests
 import json
 import random
@@ -16,11 +15,19 @@ REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
 HISTORY_FILE = 'history_tech_solutions.json'
 
-# إعداد مكتبة جوجل الرسمية
-genai.configure(api_key=GEMINI_API_KEY)
+# =========================================================
+# 🧬 قائمة الموديلات (الجوكر) - سيجربها واحداً تلو الآخر
+# =========================================================
+MODELS_LIST = [
+    "gemini-1.5-flash",
+    "gemini-1.5-flash-latest",
+    "gemini-pro",
+    "gemini-1.0-pro",
+    "gemini-1.5-pro-latest"
+]
 
 # =========================================================
-# 🔄 دالة تجديد التوكن (Blogger)
+# 🔄 دالة تجديد التوكن
 # =========================================================
 def get_access_token():
     url = "https://oauth2.googleapis.com/token"
@@ -42,29 +49,51 @@ def get_access_token():
         return None
 
 # =========================================================
-# 🧠 الاتصال بـ Gemini (بالمكتبة الرسمية - الحل المضمون)
+# 🧠 الاتصال بـ Gemini (نظام المحاولات المتعددة الذكي)
 # =========================================================
-def call_gemini(prompt):
-    # قائمة الموديلات التي سنجربها بالترتيب
-    models_to_try = ['gemini-1.5-flash', 'gemini-pro', 'gemini-1.0-pro']
-    
-    for model_name in models_to_try:
+def call_gemini_robust(prompt):
+    # نجرب كل موديل في القائمة
+    for model in MODELS_LIST:
+        print(f"Testing model: {model}...")
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        
+        payload = {
+            "contents": [{"parts": [{"text": prompt}]}],
+            "safetySettings": [
+                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+            ]
+        }
+        
         try:
-            # إعداد الموديل
-            model = genai.GenerativeModel(model_name)
+            response = requests.post(url, json=payload)
             
-            # إرسال الطلب
-            response = model.generate_content(prompt)
+            if response.status_code == 200:
+                print(f"✅ SUCCESS! Connected using: {model}")
+                try:
+                    return response.json()['candidates'][0]['content']['parts'][0]['text']
+                except:
+                    print("⚠️ Response empty (safety filter maybe?), trying next...")
+                    continue
             
-            # استخراج النص
-            if response.text:
-                return response.text
+            elif response.status_code == 404:
+                print(f"⚠️ Model {model} not found (404), skipping...")
+                continue
+            
+            elif response.status_code == 429:
+                print(f"⚠️ Quota exceeded for {model}, trying next...")
+                continue
+                
+            else:
+                print(f"⚠️ Failed with {model}: {response.status_code} - {response.text}")
                 
         except Exception as e:
-            # إذا فشل موديل، نجرب التالي بصمت
-            continue
+            print(f"⚠️ Network Error with {model}: {e}")
             
-    print("❌ Failed to generate content with all models.")
+    # إذا وصلنا هنا، يعني فشل الكل
+    print("❌ ALL MODELS FAILED. Check API Key or Google Cloud Console.")
     return None
 
 # =========================================================
@@ -98,7 +127,11 @@ def invent_new_topic():
     3. اكتب العنوان فقط بدون مقدمات.
     """
     
-    return call_gemini(prompt)
+    # تنظيف العنوان من أي علامات
+    topic = call_gemini_robust(prompt)
+    if topic:
+        return topic.strip().replace('"', '').replace('*', '')
+    return None
 
 # =========================================================
 # ✍️ كتابة المحتوى
@@ -115,7 +148,7 @@ def write_article(title):
     - <h2>الخاتمة</h2>
     الشروط: طويل (600 كلمة)، عربي فصحى، منسق HTML.
     """
-    return call_gemini(prompt)
+    return call_gemini_robust(prompt)
 
 # =========================================================
 # 🚀 النشر
@@ -156,24 +189,22 @@ def post_to_blogger(title, content, access_token):
 # 🏁 التشغيل
 # =========================================================
 if __name__ == "__main__":
-    print("🤖 Tech Solutions Bot Started (Official SDK Mode)...")
+    print("🤖 Tech Solutions Bot Started (Robust Mode)...")
     
     token = get_access_token()
     
     if token:
         new_topic = ""
-        # محاولات الابتكار
+        # 3 محاولات للابتكار
         for i in range(3):
             print(f"🔄 Attempt {i+1} to invent topic...")
-            # تنظيف العنوان من أي علامات
-            raw_topic = invent_new_topic()
-            if raw_topic:
-                clean_topic = raw_topic.strip().replace('"', '').replace('*', '')
-                if clean_topic not in published_history:
-                    new_topic = clean_topic
-                    break
+            suggested = invent_new_topic()
+            
+            if suggested and suggested not in published_history:
+                new_topic = suggested
+                break
             else:
-                print("⚠️ Empty response from AI, retrying...")
+                print("⚠️ Duplicate or empty response, retrying...")
                 time.sleep(2)
         
         if new_topic:
@@ -192,6 +223,6 @@ if __name__ == "__main__":
             else:
                 print("❌ Failed to generate body.")
         else:
-            print("❌ No Unique Topic Found (Check Quota or Region).")
+            print("❌ No Unique Topic Found (All models failed).")
     else:
         print("❌ Critical: Token Failed.")
