@@ -22,7 +22,7 @@ HISTORY_FILE = "history_tech_solutions.json"
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
 LABELS = ["شروحات_تقنية", "صيانة", "Technology", "دليل_شامل"]
 
-# =================== مجالات التفكير (NICHES) ===================
+# =================== مجالات التفكير ===================
 NICHES = [
     "صيانة الهواتف الذكية (Android & iOS)",
     "أدوات ومواقع الذكاء الاصطناعي (AI Tools)",
@@ -84,7 +84,7 @@ def _rest_generate(prompt):
         print(f"❌ Request Failed: {e}")
         return None
 
-# =================== العقل المدبر (الابتكار) ===================
+# =================== العقل المدبر ===================
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def invent_topic():
     history = load_history()
@@ -135,7 +135,7 @@ def write_tech_article(topic):
     """
     return _rest_generate(prompt)
 
-# =================== التصميم والحقن (Fixed Layout) ===================
+# =================== التصميم والحقن (Fixed Layout v2) ===================
 def build_styled_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
@@ -175,14 +175,13 @@ def build_styled_html(title, markdown_content):
 
     content_html += btn2_html
 
-    # القالب المصحح (Responsive Fixes)
+    # 🔥 التحديث الجذري للـ CSS لإصلاح مشكلة الموبايل
     styled_template = f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
         
-        /* أهم سطر: هذا يمنع أي عنصر من الخروج عن الشاشة */
         * {{
-            box-sizing: border-box;
+            box-sizing: border-box !important;
         }}
 
         @keyframes glow {{
@@ -198,11 +197,16 @@ def build_styled_html(title, markdown_content):
             background: #fff;
             text-align: right;
             direction: rtl;
-            width: 100%;
-            max-width: 100%;
-            overflow-x: hidden; /* يقطع أي شيء زائد */
-            word-wrap: break-word; /* يجبر الكلمات الطويلة على النزول لسطر */
-            overflow-wrap: break-word;
+            
+            /* هذه الأسطر تجبر النص على البقاء داخل الشاشة */
+            width: 100% !important;
+            max-width: 100vw !important;
+            overflow-x: hidden !important;
+            
+            /* كسر الكلمات الطويلة إجبارياً */
+            word-wrap: break-word !important;
+            overflow-wrap: anywhere !important;
+            word-break: break-word !important;
         }}
         
         .tech-header-img {{
@@ -234,6 +238,10 @@ def build_styled_html(title, markdown_content):
             margin-bottom: 15px;
             font-size: 20px;
             font-weight: 700;
+            
+            /* إصلاح العناوين */
+            width: 100%;
+            overflow-wrap: break-word;
         }}
         
         .tech-article ul, .tech-article ol {{
@@ -244,16 +252,20 @@ def build_styled_html(title, markdown_content):
             max-width: 100%;
         }}
         
-        /* إصلاح الصناديق الصفراء */
+        /* إصلاح الصناديق التي تخرج عن الشاشة */
         blockquote {{
             background-color: #fff8e1;
             border-right: 5px solid #ffc107;
-            margin: 20px 0;
-            padding: 15px;
+            margin: 20px 0 !important;
+            padding: 15px !important;
             border-radius: 8px;
             color: #856404;
             font-weight: bold;
-            width: 100%; /* ضمان عدم تجاوز العرض */
+            
+            /* هام جداً للموبايل */
+            width: auto !important;
+            max-width: 100% !important;
+            word-break: break-word !important; 
         }}
         
         .tech-footer {{
@@ -269,17 +281,24 @@ def build_styled_html(title, markdown_content):
         /* 📱 تحسينات الموبايل القصوى */
         @media only screen and (max-width: 600px) {{
             .tech-article {{
-                padding: 5px !important;
-                font-size: 16px;
+                padding: 10px !important;
             }}
-            .tech-article h1 {{ font-size: 20px; }}
-            .tech-article h2 {{ font-size: 18px; }}
-            .tech-article ul, .tech-article ol {{ padding-right: 30px; }}
             
-            /* تصغير هوامش الصناديق في الموبايل */
+            /* تقليص حجم الخط قليلاً ليناسب الشاشة */
+            .tech-article p, .tech-article li {{
+                font-size: 16px !important;
+            }}
+            
+            /* إجبار الصناديق على احترام حدود الشاشة مع هامش */
             blockquote {{
-                margin: 15px 0;
-                padding: 10px;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                width: 100% !important;
+            }}
+            
+            .tech-article ul, .tech-article ol {{ 
+                padding-right: 25px !important; 
+                padding-left: 5px !important;
             }}
         }}
     </style>
@@ -307,7 +326,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🚀 Starting Tech Solutions Bot (Responsive Fix)...")
+    print("🚀 Starting Tech Solutions Bot (Final CSS Fix)...")
     
     raw_topic = None
     for i in range(3):
