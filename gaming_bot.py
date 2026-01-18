@@ -24,10 +24,6 @@ PRODUCTS_FILE = "products.json"
 HISTORY_FILE = "history_gaming.json"
 
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-# ⚠️ تم التحديث إلى v1 لضمان العمل دائماً
-API_VERSION = "v1"
-MODEL_NAME = "gemini-1.5-flash"
-
 LABELS = ["Gaming", "Games_2026", "Android_Games", "شروحات_ألعاب", "Game_Booster"]
 
 PROBLEMS = [
@@ -39,16 +35,22 @@ PROBLEMS = [
     "تقليل البينغ والدمج الوهمي (Fix Ping)"
 ]
 
-# =================== 1. المستشعر: جلب الألعاب (نطاق واسع) ===================
+# قائمة المحاولات (الموديل + الإصدار) - خطة أ، ب، ج، د
+MODEL_CONFIGS = [
+    ("v1beta", "gemini-1.5-flash"),      # الخيار الأول: الأسرع
+    ("v1", "gemini-1.5-flash"),          # الخيار الثاني: المستقر
+    ("v1beta", "gemini-pro"),            # الخيار الثالث: القديم المضمون
+    ("v1", "gemini-1.0-pro")             # الخيار الرابع: الطوارئ
+]
+
+# =================== 1. المستشعر: جلب الألعاب ===================
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        # قائمة بحث ضخمة لضمان التنوع
-        queries = ["New Games", "Action", "Racing", "RPG", "Strategy", "Sports", "Simulation", "Puzzle", "Adventure"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games", "Simulation Games", "Puzzle Games"]
         chosen_query = random.choice(queries)
         print(f"🔍 Searching for: {chosen_query}")
         
-        # ⚠️ نجلب 60 نتيجة لضمان وجود ألعاب لم ننشر عنها من قبل
         results = search(chosen_query, lang='ar', country='sa', n_hits=60)
         
         games_list = []
@@ -102,11 +104,8 @@ def get_product_recommendation():
         """
     return ""
 
-# =================== الذكاء الاصطناعي (v1 Stable) ===================
-@backoff.on_exception(backoff.expo, Exception, max_tries=3)
-def generate_content(prompt):
-    # استخدام v1 بدلاً من v1beta
-    url = f"{GEMINI_API_ROOT}/{API_VERSION}/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
+# =================== الذكاء الاصطناعي (نظام "الدبابة" متعدد المحاولات) ===================
+def generate_content_with_fallback(prompt):
     
     payload = {
         "contents": [{"parts": [{"text": prompt}]}],
@@ -117,49 +116,65 @@ def generate_content(prompt):
             {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
         ]
     }
-    
-    print(f"🤖 Generating with {MODEL_NAME} ({API_VERSION})...")
-    try:
-        r = requests.post(url, json=payload, timeout=60)
-        if r.status_code == 200:
-            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            print(f"❌ API Error: {r.text[:200]}")
-            return None
-    except Exception as e:
-        print(f"❌ Connection Error: {e}")
-        return None
 
-# =================== المنطق الرئيسي (20 محاولة) ===================
+    # نجرب كل التكوينات الممكنة حتى ينجح واحد
+    for version, model in MODEL_CONFIGS:
+        url = f"{GEMINI_API_ROOT}/{version}/models/{model}:generateContent?key={GEMINI_API_KEY}"
+        print(f"🤖 Trying AI: {model} on ({version})...")
+        
+        try:
+            r = requests.post(url, json=payload, timeout=50)
+            if r.status_code == 200:
+                print(f"✅ SUCCESS with {model}!")
+                return r.json()["candidates"][0]["content"]["parts"][0]["text"]
+            elif r.status_code == 404:
+                print(f"⚠️ Model not found on {version}, switching...")
+                continue # جرب اللي بعده فوراً
+            elif r.status_code == 429:
+                print("⚠️ Quota limit, waiting 5s...")
+                time.sleep(5)
+                continue
+            else:
+                print(f"❌ Error {r.status_code}: {r.text[:100]}")
+        except Exception as e:
+            print(f"❌ Connection Error: {e}")
+            time.sleep(1)
+            
+    print("❌ ALL AI MODELS FAILED.")
+    return None
+
+# =================== المنطق الرئيسي (الإصرار) ===================
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # 20 محاولة لضمان إيجاد لعبة جديدة تماماً
+    # 20 محاولة لإيجاد لعبة جديدة
     for attempt in range(1, 21):
-        print(f"🔄 Attempt #{attempt} of 20 to find a NEW topic...")
+        print(f"🔄 Check #{attempt}/20...")
         
         selected_game_data = random.choice(games_list)
         game_title = selected_game_data['title']
         game_image = selected_game_data['image']
         selected_problem = random.choice(PROBLEMS)
         
-        print(f"🎯 Checking: {game_title} + {selected_problem}")
-        
-        # نتحقق من العنوان المبدئي قبل الذكاء الاصطناعي لتوفير الوقت
-        # (فحص مبدئي إذا كنا نشرنا عن هذه اللعبة بنفس المشكلة سابقاً)
+        # فحص سريع للسجل قبل الكتابة
+        if check_history(f"{game_title} {selected_problem}"):
+             print("⚠️ Check: Already in history (Local check). Skipping.")
+             continue
+
+        print(f"🎯 Target: {game_title} + {selected_problem}")
         
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
-        title = generate_content(prompt)
+        title = generate_content_with_fallback(prompt)
         
         if title:
             clean_title = title.strip().replace('"', '').replace('*', '')
             if not check_history(clean_title):
-                print("✅ Success! New topic found.")
+                print("✅ Valid New Topic Found!")
                 return clean_title, game_title, game_image
             else:
-                print("⚠️ Duplicate topic detected in history. Skipping...")
+                print("⚠️ Title generated but exists in history.")
         else:
-            print("⚠️ AI failed to generate title. Retrying...")
+            print("⚠️ AI failed generation.")
             
         time.sleep(1)
         
@@ -169,7 +184,7 @@ def discover_game_trend_with_retry():
 def write_gaming_guide(title, game_name):
     if not title: return None
     product_box = get_product_recommendation()
-    print(f"✍️ Writing Article: {title}")
+    print(f"✍️ Writing Body: {title}")
     
     prompt = f"""
     اكتب مقالاً تقنياً طويلاً واحترافياً للجيمرز بعنوان: "{title}"
@@ -185,7 +200,7 @@ def write_gaming_guide(title, game_name):
     استخدم الايموجي 🎮🔥.
     """
     
-    content = generate_content(prompt)
+    content = generate_content_with_fallback(prompt)
     if content:
         content = content.replace("[PRODUCT_BOX]", product_box)
         return content
@@ -197,7 +212,7 @@ def build_html(title, markdown_content, game_image_url):
     
     header_html = f"""
     <div style="text-align:center; margin-bottom: 25px;">
-        <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <img src="{game_image_url}" alt="{title}" style="width: 120px; height: 120px; border-radius: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); object-fit: cover;">
         <h1 style="color: #333; font-size: 20px; margin-top: 20px; line-height: 1.5;">{title}</h1>
     </div>
     """
@@ -298,7 +313,7 @@ def post_to_blogger(title, content):
 
 # =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🎮 Gaming Bot (Unlimited Mode) Starting...")
+    print("🎮 Gaming Bot (Tank Mode: Multi-Model Fallback) Starting...")
     
     topic, game_name, game_image = discover_game_trend_with_retry()
     
