@@ -39,8 +39,7 @@ PROBLEMS = [
 def get_real_trending_games():
     print("📡 Contacting Google Play Store...")
     try:
-        # قائمة استعلامات متنوعة جداً لضمان عدم التكرار
-        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Zombie Games", "Sports Games"]
+        queries = ["New Action Games", "Trending Games", "Racing Games", "Battle Royale", "Shooting Games", "Sports Games"]
         chosen_query = random.choice(queries)
         print(f"🔍 Searching for: {chosen_query}")
         
@@ -80,7 +79,6 @@ def save_history(topic):
 
 def check_history(topic):
     history = load_json(HISTORY_FILE)
-    # فحص بسيط إذا كان العنوان مكرراً
     if topic in history:
         return True
     return False
@@ -149,7 +147,7 @@ def generate_content(prompt):
 def discover_game_trend_with_retry():
     games_list = get_real_trending_games()
     
-    # سنحاول 3 مرات كحد أقصى للعثور على موضوع جديد
+    # سنحاول 3 مرات كحد أقصى
     for attempt in range(1, 4):
         print(f"🔄 Attempt #{attempt} to find a topic...")
         
@@ -160,23 +158,20 @@ def discover_game_trend_with_retry():
         
         print(f"🎯 Target Check: {game_title} + {selected_problem}")
         
-        # إنشاء العنوان
         prompt = f"اكتب عنوان مقال عربي جذاب (Clickbait) يجمع بين لعبة '{game_title}' وحل مشكلة '{selected_problem}'. الرد بالعنوان فقط."
         title = generate_content(prompt)
         
         if title:
             clean_title = title.strip().replace('"', '').replace('*', '')
-            
-            # التأكد من أننا لم ننشر هذا العنوان سابقاً
             if not check_history(clean_title):
                 print("✅ New topic found!")
                 return clean_title, game_title, game_image
             else:
-                print("⚠️ Topic already exists in history. Retrying...")
+                print("⚠️ Topic exists. Retrying...")
         else:
             print("⚠️ Failed to generate title. Retrying...")
             
-        time.sleep(2) # استراحة قصيرة بين المحاولات
+        time.sleep(2)
         
     print("❌ Failed to find a NEW topic after 3 attempts.")
     return None, None, None
@@ -206,9 +201,8 @@ def write_gaming_guide(title, game_name):
         return content
     return None
 
-# =================== التصميم الجديد ===================
+# =================== التصميم الجديد (إصلاح الخطأ هنا) ===================
 def build_html(title, markdown_content, game_image_url):
-    
     rand_id = random.randint(1, 1000)
     
     header_html = f"""
@@ -225,6 +219,7 @@ def build_html(title, markdown_content, game_image_url):
     content = content.replace("[AD_BUTTON_1]", btn1).replace("[AD_BUTTON_2]", btn2)
     content = content.replace(f"<h1>{title}</h1>", "") 
 
+    # تم التأكد من إغلاق العلامات بشكل صحيح هنا
     return f"""
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -284,4 +279,51 @@ def build_html(title, markdown_content, game_image_url):
         .gift-btn {{ background: #8e44ad; color: #fff !important; }}
 
         @media (max-width:600px) {{
-            .game-article {{ padding:
+            .game-article {{ padding: 10px; }}
+            h1 {{ font-size: 18px; }}
+            .gaming-btn {{ width: 100%; }}
+        }}
+    </style>
+
+    <div class="game-article">
+        {header_html}
+        {content}
+        <div style="text-align:center; margin-top:40px; border-top:1px solid #eee; padding-top:20px; font-size:12px; color:#aaa;">
+            🎮 Loading Gaming Zone © 2026 | <a href="{STORE_PAGE}" style="color:#e67e22; text-decoration:none;">المتجر</a>
+        </div>
+    </div>
+    """
+
+def post_to_blogger(title, content):
+    print("🚀 Publishing to Blogger...")
+    creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
+    service = build("blogger", "v3", credentials=creds)
+    try: 
+        blog = service.blogs().getByUrl(url=BLOG_URL).execute()
+        blog_id = blog["id"]
+        body = {"kind": "blogger#post", "title": f"🔥 {title}", "content": content, "labels": LABELS}
+        return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
+    except Exception as e:
+        print(f"❌ Blog Error: {e}")
+        return None
+
+# =================== التشغيل ===================
+if __name__ == "__main__":
+    print("🎮 Gaming Bot (Retry System + Fixed Syntax) Starting...")
+    
+    topic, game_name, game_image = discover_game_trend_with_retry()
+    
+    if topic and game_name:
+        article_md = write_gaming_guide(topic, game_name)
+        if article_md:
+            article_html = build_html(topic, article_md, game_image)
+            res = post_to_blogger(topic, article_html)
+            if res:
+                print(f"✅ DONE! Article published: {res.get('url')}")
+                save_history(topic)
+            else:
+                print("❌ Failed to post to Blogger.")
+        else:
+            print("❌ Failed to write content.")
+    else:
+        print("❌ Failed to find a topic after retries.")
