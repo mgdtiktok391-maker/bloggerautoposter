@@ -1,228 +1,201 @@
-import requests
-import json
-import random
+# -*- coding: utf-8 -*-
 import os
-import time
+import random
+import json
+import requests
+import markdown as md
+import backoff
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
 
-# =========================================================
-# 🔐 الإعدادات
-# =========================================================
-BLOG_ID = os.environ["BLOG_ID"]
+# =================== إعدادات النظام ===================
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
+BLOG_URL = os.environ["BLOG_URL"]
 CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
-HISTORY_FILE = 'history_tech_solutions.json'
+HISTORY_FILE = "history_tech_solutions.json"
+GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
+LABELS = ["شروحات_تقنية", "صيانة", "Technology", "HowTo"]
 
-# =========================================================
-# 🧬 قائمة الموديلات (الجوكر) - سيجربها واحداً تلو الآخر
-# =========================================================
-MODELS_LIST = [
-    "gemini-1.5-flash",
-    "gemini-1.5-flash-latest",
-    "gemini-pro",
-    "gemini-1.0-pro",
-    "gemini-1.5-pro-latest"
+# =================== مجالات التفكير (NICHES) ===================
+NICHES = [
+    "حلول مشاكل ارتفاع حرارة الهاتف واستنزاف البطارية",
+    "طرق استرجاع الصور والملفات المحذوفة (للاندرويد والايفون)",
+    "شرح مواقع الذكاء الاصطناعي المجانية للتصميم والكتابة",
+    "أسرار وحيل مخفية في الواتساب والماسنجر",
+    "طريقة تسريع الويندوز والكمبيوتر بدون فورمات",
+    "كيفية حماية حسابات السوشيال ميديا من الاختراق",
+    "حل مشكلة الذاكرة ممتلئة رغم عدم وجود ملفات",
+    "طرق الربح من الانترنت للمبتدئين (شروحات صادقة)"
 ]
 
-# =========================================================
-# 🔄 دالة تجديد التوكن
-# =========================================================
-def get_access_token():
-    url = "https://oauth2.googleapis.com/token"
-    payload = {
-        'client_id': CLIENT_ID,
-        'client_secret': CLIENT_SECRET,
-        'refresh_token': REFRESH_TOKEN,
-        'grant_type': 'refresh_token'
-    }
+# =================== إدارة الذاكرة ===================
+def load_history():
+    if not os.path.exists(HISTORY_FILE): return []
     try:
-        response = requests.post(url, data=payload)
-        if response.status_code == 200:
-            return response.json()['access_token']
+        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except: return []
+
+def save_history(topic):
+    history = load_history()
+    history.append(topic)
+    with open(HISTORY_FILE, "w", encoding="utf-8") as f:
+        json.dump(history, f, ensure_ascii=False, indent=2)
+
+# =================== المحرك (نفس كود بوت التطبيقات) ===================
+def get_working_model():
+    """هذه الدالة هي السر الذي يجعل بوت التطبيقات يعمل"""
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
+    try:
+        r = requests.get(url, timeout=30)
+        if r.status_code != 200: return "gemini-pro" # Fallback
+        data = r.json()
+        for model in data.get('models', []):
+            name = model['name'].replace('models/', '')
+            if 'generateContent' in model.get('supportedGenerationMethods', []):
+                return name
+        return "gemini-1.5-flash"
+    except: return "gemini-pro"
+
+def _rest_generate(prompt):
+    """دالة الاتصال المباشر المأخوذة من البوت الناجح"""
+    model_name = get_working_model()
+    # print(f"DEBUG: Using Model: {model_name}") 
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    
+    safety_settings = [
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+    ]
+    
+    try:
+        r = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "safetySettings": safety_settings}, timeout=60)
+        if r.status_code == 200: 
+            return r.json()["candidates"][0]["content"]["parts"][0]["text"]
         else:
-            print(f"❌ Token Error: {response.text}")
+            print(f"❌ API Error: {r.text}")
             return None
     except Exception as e:
-        print(f"❌ Connection Error (Token): {e}")
+        print(f"❌ Request Failed: {e}")
         return None
 
-# =========================================================
-# 🧠 الاتصال بـ Gemini (نظام المحاولات المتعددة الذكي)
-# =========================================================
-def call_gemini_robust(prompt):
-    # نجرب كل موديل في القائمة
-    for model in MODELS_LIST:
-        print(f"Testing model: {model}...")
-        url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
-        
-        payload = {
-            "contents": [{"parts": [{"text": prompt}]}],
-            "safetySettings": [
-                {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
-                {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
-            ]
-        }
-        
-        try:
-            response = requests.post(url, json=payload)
-            
-            if response.status_code == 200:
-                print(f"✅ SUCCESS! Connected using: {model}")
-                try:
-                    return response.json()['candidates'][0]['content']['parts'][0]['text']
-                except:
-                    print("⚠️ Response empty (safety filter maybe?), trying next...")
-                    continue
-            
-            elif response.status_code == 404:
-                print(f"⚠️ Model {model} not found (404), skipping...")
-                continue
-            
-            elif response.status_code == 429:
-                print(f"⚠️ Quota exceeded for {model}, trying next...")
-                continue
-                
-            else:
-                print(f"⚠️ Failed with {model}: {response.status_code} - {response.text}")
-                
-        except Exception as e:
-            print(f"⚠️ Network Error with {model}: {e}")
-            
-    # إذا وصلنا هنا، يعني فشل الكل
-    print("❌ ALL MODELS FAILED. Check API Key or Google Cloud Console.")
-    return None
-
-# =========================================================
-# 💡 ابتكار العنوان
-# =========================================================
-NICHES = [
-    "شرح مواقع الذكاء الاصطناعي (أدوات التصميم، الكتابة)",
-    "حلول مشاكل الهواتف (أندرويد وآيفون)",
-    "شرح تطبيقات الهاتف الاحترافية والمفيدة",
-    "أسرار وحيل تقنية في الويندوز",
-    "طرق الربح من الإنترنت للمبتدئين",
-    "أمن المعلومات وحماية الحسابات",
-    "مراجعة إضافات ومواقع خدمية نادرة"
-]
-
-try:
-    with open(HISTORY_FILE, 'r', encoding='utf-8') as f:
-        published_history = json.load(f)
-except:
-    published_history = []
-
-def invent_new_topic():
+# =================== العقل المدبر (ابتكار وكتابة) ===================
+@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+def invent_topic():
+    history = load_history()
+    recent = history[-10:] if len(history) > 10 else history
     niche = random.choice(NICHES)
-    recent = published_history[-10:] if len(published_history) > 10 else published_history
     
     prompt = f"""
-    بصفتك خبير تقني، اقترح عنوان مقال واحد فقط في مجال: {niche}.
+    تصرف كمدير محتوى تقني. اقترح عنواناً واحداً فقط لمقال حصري في مجال: "{niche}".
     الشروط:
-    1. عنوان جذاب وحصري باللغة العربية.
-    2. لا يشبه هذه العناوين: {recent}
-    3. اكتب العنوان فقط بدون مقدمات.
+    1. العنوان يجب أن يحل مشكلة أو يشرح طريقة.
+    2. ممنوع تكرار هذه المواضيع: {recent}
+    3. الرد يكون العنوان فقط (بدون علامات تنصيص).
     """
-    
-    # تنظيف العنوان من أي علامات
-    topic = call_gemini_robust(prompt)
-    if topic:
-        return topic.strip().replace('"', '').replace('*', '')
-    return None
+    return _rest_generate(prompt)
 
-# =========================================================
-# ✍️ كتابة المحتوى
-# =========================================================
-def write_article(title):
+@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+def write_tech_article(topic):
     prompt = f"""
-    اكتب مقالاً تقنياً احترافياً بعنوان: "{title}".
-    التنسيق HTML:
-    - <h2>مقدمة</h2>
-    - <h2>الشرح التفصيلي</h2>
-    - <ul>المميزات/الخطوات</ul>
-    - <h2>طريقة الاستخدام</h2> (<ol>)
-    - <div style="background:#f1f1f1; padding:15px;">نصيحة إضافية</div>
-    - <h2>الخاتمة</h2>
-    الشروط: طويل (600 كلمة)، عربي فصحى، منسق HTML.
-    """
-    return call_gemini_robust(prompt)
+    اكتب مقالاً تقنياً احترافياً وشاملاً بعنوان: "{topic}"
+    
+    تنسيق Markdown المطلوب بدقة:
+    # {topic}
+    (اكتب هنا مقدمة جذابة تشرح المشكلة أو الأهمية)
 
-# =========================================================
-# 🚀 النشر
-# =========================================================
-def post_to_blogger(title, content, access_token):
-    url = f"https://www.googleapis.com/blogger/v3/blogs/{BLOG_ID}/posts"
+    ## 🛠️ الأدوات المطلوبة / المتطلبات
+    (قائمة نقطية بالأشياء التي نحتاجها)
+
+    ## 🚀 الشرح التفصيلي (خطوة بخطوة)
+    (استخدم أرقاماً 1. 2. 3. للشرح بدقة)
+
+    ## 💡 مميزات وعيوب
+    (اشرح الإيجابيات والسلبيات إن وجدت)
+
+    ## ❓ الأسئلة الشائعة (FAQ)
+    (سؤال وجواب)
+
+    ## الخاتمة
+    (نصيحة أخيرة)
+
+    الشروط:
+    - المقال طويل (أكثر من 500 كلمة).
+    - اللغة عربية فصحى سهلة وممتعة.
+    - استخدم الايموجي وعلامات التنسيق (Bold).
+    """
+    return _rest_generate(prompt)
+
+# =================== النشر ===================
+def build_html(title, markdown_content):
+    # صورة عشوائية تقنية لضمان شكل جميل
+    rand_id = random.randint(1, 1000)
+    image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
     
-    # استخدام صور Picsum لأنها مستقرة
-    random_id = random.randint(1, 1000)
-    img_url = f"https://picsum.photos/seed/{random_id}/800/400"
+    header = f'<div style="text-align:center;margin-bottom:20px;"><img src="{image_url}" alt="{title}" style="max-width:100%;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);"></div>'
     
-    final_html = f"""
-    <div style="text-align:center; margin-bottom:20px;">
-        <img src="{img_url}" alt="{title}" style="width:100%; max-width:700px; border-radius:10px;">
+    # تحويل المارك داون إلى HTML
+    content_html = md.markdown(markdown_content, extensions=['extra'])
+    
+    footer = """
+    <hr>
+    <div style="text-align:center; background:#f9f9f9; padding:15px; border-radius:10px; margin-top:20px;">
+        <p>تم إعداد هذا الشرح بواسطة فريق التحرير التقني في لودينغ تي في 🛡️</p>
     </div>
-    {content}
-    <br><hr>
-    <p style="text-align:center; color:#888;">تم التحرير بواسطة بوت الشروحات الذكي.</p>
     """
     
-    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
-    data = {
-        "kind": "blogger#post", 
-        "blog": {"id": BLOG_ID}, 
-        "title": title, 
-        "content": final_html, 
-        "labels": ["شروحات تقنية", "Technology"]
-    }
-    
-    res = requests.post(url, headers=headers, json=data)
-    if res.status_code == 200:
-        return True
-    else:
-        print(f"❌ Blogger Post Error: {res.text}")
-        return False
+    return header + content_html + footer
 
-# =========================================================
-# 🏁 التشغيل
-# =========================================================
+def post_to_blogger(title, content):
+    # استخدام مكتبة جوجل الرسمية للنشر (كما في البوت الناجح)
+    creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
+    service = build("blogger", "v3", credentials=creds)
+    
+    # جلب ID المدونة
+    try:
+        blog_id = service.blogs().getByUrl(url=BLOG_URL).execute()["id"]
+    except:
+        # حل احتياطي إذا فشل جلب الـ ID بالرابط، نستخدم المتغير البيئي إذا كنت تعرفه، أو دعها كما هي
+        blog_id = BLOG_ID 
+
+    body = {"kind": "blogger#post", "title": title, "content": content, "labels": LABELS}
+    return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
+
+# =================== التشغيل الرئيسي ===================
 if __name__ == "__main__":
-    print("🤖 Tech Solutions Bot Started (Robust Mode)...")
+    print("🚀 Starting Tech Solutions Bot (Golden Engine)...")
     
-    token = get_access_token()
-    
-    if token:
-        new_topic = ""
-        # 3 محاولات للابتكار
-        for i in range(3):
-            print(f"🔄 Attempt {i+1} to invent topic...")
-            suggested = invent_new_topic()
-            
-            if suggested and suggested not in published_history:
-                new_topic = suggested
-                break
-            else:
-                print("⚠️ Duplicate or empty response, retrying...")
-                time.sleep(2)
+    # 1. ابتكار العنوان
+    raw_topic = invent_topic()
+    if raw_topic:
+        topic = raw_topic.strip().replace('"', '').replace('*', '')
+        print(f"💡 Topic Idea: {topic}")
         
-        if new_topic:
-            print(f"💡 Topic Found: {new_topic}")
-            content = write_article(new_topic)
+        # 2. كتابة المقال
+        article_md = write_tech_article(topic)
+        
+        if article_md:
+            print("📝 Content Generated. Processing...")
             
-            if content:
-                print("📝 Content Generated. Publishing...")
-                if post_to_blogger(new_topic, content, token):
-                    print("✅ PUBLISHED SUCCESSFULLY!")
-                    published_history.append(new_topic)
-                    with open(HISTORY_FILE, 'w', encoding='utf-8') as f:
-                        json.dump(published_history, f, ensure_ascii=False, indent=2)
-                else:
-                    print("❌ Failed to Publish.")
-            else:
-                print("❌ Failed to generate body.")
+            # 3. تحويل وتجهيز HTML
+            final_html = build_html(topic, article_md)
+            
+            # 4. النشر
+            try:
+                res = post_to_blogger(topic, final_html)
+                print(f"🎉 PUBLISHED! URL: {res.get('url')}")
+                
+                # 5. حفظ الذاكرة
+                save_history(topic)
+                
+            except Exception as e:
+                print(f"❌ Publish Error: {e}")
         else:
-            print("❌ No Unique Topic Found (All models failed).")
+            print("❌ Content generation failed (Empty response).")
     else:
-        print("❌ Critical: Token Failed.")
+        print("❌ Topic generation failed.")
