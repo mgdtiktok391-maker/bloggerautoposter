@@ -17,18 +17,19 @@ REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
 HISTORY_FILE = "history_tech_solutions.json"
 GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
-LABELS = ["شروحات_تقنية", "صيانة", "Technology", "HowTo"]
+LABELS = ["شروحات_تقنية", "صيانة", "Technology", "دليل_شامل"]
 
-# =================== مجالات التفكير (NICHES) ===================
+# =================== مجالات التفكير الواسعة (Broad Niches) ===================
+# نضع هنا "التصنيفات" فقط، ونترك للبوت حرية اختيار الموضوع الدقيق
 NICHES = [
-    "حلول مشاكل ارتفاع حرارة الهاتف واستنزاف البطارية",
-    "طرق استرجاع الصور والملفات المحذوفة (للاندرويد والايفون)",
-    "شرح مواقع الذكاء الاصطناعي المجانية للتصميم والكتابة",
-    "أسرار وحيل مخفية في الواتساب والماسنجر",
-    "طريقة تسريع الويندوز والكمبيوتر بدون فورمات",
-    "كيفية حماية حسابات السوشيال ميديا من الاختراق",
-    "حل مشكلة الذاكرة ممتلئة رغم عدم وجود ملفات",
-    "طرق الربح من الانترنت للمبتدئين (شروحات صادقة)"
+    "صيانة الهواتف الذكية (Android & iOS)",
+    "أدوات ومواقع الذكاء الاصطناعي (AI Tools)",
+    "حماية المعلومات والأمن السيبراني (Cybersecurity)",
+    "خبايا وأسرار الويندوز والكمبيوتر (Windows Tips)",
+    "تطبيقات الإنتاجية والتعديل (Best Apps)",
+    "الربح من الإنترنت والعمل الحر (Freelancing)",
+    "حلول مشاكل الألعاب والإنترنت (Gaming & Network)",
+    "أسرار التطبيقات الشهيرة (WhatsApp, Instagram, etc)"
 ]
 
 # =================== إدارة الذاكرة ===================
@@ -45,13 +46,12 @@ def save_history(topic):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(history, f, ensure_ascii=False, indent=2)
 
-# =================== المحرك (نفس كود بوت التطبيقات) ===================
+# =================== المحرك الذهبي ===================
 def get_working_model():
-    """هذه الدالة هي السر الذي يجعل بوت التطبيقات يعمل"""
     url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
     try:
         r = requests.get(url, timeout=30)
-        if r.status_code != 200: return "gemini-pro" # Fallback
+        if r.status_code != 200: return "gemini-pro"
         data = r.json()
         for model in data.get('models', []):
             name = model['name'].replace('models/', '')
@@ -61,9 +61,7 @@ def get_working_model():
     except: return "gemini-pro"
 
 def _rest_generate(prompt):
-    """دالة الاتصال المباشر المأخوذة من البوت الناجح"""
     model_name = get_working_model()
-    # print(f"DEBUG: Using Model: {model_name}") 
     url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
     
     safety_settings = [
@@ -84,118 +82,185 @@ def _rest_generate(prompt):
         print(f"❌ Request Failed: {e}")
         return None
 
-# =================== العقل المدبر (ابتكار وكتابة) ===================
+# =================== العقل المدبر (الابتكار) ===================
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def invent_topic():
     history = load_history()
-    recent = history[-10:] if len(history) > 10 else history
+    # نرسل له آخر 15 عنوان لضمان عدم التكرار القريب
+    recent = history[-15:] if len(history) > 15 else history
+    
+    # نختار مجالاً عشوائياً
     niche = random.choice(NICHES)
     
+    # البرومبت الذكي: يطلب موضوعاً "محدداً" وليس عاماً
     prompt = f"""
-    تصرف كمدير محتوى تقني. اقترح عنواناً واحداً فقط لمقال حصري في مجال: "{niche}".
-    الشروط:
-    1. العنوان يجب أن يحل مشكلة أو يشرح طريقة.
-    2. ممنوع تكرار هذه المواضيع: {recent}
-    3. الرد يكون العنوان فقط (بدون علامات تنصيص).
+    تصرف كمدير تحرير لموقع تقني عالمي.
+    أحتاج منك ابتكار "عنوان مقال تقني" واحد فقط في مجال: "{niche}".
+    
+    الشروط الصارمة:
+    1. العنوان يجب أن يكون عن **مشكلة محددة جداً** أو **أداة معينة** أو **حيلة ذكية**.
+    2. تجنب العناوين العامة مثل "كيف تحمي هاتفك". بل قل "كيف تحمي صورك من التشفير في iOS 18".
+    3. العنوان يجب أن يكون جذاباً (Clicky) وباللغة العربية.
+    4. ممنوع منعاً باتاً اقتراح أي عنوان يشبه هذه العناوين السابقة: {recent}
+    5. الرد يكون العنوان فقط.
     """
     return _rest_generate(prompt)
 
 @backoff.on_exception(backoff.expo, Exception, max_tries=3)
 def write_tech_article(topic):
     prompt = f"""
-    اكتب مقالاً تقنياً احترافياً وشاملاً بعنوان: "{topic}"
+    اكتب مقالاً تقنياً احترافياً (دليل شامل) بعنوان: "{topic}"
     
-    تنسيق Markdown المطلوب بدقة:
+    تعليمات التنسيق (Markdown):
+    1. استخدم العناوين (#, ##) لتقسيم المقال.
+    2. استخدم الايموجي 📱💻🔧 لتزيين الفقرات.
+    3. الأسلوب يجب أن يكون سهلاً ومباشراً (موجه للمبتدئين).
+    
+    الهيكل المطلوب:
     # {topic}
-    (اكتب هنا مقدمة جذابة تشرح المشكلة أو الأهمية)
+    (مقدمة تشرح المشكلة أو الأهمية في 3 أسطر)
 
-    ## 🛠️ الأدوات المطلوبة / المتطلبات
-    (قائمة نقطية بالأشياء التي نحتاجها)
+    ## 🛠️ الأدوات أو المتطلبات
+    (نقاط)
 
-    ## 🚀 الشرح التفصيلي (خطوة بخطوة)
-    (استخدم أرقاماً 1. 2. 3. للشرح بدقة)
+    ## 🚀 الشرح والخطوات العملية
+    (اشرح الحل أو الطريقة بخطوات مرقمة 1. 2. 3. بشكل دقيق جداً)
 
-    ## 💡 مميزات وعيوب
-    (اشرح الإيجابيات والسلبيات إن وجدت)
+    ## 💡 نصائح إضافية (Pro Tips)
+    (نصائح لتجنب المشاكل مستقبلاً)
 
     ## ❓ الأسئلة الشائعة (FAQ)
-    (سؤال وجواب)
+    (3 أسئلة وإجاباتها)
 
     ## الخاتمة
-    (نصيحة أخيرة)
-
-    الشروط:
-    - المقال طويل (أكثر من 500 كلمة).
-    - اللغة عربية فصحى سهلة وممتعة.
-    - استخدم الايموجي وعلامات التنسيق (Bold).
+    (خاتمة قصيرة)
     """
     return _rest_generate(prompt)
 
-# =================== النشر ===================
-def build_html(title, markdown_content):
-    # صورة عشوائية تقنية لضمان شكل جميل
+# =================== التصميم (CSS + HTML) ===================
+def build_styled_html(title, markdown_content):
     rand_id = random.randint(1, 1000)
     image_url = f"https://picsum.photos/seed/{rand_id}/800/400" 
     
-    header = f'<div style="text-align:center;margin-bottom:20px;"><img src="{image_url}" alt="{title}" style="max-width:100%;border-radius:15px;box-shadow:0 4px 15px rgba(0,0,0,0.1);"></div>'
-    
-    # تحويل المارك داون إلى HTML
     content_html = md.markdown(markdown_content, extensions=['extra'])
     
-    footer = """
-    <hr>
-    <div style="text-align:center; background:#f9f9f9; padding:15px; border-radius:10px; margin-top:20px;">
-        <p>تم إعداد هذا الشرح بواسطة فريق التحرير التقني في لودينغ تي في 🛡️</p>
+    styled_template = f"""
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap');
+        
+        .tech-article {{
+            font-family: 'Tajawal', sans-serif;
+            line-height: 1.8;
+            color: #333;
+            background: #fff;
+            text-align: right;
+            direction: rtl;
+        }}
+        .tech-header-img {{
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+        }}
+        .tech-article h1 {{
+            color: #2c3e50;
+            font-size: 26px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3498db;
+            display: inline-block;
+            padding-bottom: 10px;
+        }}
+        .tech-article h2 {{
+            background: #f0f8ff;
+            color: #2980b9;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border-right: 5px solid #2980b9;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-size: 20px;
+            font-weight: 700;
+        }}
+        .tech-article ul, .tech-article ol {{
+            background: #fdfdfd;
+            padding: 20px 40px 20px 20px;
+            border: 1px solid #eee;
+            border-radius: 10px;
+        }}
+        .tech-article li {{ margin-bottom: 10px; }}
+        blockquote {{
+            background-color: #fff8e1;
+            border-right: 5px solid #ffc107;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+            color: #856404;
+            font-weight: bold;
+        }}
+        .tech-footer {{
+            margin-top: 50px;
+            padding: 20px;
+            background: #222;
+            color: #fff;
+            text-align: center;
+            border-radius: 12px;
+            font-size: 14px;
+        }}
+    </style>
+
+    <div class="tech-article">
+        <img src="{image_url}" alt="{title}" class="tech-header-img">
+        {content_html}
+        <div class="tech-footer">
+            <p>🛡️ تم إعداد هذا الشرح بواسطة فريق التحرير التقني في منصة لودينغ</p>
+        </div>
     </div>
     """
-    
-    return header + content_html + footer
+    return styled_template
 
 def post_to_blogger(title, content):
-    # استخدام مكتبة جوجل الرسمية للنشر (كما في البوت الناجح)
     creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
     service = build("blogger", "v3", credentials=creds)
-    
-    # جلب ID المدونة
     try:
         blog_id = service.blogs().getByUrl(url=BLOG_URL).execute()["id"]
     except:
-        # حل احتياطي إذا فشل جلب الـ ID بالرابط، نستخدم المتغير البيئي إذا كنت تعرفه، أو دعها كما هي
         blog_id = BLOG_ID 
 
     body = {"kind": "blogger#post", "title": title, "content": content, "labels": LABELS}
     return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
 
-# =================== التشغيل الرئيسي ===================
+# =================== التشغيل ===================
 if __name__ == "__main__":
-    print("🚀 Starting Tech Solutions Bot (Golden Engine)...")
+    print("🚀 Starting Tech Solutions Bot (Creative Mode)...")
     
-    # 1. ابتكار العنوان
-    raw_topic = invent_topic()
+    # 3 محاولات لابتكار عنوان فريد
+    raw_topic = None
+    for i in range(3):
+        print(f"🧠 Brainstorming attempt {i+1}...")
+        temp_topic = invent_topic()
+        if temp_topic:
+            clean_topic = temp_topic.strip().replace('"', '').replace('*', '')
+            # تحقق بسيط من الطول للتأكد أنه عنوان وليس جملة طويلة
+            if len(clean_topic) > 10 and len(clean_topic) < 100: 
+                raw_topic = clean_topic
+                break
+    
     if raw_topic:
-        topic = raw_topic.strip().replace('"', '').replace('*', '')
-        print(f"💡 Topic Idea: {topic}")
-        
-        # 2. كتابة المقال
-        article_md = write_tech_article(topic)
+        print(f"💡 Topic Selected: {raw_topic}")
+        article_md = write_tech_article(raw_topic)
         
         if article_md:
-            print("📝 Content Generated. Processing...")
+            print("📝 Content Generated. Styling...")
+            final_html = build_styled_html(raw_topic, article_md)
             
-            # 3. تحويل وتجهيز HTML
-            final_html = build_html(topic, article_md)
-            
-            # 4. النشر
             try:
-                res = post_to_blogger(topic, final_html)
+                res = post_to_blogger(raw_topic, final_html)
                 print(f"🎉 PUBLISHED! URL: {res.get('url')}")
-                
-                # 5. حفظ الذاكرة
-                save_history(topic)
-                
+                save_history(raw_topic)
             except Exception as e:
                 print(f"❌ Publish Error: {e}")
         else:
-            print("❌ Content generation failed (Empty response).")
+            print("❌ Content generation failed.")
     else:
-        print("❌ Topic generation failed.")
+        print("❌ Failed to invent a valid topic after 3 tries.")
