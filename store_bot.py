@@ -11,30 +11,23 @@ CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
-# الملفات
 PRODUCTS_FILE = "products.json"
-
-# روابط الإعلانات الجانبية (تظهر تحت كل منتج)
 AD_LINK_RIGHT = "https://otieu.com/4/10485502"
 AD_LINK_LEFT = "https://otieu.com/4/10485502"
 
 # =================== الدوال ===================
 
 def get_service():
-    """الاتصال بـ Blogger API"""
     creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
     return build("blogger", "v3", credentials=creds)
 
 def load_products():
-    """قراءة كل المنتجات من الملف"""
     if not os.path.exists(PRODUCTS_FILE): return []
     with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    """بناء كود HTML لصفحة المتجر كاملة"""
-    
-    # 1. بداية الصفحة (CSS + العنوان)
+    # CSS وتصميم الصفحة
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -58,22 +51,22 @@ def generate_full_catalog_html(products):
         </div>
     """
     
-    # 2. حلقة تكرارية لإنشاء بطاقة لكل منتج
     for product in products:
+        # هنا التعديل الذكي: يحاول قراءة الاسم الجديد، فإذا لم يجده يجرب القديم
+        name = product.get('name', product.get('name_ar', 'منتج مميز'))
+        desc = product.get('description', 'وصف المنتج...')
+        image = product.get('image', product.get('image_url', ''))
+        link = product.get('link', product.get('affiliate_link', '#'))
+        
+        # إذا لم يكن هناك صورة، تجاوز هذا المنتج
+        if not image: continue
+
         card = f"""
         <div class="product-card">
-            <h3 class="product-title">{product['name']}</h3>
-            
-            <img src="{product['image']}" class="product-img" alt="{product['name']}">
-            
-            <p class="product-desc">
-                {product['description']}
-            </p>
-            
-            <a href="{product['link']}" target="_blank" class="buy-btn">
-                🛒 اضغط للشراء (خصم خاص)
-            </a>
-            
+            <h3 class="product-title">{name}</h3>
+            <img src="{image}" class="product-img" alt="{name}">
+            <p class="product-desc">{desc}</p>
+            <a href="{link}" target="_blank" class="buy-btn">🛒 اضغط للشراء (خصم خاص)</a>
             <div class="ads-container">
                 <a href="{AD_LINK_RIGHT}" target="_blank" class="ad-btn ad-right">🎁 هدية المتجر</a>
                 <a href="{AD_LINK_LEFT}" target="_blank" class="ad-btn ad-left">💎 عروض اليوم</a>
@@ -82,29 +75,25 @@ def generate_full_catalog_html(products):
         """
         html_content += card
 
-    # 3. نهاية الصفحة (التوقيت)
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     html_content += f"""
         <div style="text-align:center; margin-top:50px; color:#aaa; font-size:12px;">
-            تم تحديث العروض تلقائياً: {timestamp}
+            Last Updated: {timestamp}
         </div>
     </div>
     """
-    
     return html_content
 
 def update_store_page():
-    print("🛒 Store Bot (Full Catalog Mode) Starting...")
+    print("🛒 Store Bot (Safe Mode) Starting...")
     service = get_service()
     
-    # 1. تحميل المنتجات
     products = load_products()
     if not products:
         print("❌ No products found in JSON file!")
         return
-    print(f"📦 Loaded {len(products)} products from file.")
+    print(f"📦 Loaded {len(products)} products.")
 
-    # 2. البحث عن صفحة المتجر
     print("🔍 Finding Store Page...")
     try:
         blog = service.blogs().getByUrl(url=BLOG_URL).execute()
@@ -116,33 +105,29 @@ def update_store_page():
         
         if "items" in pages:
             for page in pages['items']:
-                # نبحث عن الصفحة التي تحتوي في رابطها على كلمة store
-                # أو يمكنك وضع الـ ID مباشرة هنا إذا كنت تعرفه ليكون أدق
                 if "store" in page['url'].lower() or "متجر" in page['title']:
                     store_page_id = page['id']
                     store_page_title = page['title']
                     break
         
         if not store_page_id:
-            print("❌ Store page not found! (Make sure URL contains 'store')")
+            print("❌ Store page not found!")
             return
 
         print(f"✅ Found Page: {store_page_title} ({store_page_id})")
 
-        # 3. بناء المتجر الجديد
         full_html = generate_full_catalog_html(products)
         
-        # 4. تحديث الصفحة (استبدال المحتوى القديم بالجديد)
         body = {
             "title": store_page_title,
             "content": full_html
         }
         
         service.pages().update(blogId=blog_id, pageId=store_page_id, body=body).execute()
-        print("🚀 Store Page Updated Successfully with ALL products!")
+        print("🚀 Store Page Updated Successfully!")
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ Error details: {e}")
 
 if __name__ == "__main__":
     update_store_page()
