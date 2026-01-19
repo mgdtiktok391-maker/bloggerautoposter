@@ -1,0 +1,33 @@
+name: Update Store Page
+
+on:
+  workflow_dispatch:      # هذا السطر هو الذي يظهر زر التشغيل اليدوي
+  schedule:
+    - cron: '0 10 * * *'  # (اختياري) تحديث تلقائي يومي للساعة
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+
+    - name: Run Store Bot
+      env:
+        BLOG_URL: ${{ secrets.BLOG_URL }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+        # مفتاح Gemini غير ضروري هنا لأننا لا نولد نصوصاً، لكن نتركه احتياطاً
+        GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }} 
+      run: python store_bot.py
