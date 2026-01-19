@@ -26,159 +26,146 @@ def load_products():
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    # تصميم المتجر النظيف بدون تداخل الإعلانات
+    # تصميم المتجر "النظيف جداً" لمنع تداخل الإعلانات
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
         
-        .store-body { 
+        .store-bg { 
             font-family: 'Cairo', sans-serif; 
             direction: rtl; 
-            background: #f8f9fa; 
-            padding: 10px; 
+            background: #ffffff; 
+            padding: 5px; 
         }
         
-        .products-grid {
+        .grid-container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
+            gap: 15px;
             max-width: 1200px;
             margin: 0 auto;
         }
 
-        .product-card {
-            background: #fff;
-            border-radius: 12px;
-            padding: 15px;
+        .item-card {
+            background: #ffffff;
+            border: 1px solid #f1f1f1;
+            border-radius: 10px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1px solid #eee;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.03);
             height: 100%;
             box-sizing: border-box;
+            position: relative;
         }
 
-        .product-img {
+        .item-img {
             width: 100%;
-            height: 200px;
+            height: 160px;
             object-fit: contain;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            background: #fcfcfc;
+            margin-bottom: 10px;
         }
 
-        .product-title {
-            font-size: 16px;
+        .item-name {
+            font-size: 14px;
             font-weight: 700;
-            color: #2c3e50;
-            margin: 0 0 10px 0;
-            line-height: 1.5;
-            min-height: 48px; /* مساحة كافية للعنوان الطويل */
+            color: #333;
+            margin: 5px 0;
+            line-height: 1.4;
+            min-height: 40px;
         }
 
-        .product-desc {
-            font-size: 13px;
-            color: #636e72;
-            line-height: 1.6;
-            margin-bottom: 20px;
+        .item-desc {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.5;
+            margin-bottom: 15px;
             flex-grow: 1;
         }
 
-        .actions-section {
+        /* منع التداخل عبر عزل منطقة الأزرار */
+        .btn-section {
             margin-top: auto;
+            border-top: 1px solid #f9f9f9;
+            padding-top: 10px;
         }
 
-        .buy-now-btn {
+        .main-buy-btn {
             display: block;
             background: #ff4757;
-            color: #fff !important;
+            color: #ffffff !important;
             text-decoration: none;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 15px;
-            text-align: center;
-            margin-bottom: 10px;
-            transition: 0.2s;
-        }
-
-        .small-ads-row {
-            display: flex;
-            gap: 5px;
-        }
-
-        .mini-ad-btn {
-            flex: 1;
-            font-size: 11px;
-            padding: 8px;
+            padding: 10px;
             border-radius: 5px;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 8px;
+        }
+
+        .secondary-btns {
+            display: flex;
+            gap: 4px;
+        }
+
+        .mini-btn {
+            flex: 1;
+            font-size: 10px;
+            padding: 6px 2px;
+            border-radius: 4px;
             color: #fff !important;
             text-decoration: none;
             text-align: center;
             font-weight: 600;
         }
-        .bg-green { background: #27ae60; }
-        .bg-blue { background: #2980b9; }
+        .green { background: #27ae60; }
+        .blue { background: #2980b9; }
 
-        .footer-banner {
-            max-width: 1100px;
-            margin: 40px auto;
-            text-align: center;
-            border-top: 2px dashed #ddd;
-            padding-top: 30px;
+        @media (max-width: 900px) {
+            .grid-container { grid-template-columns: repeat(2, 1fr); }
         }
-
-        @media (max-width: 992px) {
-            .products-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-        @media (max-width: 600px) {
-            .products-grid { grid-template-columns: 1fr; }
-            .product-img { height: 260px; }
+        @media (max-width: 500px) {
+            .grid-container { grid-template-columns: 1fr; }
         }
     </style>
     
-    <div class="store-body">
-        <div style="text-align:center; padding: 30px 0;">
-            <h1 style="color:#2d3436; font-size:26px; font-weight:900;">🛒 Loading Store</h1>
-            <p style="color:#95a5a6; font-size:14px;">عالم من المنتجات المبتكرة بضغطة زر</p>
+    <div class="store-bg">
+        <div style="text-align:center; padding-bottom: 20px;">
+            <h2 style="color:#333;">🛒 قائمة المنتجات المختارة</h2>
         </div>
         
-        <div class="products-grid">
+        <div class="grid-container">
     """
     
     for p in products:
         card = f"""
-        <div class="product-card">
-            <img src="{p['image']}" class="product-img" alt="{p['name']}">
-            <h3 class="product-title">{p['name']}</h3>
-            <p class="product-desc">{p['description']}</p>
+        <div class="item-card">
+            <img src="{p['image']}" class="item-img" alt="{p['name']}">
+            <div class="item-name">{p['name']}</div>
+            <div class="item-desc">{p['description']}</div>
             
-            <div class="actions-section">
-                <a href="{p['link']}" target="_blank" class="buy-now-btn">🛒 اشتر الآن</a>
-                
-                <div class="small-ads-row">
-                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-ad-btn bg-green">🎁 هدية المتجر</a>
-                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-ad-btn bg-blue">💎 عروض اليوم</a>
+            <div class="btn-section">
+                <a href="{p['link']}" target="_blank" class="main-buy-btn">🛒 اشتر الآن</a>
+                <div class="secondary-btns">
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-btn green">🎁 هدية المتجر</a>
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-btn blue">💎 عروض اليوم</a>
                 </div>
             </div>
         </div>
         """
         html_content += card
 
-    html_content += f"""
-        </div> <div class="footer-banner">
-            <p style="color:#7f8c8d; margin-bottom:15px; font-size:13px;">إعلان مميز</p>
-            <a href="{AD_LINK_GENERAL}" target="_blank">
-                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiqU8B8..." style="max-width:100%; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
-            </a>
-            <p style="margin-top:20px; font-size:11px; color:#bdc3c7;">Loading Store © 2026</p>
+    html_content += """
+        </div>
+        <div style="text-align:center; margin-top:40px; color:#ccc; font-size:10px;">
+            Loading Store © 2026
         </div>
     </div>
     """
     return html_content
 
 def update_store_page():
-    print("🛒 Final Layout Polish Starting...")
+    print("🛒 Fixing Store Overlap...")
     service = get_service()
     products = load_products()
     
@@ -192,7 +179,7 @@ def update_store_page():
         if target:
             body = {"title": target['title'], "content": generate_full_catalog_html(products)}
             service.pages().update(blogId=blog_id, pageId=target['id'], body=body).execute()
-            print("🚀 Fixed! The store is now clean and professional.")
+            print("🚀 Fixed! The products are now isolated from ads.")
     except Exception as e:
         print(f"❌ Error: {e}")
 
