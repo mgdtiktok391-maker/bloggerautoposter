@@ -1,45 +1,32 @@
-name: Gaming Bot 🎮
+name: Run Gaming Bot
 
 on:
+  workflow_dispatch:      # زر تشغيل يدوي
   schedule:
-    # التوقيت: الدقيقة 23، الساعة 11 UTC (أي 2:23 ظهراً بتوقيت العراق)
-    - cron: '23 11 * * *'
-  workflow_dispatch: # زر للتشغيل اليدوي في أي وقت
-
-permissions:
-  contents: write
+    - cron: '0 16 * * *'  # تشغيل يومي الساعة 4 عصراً بتوقيت جرينتش (السابعة مساءً بتوقيتك)
 
 jobs:
-  run-gaming-bot:
+  run-bot:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v2
         with:
           python-version: '3.9'
 
       - name: Install dependencies
-        # نستخدم نفس المكتبات الموجودة لضمان التوافق
-        run: pip install -r requirements.txt
+        run: |
+          pip install google-api-python-client google-auth requests markdown bleach APScheduler backoff python-dateutil feedparser Flask google-play-scraper
 
       - name: Run Gaming Bot
         env:
-          BLOG_URL: ${{ secrets.BLOG_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          BLOG_URL: ${{ secrets.BLOG_URL }}
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
         run: python gaming_bot.py
-
-      - name: Commit History
-        # حفظ السجل لمنع تكرار المواضيع
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add history_gaming.json
-          git commit -m "🎮 Gaming Bot history update [skip ci]" || echo "No changes"
-          git push
