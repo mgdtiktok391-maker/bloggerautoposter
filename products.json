@@ -1,65 +1,56 @@
 [
   {
-    "name_ar": "جهاز ترطيب الهواء المضاد للجاذبية (سحر الديكور)",
-    "name_en": "Anti-Gravity Humidifier (Magic Water Drops)",
-    "description": "قطرات الماء تصعد للأعلى بدلاً من السقوط! منظر ساحر يهدئ الأعصاب ويرطب الجو، قطعة ديكور فخمة لمكتبك.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S5fa26d99a39048068d880fe6578ddd18J.jpeg_220x220q75.jpeg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c3I4Nny7"
+    "name": "جهاز ترطيب الهواء المضاد للجاذبية",
+    "description": "قطرات الماء تبدو وكأنها تصعد للأعلى! منظر سحري يرطب الجو ويهدئ الأعصاب.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S5fa26d99a39048068d880fe6578ddd18J.jpeg_220x220q75.jpeg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c3I4Nny7"
   },
   {
-    "name_ar": "منظف الأذن الذكي بالكاميرا (HD)",
-    "name_en": "Smart Visual Ear Cleaner with Camera",
-    "description": "شاهد أذنك من الداخل بدقة HD على موبايلك! تنظيف آمن وذكي بدلاً من الأعواد القطنية الضارة.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S83d3b624120342f29358210c2c034b40H.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c4nG52nV"
+    "name": "منظف الأذن الذكي بالكاميرا HD",
+    "description": "شاهد أذنك من الداخل بدقة عالية على موبايلك! تنظيف آمن وذكي جداً.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S83d3b624120342f29358210c2c034b40H.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c4nG52nV"
   },
   {
-    "name_ar": "الطابعة الحرارية اللاصقة (بدون حبر)",
-    "name_en": "Mini Portable Inkless Thermal Printer",
-    "description": "طابعة بحجم الكف تطبع صورك وملاحظاتك فوراً من الموبايل بدون نقطة حبر واحدة! مثالية للدراسة والذكريات.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S794b59271e3841248e9131f6f1e60716Q.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c4VsQNV9"
+    "name": "الطابعة الحرارية اللاصقة (بدون حبر)",
+    "description": "طابعة بحجم الكف تطبع ملصقات وصور فورية من الموبايل للدراسة والذكريات.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S794b59271e3841248e9131f6f1e60716Q.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c4VsQNV9"
   },
   {
-    "name_ar": "رائد الفضاء مضيء المجرة (Galaxy Projector)",
-    "name_en": "Astronaut Galaxy Projector (Laser Light)",
-    "description": "حول سقف غرفتك إلى فضاء واسع من النجوم والسدم المتحركة! جو خيالي للنوم أو اللعب (Gaming Setup).",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/Sb59ebd5cd54443b0849218fe4845900dQ.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c4sqxMET"
+    "name": "بروجيكتور رائد الفضاء (Galaxy)",
+    "description": "حول سقف غرفتك إلى فضاء ونجوم متحركة! أفضل هدية للأطفال وللجيمرز.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/Sb59ebd5cd54443b0849218fe4845900dQ.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c4sqxMET"
   },
   {
-    "name_ar": "الكيبورد الليزري المستقبلي (Virtual Laser)",
-    "name_en": "Virtual Laser Projection Keyboard",
-    "description": "حول أي سطح طاولة إلى كيبورد ليزري واكتب عليه! تكنولوجيا المستقبل بين يديك الآن.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S0b6a400c41794d328e7e030ecfc3e1acN.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c457DPn1"
+    "name": "الكيبورد الليزري الافتراضي",
+    "description": "جهاز صغير يسقط ضوء ليزر على الطاولة لتكتب عليه فعلياً! تكنولوجيا المستقبل.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S0b6a400c41794d328e7e030ecfc3e1acN.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c457DPn1"
   },
   {
-    "name_ar": "المروحة المحمولة للرقبة (تكييف شخصي)",
-    "name_en": "Portable Bladeless Neck Fan",
-    "description": "أنيقة كسماعات الرأس، ولكنها تضخ هواءً بارداً لوجهك ورقبتك. الحل المثالي لحر الصيف والمشي.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S8ec35c3efb534a6790ad6b6274667a2cw.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c4BAvIJV"
+    "name": "مروحة الرقبة المحمولة (تكييف شخصي)",
+    "description": "تضخ هواء بارداً للوجه والرقبة، منقذة للحياة في الصيف الحار.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S8ec35c3efb534a6790ad6b6274667a2cw.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c4BAvIJV"
   },
   {
-    "name_ar": "المكنسة الروبوتية المصغرة للمكتب",
-    "name_en": "Mini Desktop Vacuum Cleaner",
-    "description": "مكنسة لطيفة بحجم اليد تشفط الغبار وفتافيت الطعام من الكيبورد والمكتب بقوة مذهلة.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/Sb4eabebfaf8640508e3ec9984f08a115R.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c4N3Vcn9"
+    "name": "المكنسة الروبوتية المصغرة للمكتب",
+    "description": "تشفط الغبار وفتافيت الطعام من الكيبورد والمكتب بقوة مذهلة.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/Sb4eabebfaf8640508e3ec9984f08a115R.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c4N3Vcn9"
   },
   {
-    "name_ar": "الملعقة الرقمية للميزان (دقة عالية)",
-    "name_en": "Digital Spoon Scale (High Precision)",
-    "description": "توقف عن التخمين! زن البهارات، البروتين، والدقيق بدقة متناهية وأنت تغرفها مباشرة.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/S0ac141ce082f40e2968c142d50192d846.png?has_lang=1&ver=1_220x220.png_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c3J8dcoP"
+    "name": "الملعقة الرقمية للميزان",
+    "description": "زن البهارات والبروتين بدقة متناهية وأنت تغرفها مباشرة. شاشة رقمية دقيقة.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/S0ac141ce082f40e2968c142d50192d846.png?has_lang=1&ver=1_220x220.png_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c3J8dcoP"
   },
   {
-    "name_ar": "فرشاة التنظيف الكهربائية السحرية",
-    "name_en": "Electric Magic Cleaning Brush (Rechargeable)",
-    "description": "وفر مجهودك! فرشاة دوارة قوية تنظف السيراميك، الأحواض، والأحذية بلمسة زر ودون تعب.",
-    "image_url": "https://ae-pic-a1.aliexpress-media.com/kf/Sb1d01a0480ad4b6eb7a99400a74df06f6.jpg_220x220q75.jpg_.avif",
-    "affiliate_link": "https://s.click.aliexpress.com/e/_c2IA1Z5H"
+    "name": "فرشاة التنظيف الكهربائية السحرية",
+    "description": "تنظف السيراميك والأحواض والأحذية بلمسة زر ودون تعب الفرك اليدوي.",
+    "image": "https://ae-pic-a1.aliexpress-media.com/kf/Sb1d01a0480ad4b6eb7a99400a74df06f6.jpg_220x220q75.jpg_.avif",
+    "link": "https://s.click.aliexpress.com/e/_c2IA1Z5H"
   }
 ]
