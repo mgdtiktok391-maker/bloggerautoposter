@@ -26,7 +26,7 @@ def load_products():
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    # التصميم المطور لمنع تداخل الإعلانات وظهور الأسماء كاملة
+    # تصميم المتجر النظيف بدون تداخل الإعلانات
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
@@ -34,108 +34,113 @@ def generate_full_catalog_html(products):
         .store-body { 
             font-family: 'Cairo', sans-serif; 
             direction: rtl; 
-            background: #ffffff; 
-            padding: 5px; 
+            background: #f8f9fa; 
+            padding: 10px; 
         }
         
         .products-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 20px;
             max-width: 1200px;
             margin: 0 auto;
-            padding: 10px;
         }
 
         .product-card {
             background: #fff;
-            border: 1px solid #f0f0f0;
             border-radius: 12px;
-            padding: 12px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-            height: 100%; /* لتوحيد ارتفاع البطاقات في السطر */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #eee;
+            height: 100%;
             box-sizing: border-box;
         }
 
         .product-img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             object-fit: contain;
             border-radius: 8px;
-            margin-bottom: 12px;
-            background: #fdfdfd;
+            margin-bottom: 15px;
+            background: #fcfcfc;
         }
 
         .product-title {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 700;
             color: #2c3e50;
             margin: 0 0 10px 0;
-            line-height: 1.4;
-            min-height: 42px; /* ضمان مساحة لسطرين على الأقل */
+            line-height: 1.5;
+            min-height: 48px; /* مساحة كافية للعنوان الطويل */
         }
 
         .product-desc {
-            font-size: 12px;
+            font-size: 13px;
             color: #636e72;
-            line-height: 1.5;
-            margin-bottom: 15px;
-            flex-grow: 1; /* يدفع ما تحته للأسفل */
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
         }
 
-        .actions-wrapper {
-            margin-top: auto; /* يجبر الأزرار على البقاء في القاع */
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
+        .actions-section {
+            margin-top: auto;
         }
 
-        .buy-btn {
+        .buy-now-btn {
+            display: block;
             background: #ff4757;
-            color: #ffffff !important;
+            color: #fff !important;
             text-decoration: none;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 12px;
+            border-radius: 8px;
             font-weight: 700;
-            font-size: 14px;
+            font-size: 15px;
             text-align: center;
+            margin-bottom: 10px;
             transition: 0.2s;
         }
 
-        .ads-row {
+        .small-ads-row {
             display: flex;
             gap: 5px;
         }
 
-        .ad-link {
+        .mini-ad-btn {
             flex: 1;
             font-size: 11px;
-            padding: 7px;
-            border-radius: 4px;
+            padding: 8px;
+            border-radius: 5px;
             color: #fff !important;
             text-decoration: none;
             text-align: center;
             font-weight: 600;
         }
-        .ad-green { background: #27ae60; }
-        .ad-blue { background: #2980b9; }
+        .bg-green { background: #27ae60; }
+        .bg-blue { background: #2980b9; }
 
-        /* تعديلات الموبايل لضمان الوضوح */
-        @media (max-width: 900px) {
+        .footer-banner {
+            max-width: 1100px;
+            margin: 40px auto;
+            text-align: center;
+            border-top: 2px dashed #ddd;
+            padding-top: 30px;
+        }
+
+        @media (max-width: 992px) {
             .products-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 550px) {
+        @media (max-width: 600px) {
             .products-grid { grid-template-columns: 1fr; }
-            .product-img { height: 250px; } /* تكبير الصورة في الموبايل */
+            .product-img { height: 260px; }
         }
     </style>
     
     <div class="store-body">
-        <div style="text-align:center; padding: 25px 10px;">
-            <h1 style="color:#2d3436; font-size:22px; font-weight:900;">🛒 متجر التحميل الذكي</h1>
-            <p style="color:#b2bec3; font-size:13px;">منتجات مبتكرة مختارة لكم بعناية</p>
+        <div style="text-align:center; padding: 30px 0;">
+            <h1 style="color:#2d3436; font-size:26px; font-weight:900;">🛒 Loading Store</h1>
+            <p style="color:#95a5a6; font-size:14px;">عالم من المنتجات المبتكرة بضغطة زر</p>
         </div>
         
         <div class="products-grid">
@@ -148,30 +153,32 @@ def generate_full_catalog_html(products):
             <h3 class="product-title">{p['name']}</h3>
             <p class="product-desc">{p['description']}</p>
             
-            <div class="actions-wrapper">
-                <a href="{p['link']}" target="_blank" class="buy-btn">🛒 اشترِ الآن</a>
+            <div class="actions-section">
+                <a href="{p['link']}" target="_blank" class="buy-now-btn">🛒 اشتر الآن</a>
                 
-                <div class="ads-row">
-                    <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-link ad-green">🎁 هدية المتجر</a>
-                    <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-link ad-blue">💎 عروض اليوم</a>
+                <div class="small-ads-row">
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-ad-btn bg-green">🎁 هدية المتجر</a>
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="mini-ad-btn bg-blue">💎 عروض اليوم</a>
                 </div>
             </div>
         </div>
         """
         html_content += card
 
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
     html_content += f"""
-        </div>
-        <div style="text-align:center; margin-top:50px; padding:20px; color:#dfe6e9; font-size:10px; border-top: 1px solid #f1f2f6;">
-            Loading Store © 2026 | تحديث يومي: {timestamp}
+        </div> <div class="footer-banner">
+            <p style="color:#7f8c8d; margin-bottom:15px; font-size:13px;">إعلان مميز</p>
+            <a href="{AD_LINK_GENERAL}" target="_blank">
+                <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiqU8B8..." style="max-width:100%; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+            </a>
+            <p style="margin-top:20px; font-size:11px; color:#bdc3c7;">Loading Store © 2026</p>
         </div>
     </div>
     """
     return html_content
 
 def update_store_page():
-    print("🛒 Updating Store Page (Layout Fix)...")
+    print("🛒 Final Layout Polish Starting...")
     service = get_service()
     products = load_products()
     
@@ -180,12 +187,12 @@ def update_store_page():
         blog_id = blog["id"]
         pages = service.pages().list(blogId=blog_id).execute()
         
-        target_page = next((p for p in pages['items'] if "store" in p['url'].lower() or "متجر" in p['title']), None)
+        target = next((p for p in pages['items'] if "store" in p['url'].lower() or "متجر" in p['title']), None)
         
-        if target_page:
-            body = {"title": target_page['title'], "content": generate_full_catalog_html(products)}
-            service.pages().update(blogId=blog_id, pageId=target_page['id'], body=body).execute()
-            print("🚀 Layout Fixed! Check your store page.")
+        if target:
+            body = {"title": target['title'], "content": generate_full_catalog_html(products)}
+            service.pages().update(blogId=blog_id, pageId=target['id'], body=body).execute()
+            print("🚀 Fixed! The store is now clean and professional.")
     except Exception as e:
         print(f"❌ Error: {e}")
 
