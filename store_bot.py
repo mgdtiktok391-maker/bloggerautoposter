@@ -27,38 +27,103 @@ def load_products():
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    # CSS وتصميم الصفحة
+    # CSS وتصميم الصفحة (تصميم الشبكة Grid لمنتجين في السطر)
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        .store-container { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; color: #333; }
-        .product-card { background: #fff; border: 1px solid #eee; border-radius: 15px; padding: 20px; margin-bottom: 40px; box-shadow: 0 5px 15px rgba(0,0,0,0.05); text-align: center; }
-        .product-title { color: #2d3436; margin-bottom: 15px; font-size: 22px; font-weight: 900; }
-        .product-img { width: 100%; max-width: 300px; height: auto; border-radius: 12px; margin: 10px 0; object-fit: contain; }
-        .product-desc { color: #636e72; font-size: 16px; line-height: 1.7; margin: 15px 0; }
-        .buy-btn { display: block; width: 100%; background: linear-gradient(45deg, #ff9f43, #ee5253); color: white !important; padding: 15px 0; text-decoration: none; border-radius: 50px; font-weight: bold; font-size: 18px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(238, 82, 83, 0.3); transition: 0.3s; }
-        .buy-btn:hover { transform: translateY(-3px); }
-        .ads-container { display: flex; gap: 10px; justify-content: center; margin-top: 10px; }
-        .ad-btn { flex: 1; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: bold; color: white !important; text-align: center; }
+        .store-container { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; color: #333; max-width: 1200px; margin: 0 auto; }
+        
+        /* Grid Layout for 2 products per row */
+        .products-grid {
+            display: grid;
+            grid-template_columns: repeat(2, 1fr); /* عمودين متساويين */
+            gap: 20px; /* مسافة بين المنتجات */
+            margin-top: 30px;
+        }
+
+        .product-card { 
+            background: #fff; 
+            border: 1px solid #eee; 
+            border-radius: 15px; 
+            padding: 15px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
+            text-align: center; 
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .product-title { 
+            color: #2d3436; 
+            margin-bottom: 10px; 
+            font-size: 18px; 
+            font-weight: 900; 
+            line-height: 1.4;
+            height: 50px; /* توحيد ارتفاع العنوان */
+            overflow: hidden;
+        }
+
+        .product-img { 
+            width: 100%; 
+            height: 200px; /* تثبيت الارتفاع */
+            object-fit: contain; /* الحفاظ على أبعاد الصورة */
+            border-radius: 10px; 
+            margin: 10px 0; 
+        }
+
+        .product-desc { 
+            color: #636e72; 
+            font-size: 14px; 
+            line-height: 1.6; 
+            margin: 10px 0; 
+            text-align: right;
+            flex-grow: 1; /* لملء الفراغ المتبقي */
+        }
+
+        .buy-btn { 
+            display: block; 
+            width: 100%; 
+            background: linear-gradient(45deg, #ff9f43, #ee5253); 
+            color: white !important; 
+            padding: 10px 0; 
+            text-decoration: none; 
+            border-radius: 50px; 
+            font-weight: bold; 
+            font-size: 16px; 
+            margin-bottom: 10px; 
+            box-shadow: 0 4px 10px rgba(238, 82, 83, 0.3); 
+            transition: 0.3s; 
+        }
+        .buy-btn:hover { transform: translateY(-2px); }
+
+        .ads-container { display: flex; gap: 5px; justify-content: center; margin-top: 5px; }
+        .ad-btn { flex: 1; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; color: white !important; text-align: center; }
         .ad-right { background: #00b894; }
         .ad-left { background: #0984e3; }
+
+        /* جعلها منتج واحد في السطر للموبايل */
+        @media (max-width: 768px) {
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
     
     <div class="store-container">
-        <div style="text-align:center; margin-bottom: 40px; padding: 20px; background: #f9f9f9; border-radius: 15px;">
+        <div style="text-align:center; margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 15px;">
             <h1 style="color:#e17055; margin:0;">🔥 Loading Store 🔥</h1>
             <p style="color:#777;">أفضل المنتجات التقنية والغريبة المختارة بعناية</p>
         </div>
+        
+        <div class="products-grid">
     """
     
     for product in products:
-        # هنا التعديل الذكي: يحاول قراءة الاسم الجديد، فإذا لم يجده يجرب القديم
-        name = product.get('name', product.get('name_ar', 'منتج مميز'))
-        desc = product.get('description', 'وصف المنتج...')
-        image = product.get('image', product.get('image_url', ''))
-        link = product.get('link', product.get('affiliate_link', '#'))
+        name = product.get('name', 'منتج مميز')
+        desc = product.get('description', '')
+        image = product.get('image', '')
+        link = product.get('link', '#')
         
-        # إذا لم يكن هناك صورة، تجاوز هذا المنتج
         if not image: continue
 
         card = f"""
@@ -77,7 +142,7 @@ def generate_full_catalog_html(products):
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     html_content += f"""
-        <div style="text-align:center; margin-top:50px; color:#aaa; font-size:12px;">
+        </div> <div style="text-align:center; margin-top:50px; color:#aaa; font-size:12px;">
             Last Updated: {timestamp}
         </div>
     </div>
@@ -85,7 +150,7 @@ def generate_full_catalog_html(products):
     return html_content
 
 def update_store_page():
-    print("🛒 Store Bot (Safe Mode) Starting...")
+    print("🛒 Store Bot (Grid Layout Mode) Starting...")
     service = get_service()
     
     products = load_products()
@@ -111,7 +176,7 @@ def update_store_page():
                     break
         
         if not store_page_id:
-            print("❌ Store page not found!")
+            print("❌ Store page not found! (Please create a page with 'store' in URL)")
             return
 
         print(f"✅ Found Page: {store_page_title} ({store_page_id})")
