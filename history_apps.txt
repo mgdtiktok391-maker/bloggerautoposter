@@ -21,3 +21,4 @@ com.spocky.projengmenu
 com.microsoft.launcher
 com.mxtech.videoplayer.ad
 ginlemon.iconpackstudio
+com.NewFolderGames.IAmSecurirty
