@@ -26,105 +26,119 @@ def load_products():
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    # التصميم الجديد لعرض 3 منتجات في السطر
+    # التصميم المطور لمنع تداخل الإعلانات وظهور الأسماء كاملة
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        .store-body { font-family: 'Cairo', sans-serif; direction: rtl; background: #f4f7f6; padding: 10px; }
         
-        .products-container {
+        .store-body { 
+            font-family: 'Cairo', sans-serif; 
+            direction: rtl; 
+            background: #ffffff; 
+            padding: 5px; 
+        }
+        
+        .products-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
+            padding: 10px;
         }
 
         .product-card {
             background: #fff;
+            border: 1px solid #f0f0f0;
             border-radius: 12px;
             padding: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            transition: 0.3s;
-            border: 1px solid #eee;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            height: 100%; /* لتوحيد ارتفاع البطاقات في السطر */
+            box-sizing: border-box;
         }
-        .product-card:hover { transform: translateY(-5px); }
 
         .product-img {
             width: 100%;
-            height: 160px;
+            height: 180px;
             object-fit: contain;
             border-radius: 8px;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            background: #fdfdfd;
         }
 
         .product-title {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 700;
             color: #2c3e50;
-            margin: 5px 0;
-            height: 40px;
-            overflow: hidden;
+            margin: 0 0 10px 0;
             line-height: 1.4;
+            min-height: 42px; /* ضمان مساحة لسطرين على الأقل */
         }
 
         .product-desc {
-            font-size: 11px;
-            color: #7f8c8d;
-            height: 50px;
-            overflow: hidden;
-            margin-bottom: 10px;
+            font-size: 12px;
+            color: #636e72;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            flex-grow: 1; /* يدفع ما تحته للأسفل */
+        }
+
+        .actions-wrapper {
+            margin-top: auto; /* يجبر الأزرار على البقاء في القاع */
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
 
         .buy-btn {
-            background: linear-gradient(45deg, #ff4757, #ff6b81);
-            color: #fff !important;
+            background: #ff4757;
+            color: #ffffff !important;
             text-decoration: none;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             font-weight: 700;
-            font-size: 13px;
+            font-size: 14px;
             text-align: center;
-            margin-bottom: 8px;
+            transition: 0.2s;
         }
 
-        .ads-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .ads-row {
+            display: flex;
             gap: 5px;
         }
 
-        .ad-btn {
-            font-size: 10px;
-            padding: 6px;
+        .ad-link {
+            flex: 1;
+            font-size: 11px;
+            padding: 7px;
             border-radius: 4px;
             color: #fff !important;
             text-decoration: none;
             text-align: center;
-            font-weight: bold;
+            font-weight: 600;
         }
-        .ad-r { background: #27ae60; }
-        .ad-l { background: #2980b9; }
+        .ad-green { background: #27ae60; }
+        .ad-blue { background: #2980b9; }
 
-        /* التوافق مع الجوال */
-        @media (max-width: 850px) {
-            .products-container { grid-template-columns: repeat(2, 1fr); } /* منتجين في الجوال الكبير */
+        /* تعديلات الموبايل لضمان الوضوح */
+        @media (max-width: 900px) {
+            .products-grid { grid-template-columns: repeat(2, 1fr); }
         }
-        @media (max-width: 500px) {
-            .products-container { grid-template-columns: 1fr; } /* منتج واحد في الجوال الصغير */
+        @media (max-width: 550px) {
+            .products-grid { grid-template-columns: 1fr; }
+            .product-img { height: 250px; } /* تكبير الصورة في الموبايل */
         }
     </style>
     
     <div class="store-body">
-        <div style="text-align:center; padding: 20px 0;">
-            <h1 style="color:#2c3e50; font-size:24px;">💎 متجر العروض الحصرية 💎</h1>
-            <p style="color:#7f8c8d; font-size:14px;">أحدث الاختيارات الذكية من AliExpress</p>
+        <div style="text-align:center; padding: 25px 10px;">
+            <h1 style="color:#2d3436; font-size:22px; font-weight:900;">🛒 متجر التحميل الذكي</h1>
+            <p style="color:#b2bec3; font-size:13px;">منتجات مبتكرة مختارة لكم بعناية</p>
         </div>
         
-        <div class="products-container">
+        <div class="products-grid">
     """
     
     for p in products:
@@ -134,28 +148,30 @@ def generate_full_catalog_html(products):
             <h3 class="product-title">{p['name']}</h3>
             <p class="product-desc">{p['description']}</p>
             
-            <a href="{p['link']}" target="_blank" class="buy-btn">🛒 اشترِ الآن</a>
-            
-            <div class="ads-grid">
-                <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-btn ad-r">🎁 هدية</a>
-                <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-btn ad-l">💎 عرض</a>
+            <div class="actions-wrapper">
+                <a href="{p['link']}" target="_blank" class="buy-btn">🛒 اشترِ الآن</a>
+                
+                <div class="ads-row">
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-link ad-green">🎁 هدية المتجر</a>
+                    <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-link ad-blue">💎 عروض اليوم</a>
+                </div>
             </div>
         </div>
         """
         html_content += card
 
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
+    timestamp = datetime.datetime.now().strftime("%Y-%m-%d")
     html_content += f"""
         </div>
-        <div style="text-align:center; margin-top:40px; padding:20px; color:#bdc3c7; font-size:11px;">
-            Updated: {timestamp} | Loading Store © 2026
+        <div style="text-align:center; margin-top:50px; padding:20px; color:#dfe6e9; font-size:10px; border-top: 1px solid #f1f2f6;">
+            Loading Store © 2026 | تحديث يومي: {timestamp}
         </div>
     </div>
     """
     return html_content
 
 def update_store_page():
-    print("🛒 Starting Store Grid Update...")
+    print("🛒 Updating Store Page (Layout Fix)...")
     service = get_service()
     products = load_products()
     
@@ -169,7 +185,7 @@ def update_store_page():
         if target_page:
             body = {"title": target_page['title'], "content": generate_full_catalog_html(products)}
             service.pages().update(blogId=blog_id, pageId=target_page['id'], body=body).execute()
-            print("🚀 Store Grid Updated Successfully (3 Items per row)!")
+            print("🚀 Layout Fixed! Check your store page.")
     except Exception as e:
         print(f"❌ Error: {e}")
 
