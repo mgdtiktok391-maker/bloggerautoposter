@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
-import os
-import random
-import json
-import time
+import os, random, markdown as md
+from datetime import datetime
 import requests
-import markdown as md
 import backoff
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-from google_play_scraper import search # المكتبة المطلوبة
+from google_play_scraper import search as play_search, app as play_app
+
+# =================== إعدادات المستخدم ===================
+# رابط الإعلان الخاص بالألعاب (استبدله برابطك المباشر)
+MONETAG_DIRECT_LINK = "https://otieu.com/4/10485502"
+GAME_LABELS = ["Games", "العاب", "Android", "Gaming"]
 
 # =================== إعدادات النظام ===================
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
@@ -16,184 +18,172 @@ BLOG_URL = os.environ["BLOG_URL"]
 CLIENT_ID = os.environ["CLIENT_ID"]
 CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
+HISTORY_GAMES_FILE = "history_gaming.txt"
+GEMINI_API_ROOT = "https://generativelanguage.googleapis.com"
 
-HISTORY_FILE = "history_gaming.json"
-PRODUCTS_FILE = "products.json"
-
-# رابط الموديل الصحيح (v1beta) لتجنب خطأ 404
-MODEL_NAME = "gemini-1.5-flash"
-GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent?key={GEMINI_API_KEY}"
-
-# قائمة المشاكل لدمجها مع الألعاب
-PROBLEMS = [
-    "حل مشكلة اللاغ والتقطيع (Fix Lag)",
-    "تفعيل 90/120 فريم (Unlock FPS)",
-    "حل مشكلة سخونة الهاتف (Overheating)",
-    "تسريع اللعبة للأجهزة الضعيفة (Game Booster)",
-    "حل مشكلة الخروج المفاجئ (Crash Fix)",
-    "تقليل البينغ (Fix High Ping)"
+# كلمات بحث تجلب ألعاب ترند وقوية
+SEARCH_QUERIES = [
+    "Battle Royale", "FPS Shooting", "Action RPG", "Open World", "Survival", 
+    "Racing Car", "Zombie", "Strategy", "Fighting Game", "Adventure", 
+    "Simulation", "Sports Football", "Sniper 3D", "Multiplayer"
 ]
 
-# رابط الإعلان للأزرار الجانبية
-AD_LINK = "https://otieu.com/4/10485502"
+def load_used_games():
+    if not os.path.exists(HISTORY_GAMES_FILE): return set()
+    with open(HISTORY_GAMES_FILE, "r", encoding="utf-8") as f:
+        return set(line.strip() for line in f if line.strip())
 
-# =================== 1. الدوال المساعدة ===================
-def load_products():
-    """تحميل المنتجات لاختيار واحد منها كحل"""
-    if not os.path.exists(PRODUCTS_FILE): return []
-    with open(PRODUCTS_FILE, "r", encoding="utf-8") as f:
-        return json.load(f)
+def save_used_game(package_name):
+    with open(HISTORY_GAMES_FILE, "a", encoding="utf-8") as f:
+        f.write(f"{package_name}\n")
 
-def get_product_card(product):
-    """تصميم بطاقة المنتج لإدراجها وسط المقال"""
-    if not product: return ""
+def get_fresh_game():
+    used_games = load_used_games()
+    queries = SEARCH_QUERIES[:]
+    random.shuffle(queries)
+    print(f"🎮 Scanning Google Play for Games...")
     
-    html = f"""
-    <div style="background: #fff; border: 2px dashed #ff4757; border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
-        <h3 style="color: #2f3542; margin-bottom: 10px;">🔥 الحل الأقوى: {product['name']}</h3>
-        <p style="color: #57606f; font-size: 14px; margin-bottom: 15px;">{product['description']}</p>
-        <img src="{product['image']}" style="width: 150px; height: 150px; object-fit: contain; margin-bottom: 15px;">
-        <br>
-        <a href="{product['link']}" target="_blank" style="display: inline-block; background: #ff4757; color: white; padding: 10px 25px; text-decoration: none; border-radius: 50px; font-weight: bold;">
-            🛒 احصل عليه الآن (خصم خاص)
-        </a>
-    </div>
-    """
-    return html
+    for query in queries:
+        try:
+            # البحث في المتجر السعودي (sa) واللغة العربية (ar) للحصول على نتائج تهم العرب
+            results = play_search(query, lang="ar", country="sa", n_hits=40)
+            for game_summary in results:
+                pkg = game_summary['appId']
+                if pkg in used_games: continue
+                
+                score = game_summary.get('score', 0)
+                if score and score < 3.8: continue # تجاهل الألعاب الضعيفة
 
-# =================== 2. مستشعر غوغل بلاي ===================
-def get_game_from_google_play():
-    print("📡 Contacting Google Play Store...")
-    try:
-        # كلمات بحث تجلب ألعاباً قوية
-        queries = ["Action Games", "Battle Royale", "Racing", "FPS Shooting", "RPG"]
-        chosen_query = random.choice(queries)
-        
-        # البحث عن ألعاب في السعودية (للمحتوى العربي)
-        results = search(chosen_query, lang='ar', country='sa', n_hits=30)
-        
-        if results:
-            return results # إرجاع قائمة الألعاب
-        return []
-    except Exception as e:
-        print(f"⚠️ Google Play Error: {e}")
-        return []
+                try: details = play_app(pkg, lang='ar', country='sa')
+                except: continue
+                
+                if not details.get('icon'): continue
+                
+                print(f"✅ Found Game: {details['title']}")
+                return details
+        except: continue  
+    return None
 
-# =================== 3. الذكاء الاصطناعي (Gemini) ===================
-@backoff.on_exception(backoff.expo, Exception, max_tries=3)
-def generate_content(prompt):
-    payload = {"contents": [{"parts": [{"text": prompt}]}]}
+# =================== اكتشاف الموديل (نفس منطق كود التطبيقات الناجح) ===================
+def get_working_model():
+    url = f"{GEMINI_API_ROOT}/v1beta/models?key={GEMINI_API_KEY}"
     try:
-        response = requests.post(GEMINI_URL, json=payload, timeout=60)
-        if response.status_code == 200:
-            return response.json()["candidates"][0]["content"]["parts"][0]["text"]
-        else:
-            print(f"❌ API Error {response.status_code}: {response.text}")
-            return None
-    except Exception as e:
-        print(f"❌ Connection Error: {e}")
+        r = requests.get(url, timeout=30)
+        if r.status_code != 200: return "gemini-pro"
+        data = r.json()
+        for model in data.get('models', []):
+            name = model['name'].replace('models/', '')
+            if 'generateContent' in model.get('supportedGenerationMethods', []):
+                return name
+        return "gemini-1.5-flash"
+    except: return "gemini-pro"
+
+def _rest_generate(prompt):
+    model_name = get_working_model()
+    url = f"{GEMINI_API_ROOT}/v1beta/models/{model_name}:generateContent?key={GEMINI_API_KEY}"
+    safety_settings = [
+        {"category": "HARM_CATEGORY_HARASSMENT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_HATE_SPEECH", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_SEXUALLY_EXPLICIT", "threshold": "BLOCK_NONE"},
+        {"category": "HARM_CATEGORY_DANGEROUS_CONTENT", "threshold": "BLOCK_NONE"}
+    ]
+    try:
+        r = requests.post(url, json={"contents": [{"parts": [{"text": prompt}]}], "safetySettings": safety_settings}, timeout=60)
+        if r.status_code == 200: return r.json()["candidates"][0]["content"]["parts"][0]["text"]
         return None
+    except: return None
 
-# =================== 4. المحرك الرئيسي ===================
-def run_gaming_bot():
-    print("🎮 Gaming Bot (Play + Product Logic) Starting...")
+@backoff.on_exception(backoff.expo, Exception, max_tries=3)
+def ask_gemini_game_review(game_details):
+    title = game_details['title']
+    desc = game_details.get('description', '')[:2000] # تقليل النص لتجنب الأخطاء
     
-    # 1. جلب لعبة جديدة
-    games_list = get_game_from_google_play()
-    if not games_list:
-        print("❌ No games found.")
-        return
-
-    # تحميل السجل لمنع التكرار
-    if os.path.exists(HISTORY_FILE):
-        with open(HISTORY_FILE, "r", encoding="utf-8") as f:
-            history = json.load(f)
-    else:
-        history = []
-
-    # اختيار لعبة لم تنشر من قبل
-    selected_game = None
-    for game in games_list:
-        if game['title'] not in history:
-            selected_game = game
-            break
-    
-    if not selected_game:
-        print("⚠️ All games in this batch are duplicates. Picking random...")
-        selected_game = random.choice(games_list)
-
-    # 2. تجهيز البيانات
-    game_title = selected_game['title']
-    game_icon = selected_game['icon']
-    problem = random.choice(PROBLEMS)
-    
-    # 3. اختيار منتج من المتجر
-    products = load_products()
-    selected_product = random.choice(products) if products else None
-    product_html = get_product_card(selected_product)
-
-    print(f"📝 Writing about: {game_title} + {problem}")
-
-    # 4. كتابة المقال
     prompt = f"""
-    اكتب مقالاً تقنياً احترافياً (SEO) بعنوان جذاب يجمع بين لعبة "{game_title}" ومشكلة "{problem}".
-    استخدم تنسيق HTML (عناوين h2, h3 وفقرات).
+    تصرف كخبير ألعاب (Gamer) محترف. اكتب مراجعة حماسية للعبة: {title}
+    الوصف الرسمي: {desc}
     
-    الهيكل المطلوب:
-    1. مقدمة قوية عن شهرة اللعبة ولماذا يواجه اللاعبون مشكلة {problem}.
-    2. فقرة تشويقية تذكر أن الحل يكمن في الأدوات المناسبة (تمهيد للمنتج).
-    3. [PRODUCT_PLACEHOLDER] (اترك هذا النص كما هو سأستبدله لاحقاً).
-    4. خطوات تقنية (إعدادات، نصائح) لتحسين اللعبة وحل المشكلة.
-    5. خاتمة تشجع على زيارة المتجر.
+    المطلوب (بتنسيق Markdown):
+    1. **عنوان جذاب**: (H1) يجذب اللاعبين (مثلاً: أقوى لعبة أكشن لهذا العام).
+    2. **لماذا هي ترند؟**: فقرة تشويقية.
+    3. **الجرافيك والتحكم**: تحدث عن جودة الرسوميات وسلاسة اللعب.
+    4. **نصائح للفوز**: (H2) كيف تصبح محترفاً فيها؟
+    5. **المواصفات المطلوبة**: جدول بسيط.
+    6. **الخاتمة**.
     
-    استخدم الايموجي 🎮🔥. لا تضع مقدمات مثل "إليك المقال".
+    استخدم الايموجي 🎮🔥🚀. لا تضع أي روابط خارجية.
+    """
+    return _rest_generate(prompt)
+
+# =================== الأزرار المشوقة (التعديل الأهم) ===================
+def build_game_post_html(game_details, article_html):
+    image_url = game_details.get('headerImage') or game_details.get('icon')
+    title = game_details['title']
+    pkg_id = game_details['appId']
+    real_play_store_url = f"https://play.google.com/store/apps/details?id={pkg_id}"
+    
+    header = f'<div style="text-align:center;margin-bottom:20px;"><img src="{image_url}" alt="{title}" style="max-width:100%;border-radius:15px;box-shadow:0 8px 20px rgba(0,0,0,0.2);"></div>'
+    
+    # تنسيق الأزرار المشوقة (3 أزرار تفتح الإعلان)
+    # الخدعة: onclick يفتح الإعلان، و href يفتح المتجر (للزر الأخير) أو نفس الإعلان
+    buttons_html = f"""
+    <style>
+        .gaming-btns {{ display: flex; flex-direction: column; gap: 15px; margin: 30px 0; }}
+        .g-btn {{
+            display: block; padding: 15px; text-align: center; color: white !important;
+            text-decoration: none; font-weight: bold; border-radius: 50px;
+            font-size: 18px; transition: transform 0.2s; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }}
+        .g-btn:hover {{ transform: scale(1.02); }}
+        .btn-gold {{ background: linear-gradient(45deg, #f1c40f, #f39c12); }}
+        .btn-blue {{ background: linear-gradient(45deg, #3498db, #2980b9); }}
+        .btn-green {{ background: linear-gradient(45deg, #2ecc71, #27ae60); }}
+    </style>
+
+    <div class="gaming-btns">
+        <a href="{MONETAG_DIRECT_LINK}" target="_blank" class="g-btn btn-gold">
+            💎 شحن جواهر/شدات (مجاناً)
+        </a>
+
+        <a href="{MONETAG_DIRECT_LINK}" target="_blank" class="g-btn btn-blue">
+            🚀 تفعيل 90 فريم وإزالة اللاغ
+        </a>
+
+        <a href="{real_play_store_url}" 
+           onclick="window.open('{MONETAG_DIRECT_LINK}', '_blank');" 
+           target="_blank" class="g-btn btn-green">
+            📥 تحميل اللعبة (Google Play)
+        </a>
+        
+        <p style="text-align:center; font-size:12px; color:#777; margin-top:5px;">رابط مباشر وآمن 100% ✅</p>
+    </div>
     """
     
-    content = generate_content(prompt)
-    if not content: return
+    return header + md.markdown(article_html, extensions=['extra']) + buttons_html
 
-    # 5. تجميع المقال (استبدال الرمز ببطاقة المنتج)
-    content = content.replace("[PRODUCT_PLACEHOLDER]", product_html)
-    content = content.replace("```html", "").replace("```", "") # تنظيف
-
-    # إضافة صورة اللعبة والأزرار السفلية
-    final_html = f"""
-    <div style="text-align:center; margin-bottom: 20px;">
-        <img src="{game_icon}" alt="{game_title}" style="width: 100px; border-radius: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.1);">
-        <h2 style="color:#e17055; margin-top:10px;">{game_title}</h2>
-    </div>
-    
-    {content}
-    
-    <div style="display: flex; gap: 10px; margin-top: 30px;">
-        <a href="{AD_LINK}" target="_blank" style="flex:1; background:#27ae60; color:white; padding:12px; text-align:center; border-radius:50px; text-decoration:none; font-weight:bold;">🎁 هدية اللاعبين</a>
-        <a href="{AD_LINK}" target="_blank" style="flex:1; background:#2980b9; color:white; padding:12px; text-align:center; border-radius:50px; text-decoration:none; font-weight:bold;">💎 شحن جواهر</a>
-    </div>
-    """
-
-    # 6. النشر
+def post_to_blogger(title, content):
     creds = Credentials(None, refresh_token=REFRESH_TOKEN, client_id=CLIENT_ID, client_secret=CLIENT_SECRET, token_uri="https://oauth2.googleapis.com/token")
     service = build("blogger", "v3", credentials=creds)
-    
-    try:
-        blog = service.blogs().getByUrl(url=BLOG_URL).execute()
-        title = f"حل مشكلة {problem} في لعبة {game_title} 🔥"
-        body = {
-            "kind": "blogger#post",
-            "title": title,
-            "content": final_html,
-            "labels": ["Games", "Solutions", "Android"]
-        }
-        service.posts().insert(blogId=blog["id"], body=body).execute()
-        print(f"🚀 Published: {title}")
-        
-        # حفظ في السجل
-        history.append(game_title)
-        with open(HISTORY_FILE, "w", encoding="utf-8") as f:
-            json.dump(history[-100:], f, ensure_ascii=False)
-            
-    except Exception as e:
-        print(f"❌ Blogger Error: {e}")
+    blog_id = service.blogs().getByUrl(url=BLOG_URL).execute()["id"]
+    body = {"kind": "blogger#post", "title": title, "content": content, "labels": GAME_LABELS}
+    return service.posts().insert(blogId=blog_id, body=body, isDraft=False).execute()
 
 if __name__ == "__main__":
-    run_gaming_bot()
+    print("🎮 Starting Gaming Bot (Pro Version)...")
+    game_data = get_fresh_game()
+    if game_data:
+        print(f"📝 Generating review for: {game_data['title']}...")
+        article = ask_gemini_game_review(game_data)
+        if article:
+            lines = article.strip().split('\n')
+            title = lines[0].replace('#', '').replace('*', '').strip()
+            if len(title) < 5: title = f"تحميل لعبة {game_data['title']} مهكرة (شرح كامل)"
+            
+            final_html = build_game_post_html(game_data, article)
+            try:
+                res = post_to_blogger(title, final_html)
+                save_used_game(game_data['appId'])
+                print(f"🎉 PUBLISHED! URL: {res.get('url')}")
+            except Exception as e: print(f"❌ Publish Error: {e}")
+        else: print("❌ Content generation failed.")
+    else: print("❌ No game found.")
