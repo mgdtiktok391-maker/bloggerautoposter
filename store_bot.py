@@ -12,8 +12,7 @@ CLIENT_SECRET = os.environ["CLIENT_SECRET"]
 REFRESH_TOKEN = os.environ["REFRESH_TOKEN"]
 
 PRODUCTS_FILE = "products.json"
-AD_LINK_RIGHT = "https://otieu.com/4/10485502"
-AD_LINK_LEFT = "https://otieu.com/4/10485502"
+AD_LINK_GENERAL = "https://otieu.com/4/10485502"
 
 # =================== الدوال ===================
 
@@ -27,114 +26,119 @@ def load_products():
         return json.load(f)
 
 def generate_full_catalog_html(products):
-    # CSS وتصميم الصفحة (تصميم الشبكة Grid لمنتجين في السطر)
+    # التصميم الجديد لعرض 3 منتجات في السطر
     html_content = """
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap');
-        .store-container { font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; color: #333; max-width: 1200px; margin: 0 auto; }
+        .store-body { font-family: 'Cairo', sans-serif; direction: rtl; background: #f4f7f6; padding: 10px; }
         
-        /* Grid Layout for 2 products per row */
-        .products-grid {
+        .products-container {
             display: grid;
-            grid-template_columns: repeat(2, 1fr); /* عمودين متساويين */
-            gap: 20px; /* مسافة بين المنتجات */
-            margin-top: 30px;
+            grid-template-columns: repeat(3, 1fr); /* 3 أعمدة متساوية */
+            gap: 15px;
+            max-width: 1100px;
+            margin: 0 auto;
         }
 
-        .product-card { 
-            background: #fff; 
-            border: 1px solid #eee; 
-            border-radius: 15px; 
-            padding: 15px; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05); 
-            text-align: center; 
+        .product-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.08);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: 0.3s;
+            border: 1px solid #eee;
+        }
+        .product-card:hover { transform: translateY(-5px); }
+
+        .product-img {
+            width: 100%;
+            height: 160px;
+            object-fit: contain;
+            border-radius: 8px;
+            margin-bottom: 10px;
         }
 
-        .product-title { 
-            color: #2d3436; 
-            margin-bottom: 10px; 
-            font-size: 18px; 
-            font-weight: 900; 
-            line-height: 1.4;
-            height: 50px; /* توحيد ارتفاع العنوان */
+        .product-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin: 5px 0;
+            height: 40px;
             overflow: hidden;
+            line-height: 1.4;
         }
 
-        .product-img { 
-            width: 100%; 
-            height: 200px; /* تثبيت الارتفاع */
-            object-fit: contain; /* الحفاظ على أبعاد الصورة */
-            border-radius: 10px; 
-            margin: 10px 0; 
+        .product-desc {
+            font-size: 11px;
+            color: #7f8c8d;
+            height: 50px;
+            overflow: hidden;
+            margin-bottom: 10px;
         }
 
-        .product-desc { 
-            color: #636e72; 
-            font-size: 14px; 
-            line-height: 1.6; 
-            margin: 10px 0; 
-            text-align: right;
-            flex-grow: 1; /* لملء الفراغ المتبقي */
+        .buy-btn {
+            background: linear-gradient(45deg, #ff4757, #ff6b81);
+            color: #fff !important;
+            text-decoration: none;
+            padding: 8px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 8px;
         }
 
-        .buy-btn { 
-            display: block; 
-            width: 100%; 
-            background: linear-gradient(45deg, #ff9f43, #ee5253); 
-            color: white !important; 
-            padding: 10px 0; 
-            text-decoration: none; 
-            border-radius: 50px; 
-            font-weight: bold; 
-            font-size: 16px; 
-            margin-bottom: 10px; 
-            box-shadow: 0 4px 10px rgba(238, 82, 83, 0.3); 
-            transition: 0.3s; 
+        .ads-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5px;
         }
-        .buy-btn:hover { transform: translateY(-2px); }
 
-        .ads-container { display: flex; gap: 5px; justify-content: center; margin-top: 5px; }
-        .ad-btn { flex: 1; padding: 8px; border-radius: 8px; text-decoration: none; font-size: 12px; font-weight: bold; color: white !important; text-align: center; }
-        .ad-right { background: #00b894; }
-        .ad-left { background: #0984e3; }
+        .ad-btn {
+            font-size: 10px;
+            padding: 6px;
+            border-radius: 4px;
+            color: #fff !important;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+        }
+        .ad-r { background: #27ae60; }
+        .ad-l { background: #2980b9; }
 
-        /* جعلها منتج واحد في السطر للموبايل */
-        @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
+        /* التوافق مع الجوال */
+        @media (max-width: 850px) {
+            .products-container { grid-template-columns: repeat(2, 1fr); } /* منتجين في الجوال الكبير */
+        }
+        @media (max-width: 500px) {
+            .products-container { grid-template-columns: 1fr; } /* منتج واحد في الجوال الصغير */
         }
     </style>
     
-    <div class="store-container">
-        <div style="text-align:center; margin-bottom: 30px; padding: 20px; background: #f9f9f9; border-radius: 15px;">
-            <h1 style="color:#e17055; margin:0;">🔥 Loading Store 🔥</h1>
-            <p style="color:#777;">أفضل المنتجات التقنية والغريبة المختارة بعناية</p>
+    <div class="store-body">
+        <div style="text-align:center; padding: 20px 0;">
+            <h1 style="color:#2c3e50; font-size:24px;">💎 متجر العروض الحصرية 💎</h1>
+            <p style="color:#7f8c8d; font-size:14px;">أحدث الاختيارات الذكية من AliExpress</p>
         </div>
         
-        <div class="products-grid">
+        <div class="products-container">
     """
     
-    for product in products:
-        name = product.get('name', 'منتج مميز')
-        desc = product.get('description', '')
-        image = product.get('image', '')
-        link = product.get('link', '#')
-        
-        if not image: continue
-
+    for p in products:
         card = f"""
         <div class="product-card">
-            <h3 class="product-title">{name}</h3>
-            <img src="{image}" class="product-img" alt="{name}">
-            <p class="product-desc">{desc}</p>
-            <a href="{link}" target="_blank" class="buy-btn">🛒 اضغط للشراء (خصم خاص)</a>
-            <div class="ads-container">
-                <a href="{AD_LINK_RIGHT}" target="_blank" class="ad-btn ad-right">🎁 هدية المتجر</a>
-                <a href="{AD_LINK_LEFT}" target="_blank" class="ad-btn ad-left">💎 عروض اليوم</a>
+            <img src="{p['image']}" class="product-img" alt="{p['name']}">
+            <h3 class="product-title">{p['name']}</h3>
+            <p class="product-desc">{p['description']}</p>
+            
+            <a href="{p['link']}" target="_blank" class="buy-btn">🛒 اشترِ الآن</a>
+            
+            <div class="ads-grid">
+                <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-btn ad-r">🎁 هدية</a>
+                <a href="{AD_LINK_GENERAL}" target="_blank" class="ad-btn ad-l">💎 عرض</a>
             </div>
         </div>
         """
@@ -142,57 +146,32 @@ def generate_full_catalog_html(products):
 
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M")
     html_content += f"""
-        </div> <div style="text-align:center; margin-top:50px; color:#aaa; font-size:12px;">
-            Last Updated: {timestamp}
+        </div>
+        <div style="text-align:center; margin-top:40px; padding:20px; color:#bdc3c7; font-size:11px;">
+            Updated: {timestamp} | Loading Store © 2026
         </div>
     </div>
     """
     return html_content
 
 def update_store_page():
-    print("🛒 Store Bot (Grid Layout Mode) Starting...")
+    print("🛒 Starting Store Grid Update...")
     service = get_service()
-    
     products = load_products()
-    if not products:
-        print("❌ No products found in JSON file!")
-        return
-    print(f"📦 Loaded {len(products)} products.")
-
-    print("🔍 Finding Store Page...")
+    
     try:
         blog = service.blogs().getByUrl(url=BLOG_URL).execute()
         blog_id = blog["id"]
-        pages = service.pages().list(blogId=blog_id, fetchBodies=False).execute()
+        pages = service.pages().list(blogId=blog_id).execute()
         
-        store_page_id = None
-        store_page_title = None
+        target_page = next((p for p in pages['items'] if "store" in p['url'].lower() or "متجر" in p['title']), None)
         
-        if "items" in pages:
-            for page in pages['items']:
-                if "store" in page['url'].lower() or "متجر" in page['title']:
-                    store_page_id = page['id']
-                    store_page_title = page['title']
-                    break
-        
-        if not store_page_id:
-            print("❌ Store page not found! (Please create a page with 'store' in URL)")
-            return
-
-        print(f"✅ Found Page: {store_page_title} ({store_page_id})")
-
-        full_html = generate_full_catalog_html(products)
-        
-        body = {
-            "title": store_page_title,
-            "content": full_html
-        }
-        
-        service.pages().update(blogId=blog_id, pageId=store_page_id, body=body).execute()
-        print("🚀 Store Page Updated Successfully!")
-        
+        if target_page:
+            body = {"title": target_page['title'], "content": generate_full_catalog_html(products)}
+            service.pages().update(blogId=blog_id, pageId=target_page['id'], body=body).execute()
+            print("🚀 Store Grid Updated Successfully (3 Items per row)!")
     except Exception as e:
-        print(f"❌ Error details: {e}")
+        print(f"❌ Error: {e}")
 
 if __name__ == "__main__":
     update_store_page()
