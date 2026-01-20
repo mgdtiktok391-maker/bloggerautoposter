@@ -22,3 +22,4 @@ com.microsoft.launcher
 com.mxtech.videoplayer.ad
 ginlemon.iconpackstudio
 com.NewFolderGames.IAmSecurirty
+homeworkout.homeworkouts.noequipment
