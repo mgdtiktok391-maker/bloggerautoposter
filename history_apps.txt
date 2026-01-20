@@ -24,3 +24,4 @@ ginlemon.iconpackstudio
 com.NewFolderGames.IAmSecurirty
 homeworkout.homeworkouts.noequipment
 com.google.android.apps.photos
+ru.zdevs.zarchiver
