@@ -28,3 +28,4 @@ ru.zdevs.zarchiver
 com.rarlab.rar
 com.bng.calculator
 com.planetfitness
+com.tduk.cacheclean
