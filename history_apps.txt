@@ -27,3 +27,4 @@ com.google.android.apps.photos
 ru.zdevs.zarchiver
 com.rarlab.rar
 com.bng.calculator
+com.planetfitness
