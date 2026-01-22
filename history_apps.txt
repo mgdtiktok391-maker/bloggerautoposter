@@ -32,3 +32,4 @@ com.tduk.cacheclean
 com.adobe.reader
 com.iwi.toolevolution
 hn.zip.unzip.compressfile.extractfile.compressfolder
+com.funkopd.iconpack
