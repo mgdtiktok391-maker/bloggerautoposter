@@ -35,3 +35,4 @@ hn.zip.unzip.compressfile.extractfile.compressfolder
 com.funkopd.iconpack
 com.kvadgroup.photostudio_pro
 com.atomczak.notepat
+com.digibites.accubattery
