@@ -37,3 +37,4 @@ com.kvadgroup.photostudio_pro
 com.atomczak.notepat
 com.digibites.accubattery
 com.adrianmejia.calculator
+com.scannerradio
