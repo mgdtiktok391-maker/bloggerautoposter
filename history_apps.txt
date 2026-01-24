@@ -39,3 +39,4 @@ com.digibites.accubattery
 com.adrianmejia.calculator
 com.scannerradio
 com.virginpulse.virginpulse
+com.macropinch.pearl
