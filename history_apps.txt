@@ -40,3 +40,4 @@ com.adrianmejia.calculator
 com.scannerradio
 com.virginpulse.virginpulse
 com.macropinch.pearl
+com.samsung.android.app.notes
