@@ -43,3 +43,4 @@ com.macropinch.pearl
 com.samsung.android.app.notes
 com.touchfield.appbackuprestore
 com.cute.emoji.battery.icon.widget.customize.emojisticker.statusbar
+com.erudite.translator
