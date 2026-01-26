@@ -47,3 +47,4 @@ com.erudite.translator
 com.free.vpn.super.hotspot.open
 com.fast.free.unblock.secure.vpn
 com.ddu.security
+com.inotesapp.inotes
