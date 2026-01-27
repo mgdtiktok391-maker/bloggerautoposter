@@ -50,3 +50,4 @@ com.ddu.security
 com.inotesapp.inotes
 myfiles.filemanager.fileexplorer.cleaner
 com.easy.all.language.translate
+com.google.android.apps.nbu.files
