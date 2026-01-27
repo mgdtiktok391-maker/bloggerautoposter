@@ -49,3 +49,4 @@ com.fast.free.unblock.secure.vpn
 com.ddu.security
 com.inotesapp.inotes
 myfiles.filemanager.fileexplorer.cleaner
+com.easy.all.language.translate
