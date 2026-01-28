@@ -55,3 +55,4 @@ com.hitrolab.audioeditor
 com.audiomack
 ai.socialapps.speakmaster
 com.jndapp.line.x.iconpack
+nl.appyhapps.healthsync
