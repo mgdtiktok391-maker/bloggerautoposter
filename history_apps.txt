@@ -52,3 +52,4 @@ myfiles.filemanager.fileexplorer.cleaner
 com.easy.all.language.translate
 com.google.android.apps.nbu.files
 com.hitrolab.audioeditor
+com.audiomack
