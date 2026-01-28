@@ -54,3 +54,4 @@ com.google.android.apps.nbu.files
 com.hitrolab.audioeditor
 com.audiomack
 ai.socialapps.speakmaster
+com.jndapp.line.x.iconpack
