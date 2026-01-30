@@ -61,3 +61,4 @@ zip.unzip.zipextractor.rarextract.filemanager.zipfile
 com.myfitnesspal.android
 com.playstrom.bramaker
 com.teacapps.barcodescanner
+notepad.note.notas.notes.notizen
