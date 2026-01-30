@@ -62,3 +62,4 @@ com.myfitnesspal.android
 com.playstrom.bramaker
 com.teacapps.barcodescanner
 notepad.note.notas.notes.notizen
+com.primeziprar.zipextractor.rarextractor.unzip
