@@ -66,3 +66,4 @@ com.primeziprar.zipextractor.rarextractor.unzip
 audioeditor.musiceditor.soundeditor.songeditor
 com.piriform.ccleaner
 com.sew.ocwut
+backup.restore.contacts.sms
