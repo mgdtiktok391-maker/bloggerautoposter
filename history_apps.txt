@@ -64,3 +64,4 @@ com.teacapps.barcodescanner
 notepad.note.notas.notes.notizen
 com.primeziprar.zipextractor.rarextractor.unzip
 audioeditor.musiceditor.soundeditor.songeditor
+com.piriform.ccleaner
