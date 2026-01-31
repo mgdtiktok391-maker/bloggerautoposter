@@ -67,3 +67,4 @@ audioeditor.musiceditor.soundeditor.songeditor
 com.piriform.ccleaner
 com.sew.ocwut
 backup.restore.contacts.sms
+com.intsig.camscanner
