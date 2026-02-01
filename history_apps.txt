@@ -68,3 +68,4 @@ com.piriform.ccleaner
 com.sew.ocwut
 backup.restore.contacts.sms
 com.intsig.camscanner
+com.adobe.scan.android
