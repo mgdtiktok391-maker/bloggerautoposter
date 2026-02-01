@@ -71,3 +71,4 @@ com.intsig.camscanner
 com.adobe.scan.android
 com.onnex.weardocspdf
 com.codeway.aitutor
+con.hotspot.vpn.free.master
