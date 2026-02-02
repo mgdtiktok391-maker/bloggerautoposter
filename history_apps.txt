@@ -75,3 +75,4 @@ con.hotspot.vpn.free.master
 com.camerasideas.instashot
 pdf.reader.pdfviewer.pdfeditor
 com.apple.android.music
+com.google.android.inputmethod.latin
