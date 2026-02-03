@@ -77,3 +77,4 @@ pdf.reader.pdfviewer.pdfeditor
 com.apple.android.music
 com.google.android.inputmethod.latin
 com.google.android.apps.subscriptions.red
+ch.smalltech.battery.free
