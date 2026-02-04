@@ -81,3 +81,4 @@ ch.smalltech.battery.free
 com.jndapp.cartoon.crayon.iconpack
 com.touchtype.swiftkey
 com.camerasideas.trimmer
+com.duolingo
