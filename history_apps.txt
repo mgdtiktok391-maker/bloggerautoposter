@@ -84,3 +84,4 @@ com.camerasideas.trimmer
 com.duolingo
 com.cxinventor.file.explorer
 com.spotify.music
+com.getmimo
