@@ -85,3 +85,4 @@ com.duolingo
 com.cxinventor.file.explorer
 com.spotify.music
 com.getmimo
+org.lds.ldstools
