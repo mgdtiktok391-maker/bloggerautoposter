@@ -87,3 +87,4 @@ com.spotify.music
 com.getmimo
 org.lds.ldstools
 videoeditor.videomaker.videoeditorforyoutube
+com.fiton.android
