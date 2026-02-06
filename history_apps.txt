@@ -89,3 +89,4 @@ org.lds.ldstools
 videoeditor.videomaker.videoeditorforyoutube
 com.fiton.android
 org.videolan.vlc
+com.internet.tvbrowser
