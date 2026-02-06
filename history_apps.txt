@@ -90,3 +90,4 @@ videoeditor.videomaker.videoeditorforyoutube
 com.fiton.android
 org.videolan.vlc
 com.internet.tvbrowser
+com.audible.application
