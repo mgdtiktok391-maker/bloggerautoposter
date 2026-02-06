@@ -91,3 +91,4 @@ com.fiton.android
 org.videolan.vlc
 com.internet.tvbrowser
 com.audible.application
+org.mozilla.firefox
