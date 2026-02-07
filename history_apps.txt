@@ -94,3 +94,4 @@ com.audible.application
 org.mozilla.firefox
 com.socialnmobile.dictapps.notepad.color.note
 com.flashkeyboard.leds
+com.UtilityBusinessMedia.UtilityFleet
