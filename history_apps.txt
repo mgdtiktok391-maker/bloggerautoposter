@@ -97,3 +97,4 @@ com.flashkeyboard.leds
 com.UtilityBusinessMedia.UtilityFleet
 fitness.online.app
 com.brave.browser
+files.fileexplorer.filemanager
