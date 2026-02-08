@@ -99,3 +99,4 @@ fitness.online.app
 com.brave.browser
 files.fileexplorer.filemanager
 ginlemon.flowerfree
+com.soundcloud.android
