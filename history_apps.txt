@@ -101,3 +101,4 @@ files.fileexplorer.filemanager
 ginlemon.flowerfree
 com.soundcloud.android
 com.unacademy.antonio
+net.hubalek.android.reborn.beta
