@@ -100,3 +100,4 @@ com.brave.browser
 files.fileexplorer.filemanager
 ginlemon.flowerfree
 com.soundcloud.android
+com.unacademy.antonio
