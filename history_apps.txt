@@ -103,3 +103,4 @@ com.soundcloud.android
 com.unacademy.antonio
 net.hubalek.android.reborn.beta
 com.starmakerinteractive.starmaker
+com.fast.free.unblock.thunder.vpn
