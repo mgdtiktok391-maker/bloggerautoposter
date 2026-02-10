@@ -105,3 +105,4 @@ net.hubalek.android.reborn.beta
 com.starmakerinteractive.starmaker
 com.fast.free.unblock.thunder.vpn
 pdf.pdfreader.viewer.editor.free
+com.welltory.client.android
