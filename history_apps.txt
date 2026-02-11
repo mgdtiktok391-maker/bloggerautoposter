@@ -107,3 +107,4 @@ com.fast.free.unblock.thunder.vpn
 pdf.pdfreader.viewer.editor.free
 com.welltory.client.android
 imagetopdf.pdfconverter.jpgtopdf.pdfeditor
+easynotes.notes.notepad.notebook.privatenotes.note
