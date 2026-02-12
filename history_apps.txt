@@ -112,3 +112,4 @@ com.google.android.apps.photosgo
 free.vpn.unblock.proxy.turbovpn
 com.picsart.studio
 alldocumentreader.office.viewer.filereader
+com.mi.android.globalFileexplorer
