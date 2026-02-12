@@ -111,3 +111,4 @@ easynotes.notes.notepad.notebook.privatenotes.note
 com.google.android.apps.photosgo
 free.vpn.unblock.proxy.turbovpn
 com.picsart.studio
+alldocumentreader.office.viewer.filereader
