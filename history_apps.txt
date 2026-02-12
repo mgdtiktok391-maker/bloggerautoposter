@@ -114,3 +114,4 @@ com.picsart.studio
 alldocumentreader.office.viewer.filereader
 com.mi.android.globalFileexplorer
 com.adobe.psmobile
+cool.fonts.symbol.keyboard.custom.fancy.text.editor
