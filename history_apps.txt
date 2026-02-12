@@ -113,3 +113,4 @@ free.vpn.unblock.proxy.turbovpn
 com.picsart.studio
 alldocumentreader.office.viewer.filereader
 com.mi.android.globalFileexplorer
+com.adobe.psmobile
