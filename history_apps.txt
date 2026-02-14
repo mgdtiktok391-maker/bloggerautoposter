@@ -120,3 +120,4 @@ musicplayer.musicapps.music.mp3player
 deezer.android.app
 com.playit.videoplayer
 com.lonelycatgames.Xplore
+hsa.free.files.compressor.unarchiver
