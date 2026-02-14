@@ -119,3 +119,4 @@ com.samsung.android.wear.calculator
 musicplayer.musicapps.music.mp3player
 deezer.android.app
 com.playit.videoplayer
+com.lonelycatgames.Xplore
