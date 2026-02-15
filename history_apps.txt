@@ -124,3 +124,4 @@ hsa.free.files.compressor.unarchiver
 com.creativepixels.blaze.backless.iconpack.app
 com.suno.android
 com.videoplayer.arcplayer
+com.duolingo.literacy
