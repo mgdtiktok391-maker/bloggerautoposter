@@ -126,3 +126,4 @@ com.suno.android
 com.videoplayer.arcplayer
 com.duolingo.literacy
 steptracker.healthandfitness.walkingtracker.pedometer
+cn.wps.moffice_eng
