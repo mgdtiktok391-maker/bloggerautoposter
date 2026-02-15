@@ -125,3 +125,4 @@ com.creativepixels.blaze.backless.iconpack.app
 com.suno.android
 com.videoplayer.arcplayer
 com.duolingo.literacy
+steptracker.healthandfitness.walkingtracker.pedometer
