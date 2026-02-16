@@ -130,3 +130,4 @@ cn.wps.moffice_eng
 kr.aboy.tools2
 com.wallpaperscraft.wallpaper
 com.miui.calculator
+air.com.rosettastone.mobile.CoursePlayer
