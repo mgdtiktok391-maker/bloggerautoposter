@@ -132,3 +132,4 @@ com.wallpaperscraft.wallpaper
 com.miui.calculator
 air.com.rosettastone.mobile.CoursePlayer
 com.shazam.android
+com.komorebi.memo
