@@ -131,3 +131,4 @@ kr.aboy.tools2
 com.wallpaperscraft.wallpaper
 com.miui.calculator
 air.com.rosettastone.mobile.CoursePlayer
+com.shazam.android
