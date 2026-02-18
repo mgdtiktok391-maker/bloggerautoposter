@@ -134,3 +134,4 @@ air.com.rosettastone.mobile.CoursePlayer
 com.shazam.android
 com.komorebi.memo
 com.notes.todolist.notebook.checklist.notepad.android
+com.pdfeditor.pdfeditorandriod
