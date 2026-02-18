@@ -136,3 +136,4 @@ com.komorebi.memo
 com.notes.todolist.notebook.checklist.notepad.android
 com.pdfeditor.pdfeditorandriod
 org.brilliant.android
+com.eastcat.autosync.full
