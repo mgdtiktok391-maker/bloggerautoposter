@@ -144,3 +144,4 @@ com.selabs.speak
 bitpit.launcher
 com.avg.cleaner
 com.dertefter.wearfiles
+com.thegrizzlylabs.geniusscan.free
