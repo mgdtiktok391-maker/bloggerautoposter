@@ -145,3 +145,4 @@ bitpit.launcher
 com.avg.cleaner
 com.dertefter.wearfiles
 com.thegrizzlylabs.geniusscan.free
+com.teslacoilsw.launcher.prime
