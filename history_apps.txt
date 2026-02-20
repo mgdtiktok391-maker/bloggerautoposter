@@ -143,3 +143,4 @@ com.overdevs.at4k
 com.selabs.speak
 bitpit.launcher
 com.avg.cleaner
+com.dertefter.wearfiles
