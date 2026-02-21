@@ -147,3 +147,4 @@ com.dertefter.wearfiles
 com.thegrizzlylabs.geniusscan.free
 com.teslacoilsw.launcher.prime
 com.zip.unzip.zipextractor.raropener.zipfile
+com.pcmehanik.smarttoolbox
