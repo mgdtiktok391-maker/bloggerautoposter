@@ -151,3 +151,4 @@ com.pcmehanik.smarttoolbox
 apps.r.calculator
 com.jc.ultra
 com.kmplayer
+com.hrd.vocabulary
