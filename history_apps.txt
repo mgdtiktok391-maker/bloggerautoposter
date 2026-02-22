@@ -150,3 +150,4 @@ com.zip.unzip.zipextractor.raropener.zipfile
 com.pcmehanik.smarttoolbox
 apps.r.calculator
 com.jc.ultra
+com.kmplayer
