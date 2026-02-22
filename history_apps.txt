@@ -153,3 +153,4 @@ com.jc.ultra
 com.kmplayer
 com.hrd.vocabulary
 pl.solidexplorer2
+com.microsoft.office.onenote
