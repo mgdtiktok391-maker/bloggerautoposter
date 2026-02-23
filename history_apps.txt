@@ -156,3 +156,4 @@ pl.solidexplorer2
 com.microsoft.office.onenote
 com.dywx.larkplayer
 pdfreader.pdfviewer.officetool.pdfscanner
+org.courville.nova
