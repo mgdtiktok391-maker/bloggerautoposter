@@ -154,3 +154,4 @@ com.kmplayer
 com.hrd.vocabulary
 pl.solidexplorer2
 com.microsoft.office.onenote
+com.dywx.larkplayer
