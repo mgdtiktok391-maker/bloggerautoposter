@@ -160,3 +160,4 @@ org.courville.nova
 com.androxus.batterymeter
 phonecleaner.junkfiles.appmanager.duplicatefileremover.applock
 com.indymobileapp.document.scanner
+com.threedrop.three_drop
