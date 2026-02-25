@@ -164,3 +164,4 @@ com.threedrop.three_drop
 translate.voice.translator.camera.translation.free.all.language.app
 com.babbel.mobile.android.en
 police.scanner.radio.broadcastify.citizen
+com.nexstreaming.app.kinemasterfree
