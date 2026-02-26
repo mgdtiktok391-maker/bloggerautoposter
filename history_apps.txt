@@ -167,3 +167,4 @@ police.scanner.radio.broadcastify.citizen
 com.nexstreaming.app.kinemasterfree
 com.lb.backup_plus
 com.bandlab.bandlab
+com.transsion.XOSLauncher
