@@ -168,3 +168,4 @@ com.nexstreaming.app.kinemasterfree
 com.lb.backup_plus
 com.bandlab.bandlab
 com.transsion.XOSLauncher
+io.gonative.android.aorrro
