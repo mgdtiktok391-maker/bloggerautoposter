@@ -169,3 +169,4 @@ com.lb.backup_plus
 com.bandlab.bandlab
 com.transsion.XOSLauncher
 io.gonative.android.aorrro
+com.geekyouup.android.widgets.battery
