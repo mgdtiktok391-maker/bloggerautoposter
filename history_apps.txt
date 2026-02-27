@@ -173,3 +173,4 @@ com.geekyouup.android.widgets.battery
 com.dropbox.android
 com.voice.ai.on.translate
 com.foxit.mobile.pdf.lite
+com.pradhyu.alltoolseveryutility
