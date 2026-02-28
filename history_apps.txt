@@ -174,3 +174,4 @@ com.dropbox.android
 com.voice.ai.on.translate
 com.foxit.mobile.pdf.lite
 com.pradhyu.alltoolseveryutility
+com.openai.chatgpt
