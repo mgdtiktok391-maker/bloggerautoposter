@@ -180,3 +180,4 @@ quick.browser.secure
 dev.narikdesign.nothingness
 com.easybrain.make.music
 com.facemoji.lite
+net.zedge.android
