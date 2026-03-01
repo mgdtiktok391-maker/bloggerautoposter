@@ -178,3 +178,4 @@ com.openai.chatgpt
 com.RanaSourav.android.notes
 quick.browser.secure
 dev.narikdesign.nothingness
+com.easybrain.make.music
