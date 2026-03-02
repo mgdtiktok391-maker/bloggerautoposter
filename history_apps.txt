@@ -182,3 +182,4 @@ com.easybrain.make.music
 com.facemoji.lite
 net.zedge.android
 com.a0soft.gphone.acc.free
+com.lookout
