@@ -185,3 +185,4 @@ com.a0soft.gphone.acc.free
 com.lookout
 com.hld.anzenbokusucal
 ch.protonvpn.android
+gallery.photomanager.picturegalleryapp.imagegallery
