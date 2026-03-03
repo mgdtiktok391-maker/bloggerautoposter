@@ -186,3 +186,4 @@ com.lookout
 com.hld.anzenbokusucal
 ch.protonvpn.android
 gallery.photomanager.picturegalleryapp.imagegallery
+com.extreamsd.usbaudioplayerpro
