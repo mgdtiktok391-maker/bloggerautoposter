@@ -189,3 +189,4 @@ gallery.photomanager.picturegalleryapp.imagegallery
 com.extreamsd.usbaudioplayerpro
 com.psiphon3.subscription
 com.ttxapps.autosync
+com.sololearn
