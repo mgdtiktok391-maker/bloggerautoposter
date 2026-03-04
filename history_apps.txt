@@ -191,3 +191,4 @@ com.psiphon3.subscription
 com.ttxapps.autosync
 com.sololearn
 com.yousx.thetoolsapp
+com.paget96.batteryguru
