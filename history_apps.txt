@@ -190,3 +190,4 @@ com.extreamsd.usbaudioplayerpro
 com.psiphon3.subscription
 com.ttxapps.autosync
 com.sololearn
+com.yousx.thetoolsapp
