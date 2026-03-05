@@ -194,3 +194,4 @@ com.yousx.thetoolsapp
 com.paget96.batteryguru
 com.hyperthought.lingolegend
 com.maxmpz.audioplayer
+com.fitbit.FitbitMobile
