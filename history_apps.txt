@@ -195,3 +195,4 @@ com.paget96.batteryguru
 com.hyperthought.lingolegend
 com.maxmpz.audioplayer
 com.fitbit.FitbitMobile
+softin.my.fast.fitness
