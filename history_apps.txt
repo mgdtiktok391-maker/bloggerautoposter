@@ -193,3 +193,4 @@ com.sololearn
 com.yousx.thetoolsapp
 com.paget96.batteryguru
 com.hyperthought.lingolegend
+com.maxmpz.audioplayer
