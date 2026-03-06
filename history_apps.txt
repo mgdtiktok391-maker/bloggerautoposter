@@ -198,3 +198,4 @@ com.fitbit.FitbitMobile
 softin.my.fast.fitness
 com.opera.browser
 epic.mychart.android
+cz.hipercalc
