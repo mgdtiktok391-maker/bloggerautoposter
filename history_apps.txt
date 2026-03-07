@@ -201,3 +201,4 @@ epic.mychart.android
 cz.hipercalc
 com.freevpnplanet
 com.creativepixels.ravendark.iconpack.app
+com.google.ar.lens
