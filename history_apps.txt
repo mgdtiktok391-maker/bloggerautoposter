@@ -206,3 +206,4 @@ kika.emoji.keyboard.teclados.clavier
 com.google.android.apps.labs.language.tailwind
 com.bryanf.tool
 com.google.android.apps.youtube.kids
+com.appxy.tinyscanner
