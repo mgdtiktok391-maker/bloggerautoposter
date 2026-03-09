@@ -210,3 +210,4 @@ com.appxy.tinyscanner
 com.avast.android.mobilesecurity
 com.android.chrome
 ru.zdevs.zarchiver.pro
+com.appsgenz.launcherios.pro
