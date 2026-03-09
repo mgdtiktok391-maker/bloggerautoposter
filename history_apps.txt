@@ -208,3 +208,4 @@ com.bryanf.tool
 com.google.android.apps.youtube.kids
 com.appxy.tinyscanner
 com.avast.android.mobilesecurity
+com.android.chrome
