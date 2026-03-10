@@ -213,3 +213,4 @@ ru.zdevs.zarchiver.pro
 com.appsgenz.launcherios.pro
 com.google.android.apps.wallpaper
 com.italiano.simplyadaptive
+org.player
