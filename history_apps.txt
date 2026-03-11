@@ -218,3 +218,4 @@ com.canva.editor
 com.sew.cus
 com.rhmsoft.pulsar
 pdf.tap.scanner
+com.udemy.android
