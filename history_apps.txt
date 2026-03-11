@@ -215,3 +215,4 @@ com.google.android.apps.wallpaper
 com.italiano.simplyadaptive
 org.player
 com.canva.editor
+com.sew.cus
