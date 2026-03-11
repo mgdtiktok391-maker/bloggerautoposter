@@ -216,3 +216,4 @@ com.italiano.simplyadaptive
 org.player
 com.canva.editor
 com.sew.cus
+com.rhmsoft.pulsar
