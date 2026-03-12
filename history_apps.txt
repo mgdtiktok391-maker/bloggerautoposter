@@ -220,3 +220,4 @@ com.rhmsoft.pulsar
 pdf.tap.scanner
 com.udemy.android
 com.avast.android.cleaner
+com.digitalchemy.calculator.freedecimal
