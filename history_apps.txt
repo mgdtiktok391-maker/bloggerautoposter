@@ -223,3 +223,4 @@ com.avast.android.cleaner
 com.digitalchemy.calculator.freedecimal
 com.mobile.simplilearn
 com.wsandroid.suite
+com.instagram.basel
