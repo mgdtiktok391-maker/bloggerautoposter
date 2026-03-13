@@ -225,3 +225,4 @@ com.mobile.simplilearn
 com.wsandroid.suite
 com.instagram.basel
 com.Project100Pi.themusicplayer
+com.jndapp.linex.white.iconpack
