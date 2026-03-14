@@ -227,3 +227,4 @@ com.instagram.basel
 com.Project100Pi.themusicplayer
 com.jndapp.linex.white.iconpack
 com.linkedin.android.learning
+loseweightapp.loseweightappforwomen.womenworkoutathome
