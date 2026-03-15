@@ -232,3 +232,4 @@ com.bitdefender.security
 kr.aboy.tools
 com.microsoft.skydrive
 com.transsion.magicshow
+com.zhiliaoapp.musically
