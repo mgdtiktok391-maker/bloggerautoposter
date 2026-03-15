@@ -234,3 +234,4 @@ com.microsoft.skydrive
 com.transsion.magicshow
 com.zhiliaoapp.musically
 com.cv.docscanner
+com.popularapp.thirtydayfitnesschallenge
