@@ -233,3 +233,4 @@ kr.aboy.tools
 com.microsoft.skydrive
 com.transsion.magicshow
 com.zhiliaoapp.musically
+com.cv.docscanner
