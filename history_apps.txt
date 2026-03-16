@@ -237,3 +237,4 @@ com.cv.docscanner
 com.popularapp.thirtydayfitnesschallenge
 com.guavahealth.app
 com.symantec.cleansweep
+com.calculator.hideu
