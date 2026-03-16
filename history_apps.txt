@@ -236,3 +236,4 @@ com.zhiliaoapp.musically
 com.cv.docscanner
 com.popularapp.thirtydayfitnesschallenge
 com.guavahealth.app
+com.symantec.cleansweep
