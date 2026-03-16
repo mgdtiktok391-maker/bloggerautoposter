@@ -238,3 +238,4 @@ com.popularapp.thirtydayfitnesschallenge
 com.guavahealth.app
 com.symantec.cleansweep
 com.calculator.hideu
+photo.editor.photoeditor.photoeditorpro
