@@ -239,3 +239,4 @@ com.guavahealth.app
 com.symantec.cleansweep
 com.calculator.hideu
 photo.editor.photoeditor.photoeditorpro
+fileextractor.unzip.archiver.rarfile
