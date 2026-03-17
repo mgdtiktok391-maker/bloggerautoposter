@@ -240,3 +240,4 @@ com.symantec.cleansweep
 com.calculator.hideu
 photo.editor.photoeditor.photoeditorpro
 fileextractor.unzip.archiver.rarfile
+com.Aesthetic.Wallpaper.High.Definition.Apps
