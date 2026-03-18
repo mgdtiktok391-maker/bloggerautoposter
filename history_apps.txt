@@ -244,3 +244,4 @@ com.Aesthetic.Wallpaper.High.Definition.Apps
 com.microsoft.emmx
 com.xodo.pdf.reader
 com.metago.astro
+com.google.android.apps.bard
