@@ -250,3 +250,4 @@ com.learnprogramming.codecamp
 app.olauncher
 com.security.xvpn.z35kb
 com.antivirus
+com.snitl.omnitools
