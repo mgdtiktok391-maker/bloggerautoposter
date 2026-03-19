@@ -248,3 +248,4 @@ com.google.android.apps.bard
 com.appprivee.connect
 com.learnprogramming.codecamp
 app.olauncher
+com.security.xvpn.z35kb
