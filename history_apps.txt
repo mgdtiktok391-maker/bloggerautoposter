@@ -254,3 +254,4 @@ com.snitl.omnitools
 com.getsomeheadspace.android
 cleaner.antivirus.cleaner.virus.clean.vpn
 com.bpmobile.iscanner.free
+com.oneapps.batteryone
