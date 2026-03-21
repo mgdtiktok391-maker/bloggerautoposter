@@ -257,3 +257,4 @@ com.bpmobile.iscanner.free
 com.oneapps.batteryone
 com.mapmyfitness.android2
 com.aspiro.tidal
+com.cerdillac.filmmaker
