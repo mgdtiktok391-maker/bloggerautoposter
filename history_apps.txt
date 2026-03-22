@@ -262,3 +262,4 @@ com.nordvpn.android
 com.themesonfire.iconpack.taco_taco.paid
 com.photoroom.app
 com.amazon.avod.thirdpartyclient
+com.rz.night.player
