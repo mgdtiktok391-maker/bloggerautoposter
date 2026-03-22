@@ -259,3 +259,4 @@ com.mapmyfitness.android2
 com.aspiro.tidal
 com.cerdillac.filmmaker
 com.nordvpn.android
+com.themesonfire.iconpack.taco_taco.paid
