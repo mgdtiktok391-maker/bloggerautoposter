@@ -265,3 +265,4 @@ com.amazon.avod.thirdpartyclient
 com.rz.night.player
 com.sec.android.app.myfiles
 com.datacamp
+com.larkvideo.player
