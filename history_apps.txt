@@ -266,3 +266,4 @@ com.rz.night.player
 com.sec.android.app.myfiles
 com.datacamp
 com.larkvideo.player
+com.backdrops.wallpapers
