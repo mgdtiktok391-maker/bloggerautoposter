@@ -267,3 +267,4 @@ com.sec.android.app.myfiles
 com.datacamp
 com.larkvideo.player
 com.backdrops.wallpapers
+com.dolby.dolby234
