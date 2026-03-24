@@ -269,3 +269,4 @@ com.larkvideo.player
 com.backdrops.wallpapers
 com.dolby.dolby234
 com.transsion.hilauncher
+menloseweight.loseweightappformen.weightlossformen
