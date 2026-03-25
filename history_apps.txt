@@ -271,3 +271,4 @@ com.dolby.dolby234
 com.transsion.hilauncher
 menloseweight.loseweightappformen.weightlossformen
 advanced.scientific.calculator.calc991.plus
+com.nra.flyermaker
