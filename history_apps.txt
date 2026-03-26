@@ -275,3 +275,4 @@ com.nra.flyermaker
 com.mobisystems.fileman
 notion.id
 com.touchtype.swiftkey.beta
+com.frontrow.vlog
