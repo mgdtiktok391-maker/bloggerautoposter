@@ -278,3 +278,4 @@ com.touchtype.swiftkey.beta
 com.frontrow.vlog
 com.hevy
 com.gombosdev.ampere
+org.malwarebytes.antimalware
