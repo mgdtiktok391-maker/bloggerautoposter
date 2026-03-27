@@ -277,3 +277,4 @@ notion.id
 com.touchtype.swiftkey.beta
 com.frontrow.vlog
 com.hevy
+com.gombosdev.ampere
