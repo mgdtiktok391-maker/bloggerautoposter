@@ -283,3 +283,4 @@ ai.note.notepad.memo.journal.freenote
 se.perigee.android.seven
 com.projectfluffy.icons
 com.unvoid.borealis
+com.genie9.gcloudbackup
