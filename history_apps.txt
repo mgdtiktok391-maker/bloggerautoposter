@@ -280,3 +280,4 @@ com.hevy
 com.gombosdev.ampere
 org.malwarebytes.antimalware
 ai.note.notepad.memo.journal.freenote
+se.perigee.android.seven
