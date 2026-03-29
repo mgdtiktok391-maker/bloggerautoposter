@@ -284,3 +284,4 @@ se.perigee.android.seven
 com.projectfluffy.icons
 com.unvoid.borealis
 com.genie9.gcloudbackup
+org.edx.mobile
