@@ -286,3 +286,4 @@ com.unvoid.borealis
 com.genie9.gcloudbackup
 org.edx.mobile
 com.expressvpn.vpn
+com.pandads.livescore
