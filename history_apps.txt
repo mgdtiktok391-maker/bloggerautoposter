@@ -285,3 +285,4 @@ com.projectfluffy.icons
 com.unvoid.borealis
 com.genie9.gcloudbackup
 org.edx.mobile
+com.expressvpn.vpn
