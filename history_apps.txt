@@ -289,3 +289,4 @@ com.expressvpn.vpn
 com.pandads.livescore
 com.document.manager.filedocumentmanager
 com.ovz.carscanner
+com.esuper.file.explorer
