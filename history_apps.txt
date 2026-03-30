@@ -288,3 +288,4 @@ org.edx.mobile
 com.expressvpn.vpn
 com.pandads.livescore
 com.document.manager.filedocumentmanager
+com.ovz.carscanner
