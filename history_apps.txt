@@ -290,3 +290,4 @@ com.pandads.livescore
 com.document.manager.filedocumentmanager
 com.ovz.carscanner
 com.esuper.file.explorer
+com.amazon.clouddrive.photos
