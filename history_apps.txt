@@ -293,3 +293,4 @@ com.esuper.file.explorer
 com.amazon.clouddrive.photos
 com.media.music.mp3.musicplayer
 com.danfoss.magnetictool
+com.radio.pocketfm
