@@ -291,3 +291,4 @@ com.document.manager.filedocumentmanager
 com.ovz.carscanner
 com.esuper.file.explorer
 com.amazon.clouddrive.photos
+com.media.music.mp3.musicplayer
