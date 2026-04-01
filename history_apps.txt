@@ -297,3 +297,4 @@ com.radio.pocketfm
 com.storage.androidcleaner
 com.busuu.android.enc
 com.gww.km
+app.jumpjumpvpn.jumpjumpvpn
