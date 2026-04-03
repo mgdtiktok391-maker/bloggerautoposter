@@ -304,3 +304,4 @@ com.UCMobile.intl
 com.avira.android
 org.readera
 com.clagt.ytool
+com.clearchannel.iheartradio.controller
