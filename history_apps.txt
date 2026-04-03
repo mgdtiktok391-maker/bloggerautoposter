@@ -302,3 +302,4 @@ com.quvideo.xiaoying
 com.mmm.trebelmusic
 com.UCMobile.intl
 com.avira.android
+org.readera
