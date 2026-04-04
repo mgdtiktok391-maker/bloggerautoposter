@@ -306,3 +306,4 @@ org.readera
 com.clagt.ytool
 com.clearchannel.iheartradio.controller
 com.symantec.mobilesecurity
+com.rare.wallpapers
