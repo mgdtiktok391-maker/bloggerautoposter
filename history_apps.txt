@@ -308,3 +308,4 @@ com.clearchannel.iheartradio.controller
 com.symantec.mobilesecurity
 com.rare.wallpapers
 org.torproject.torbrowser
+all.in.one.calculator
