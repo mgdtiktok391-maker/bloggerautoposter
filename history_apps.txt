@@ -313,3 +313,4 @@ com.zaz.translate
 com.strava
 za.kilowatch.ultimatefilemanager
 com.translate.talkingtranslator
+com.magix.android.mmjam
