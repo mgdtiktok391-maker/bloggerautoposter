@@ -311,3 +311,4 @@ org.torproject.torbrowser
 all.in.one.calculator
 com.zaz.translate
 com.strava
+za.kilowatch.ultimatefilemanager
