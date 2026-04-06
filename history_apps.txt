@@ -316,3 +316,4 @@ com.translate.talkingtranslator
 com.magix.android.mmjam
 net.wllppr.kawaii_aesthetic_wallpaper
 com.hartvig_develop.util_master
+com.rarextractor.zipopener.unzip.unrar
