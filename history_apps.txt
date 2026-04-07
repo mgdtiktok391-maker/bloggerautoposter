@@ -320,3 +320,4 @@ com.rarextractor.zipopener.unzip.unrar
 com.phonecleaner.storagecleaner.junkcleaner.cleanphone
 com.google.android.apps.photos.scanner
 com.cyberlink.powerdirector.DRA140225_01
+com.weaver.app.prod
