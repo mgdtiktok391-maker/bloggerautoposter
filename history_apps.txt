@@ -324,3 +324,4 @@ com.weaver.app.prod
 ru.yandex.androidkeyboard
 com.lingodeer
 com.simplemobiletools.filemanager.pro
+com.kaylaitsines.sweatwithkayla
