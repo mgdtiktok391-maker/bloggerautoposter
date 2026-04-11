@@ -325,3 +325,4 @@ ru.yandex.androidkeyboard
 com.lingodeer
 com.simplemobiletools.filemanager.pro
 com.kaylaitsines.sweatwithkayla
+com.simplescan.scanner
