@@ -329,3 +329,4 @@ com.simplescan.scanner
 com.spotify.tv.android
 vsin.t16_funny_photo
 com.atistudios.mondly.languages
+com.zoho.notebook
