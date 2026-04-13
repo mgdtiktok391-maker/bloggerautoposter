@@ -332,3 +332,4 @@ com.atistudios.mondly.languages
 com.zoho.notebook
 com.duckduckgo.mobile.android
 com.tcl.browser
+photoeditor.layout.collagemaker
