@@ -334,3 +334,4 @@ com.duckduckgo.mobile.android
 com.tcl.browser
 photoeditor.layout.collagemaker
 vedder.vesctool
+com.adobe.lrmobile
