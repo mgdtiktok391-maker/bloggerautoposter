@@ -333,3 +333,4 @@ com.zoho.notebook
 com.duckduckgo.mobile.android
 com.tcl.browser
 photoeditor.layout.collagemaker
+vedder.vesctool
