@@ -335,3 +335,4 @@ com.tcl.browser
 photoeditor.layout.collagemaker
 vedder.vesctool
 com.adobe.lrmobile
+in.krosbits.musicolet
