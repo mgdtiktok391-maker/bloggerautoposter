@@ -336,3 +336,4 @@ photoeditor.layout.collagemaker
 vedder.vesctool
 com.adobe.lrmobile
 in.krosbits.musicolet
+com.ace.ex.file.manager
