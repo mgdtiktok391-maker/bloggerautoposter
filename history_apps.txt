@@ -337,3 +337,4 @@ vedder.vesctool
 com.adobe.lrmobile
 in.krosbits.musicolet
 com.ace.ex.file.manager
+com.extreamsd.aemobile
