@@ -340,3 +340,4 @@ com.ace.ex.file.manager
 com.extreamsd.aemobile
 com.jndapp.lux.iconpack
 com.kvadgroup.photostudio
+com.picoai.languageapp.android
