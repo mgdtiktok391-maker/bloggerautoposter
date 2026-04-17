@@ -342,3 +342,4 @@ com.jndapp.lux.iconpack
 com.kvadgroup.photostudio
 com.picoai.languageapp.android
 com.whyyao.rings
+com.developer.zpallagi.batteryanalyzer
