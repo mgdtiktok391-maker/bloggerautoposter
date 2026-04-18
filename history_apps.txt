@@ -346,3 +346,4 @@ com.developer.zpallagi.batteryanalyzer
 com.inforcegames.app3dmodelling
 com.memrise.android.memrisecompanion
 com.deepl.mobiletranslator
+qr.code.scanner.qr.code.reader
