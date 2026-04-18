@@ -343,3 +343,4 @@ com.kvadgroup.photostudio
 com.picoai.languageapp.android
 com.whyyao.rings
 com.developer.zpallagi.batteryanalyzer
+com.inforcegames.app3dmodelling
