@@ -347,3 +347,4 @@ com.inforcegames.app3dmodelling
 com.memrise.android.memrisecompanion
 com.deepl.mobiletranslator
 qr.code.scanner.qr.code.reader
+com.magewell.director.assistant
