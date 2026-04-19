@@ -350,3 +350,4 @@ qr.code.scanner.qr.code.reader
 com.magewell.director.assistant
 com.desmos.calculator
 sixpack.sixpackabs.absworkout
+eu.thedarken.sdm
