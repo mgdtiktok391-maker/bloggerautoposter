@@ -353,3 +353,4 @@ sixpack.sixpackabs.absworkout
 eu.thedarken.sdm
 com.jio.media.jiobeats
 com.vivaldi.browser
+apps.syrupy.fullbatterychargealarm
