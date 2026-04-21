@@ -352,3 +352,4 @@ com.desmos.calculator
 sixpack.sixpackabs.absworkout
 eu.thedarken.sdm
 com.jio.media.jiobeats
+com.vivaldi.browser
