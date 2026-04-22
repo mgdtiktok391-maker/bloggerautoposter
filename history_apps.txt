@@ -355,3 +355,4 @@ com.jio.media.jiobeats
 com.vivaldi.browser
 apps.syrupy.fullbatterychargealarm
 com.oceanwing.battery.cam
+com.multipond.mputility
