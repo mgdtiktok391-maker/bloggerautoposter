@@ -354,3 +354,4 @@ eu.thedarken.sdm
 com.jio.media.jiobeats
 com.vivaldi.browser
 apps.syrupy.fullbatterychargealarm
+com.oceanwing.battery.cam
