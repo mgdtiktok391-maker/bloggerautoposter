@@ -361,3 +361,4 @@ com.dark.tool_neuron
 com.moymer.falou
 com.prosoftnet.android.idriveonline
 com.media.zatashima.studio
+com.healthifyme.basic
