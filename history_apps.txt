@@ -364,3 +364,4 @@ com.media.zatashima.studio
 com.healthifyme.basic
 com.yamawa2.lithos
 com.androidbull.incognito.browser
+com.opera.mini.native
