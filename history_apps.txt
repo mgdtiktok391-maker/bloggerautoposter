@@ -366,3 +366,4 @@ com.yamawa2.lithos
 com.androidbull.incognito.browser
 com.opera.mini.native
 photo.gallery.photoeditor.photo.album
+com.cambyte.okenscan
