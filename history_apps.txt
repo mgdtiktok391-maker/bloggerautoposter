@@ -368,3 +368,4 @@ com.opera.mini.native
 photo.gallery.photoeditor.photo.album
 com.cambyte.okenscan
 com.jetappfactory.jetaudioplus
+ai.x.grok
