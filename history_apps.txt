@@ -371,3 +371,4 @@ com.jetappfactory.jetaudioplus
 ai.x.grok
 uplayer.video.player
 com.mvsep.mvsep
+com.myscript.nebo
