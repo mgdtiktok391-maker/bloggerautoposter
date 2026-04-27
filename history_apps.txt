@@ -369,3 +369,4 @@ photo.gallery.photoeditor.photo.album
 com.cambyte.okenscan
 com.jetappfactory.jetaudioplus
 ai.x.grok
+uplayer.video.player
