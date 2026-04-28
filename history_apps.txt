@@ -372,3 +372,4 @@ ai.x.grok
 uplayer.video.player
 com.mvsep.mvsep
 com.myscript.nebo
+hotspotshield.android.vpn
