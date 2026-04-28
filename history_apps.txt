@@ -373,3 +373,4 @@ uplayer.video.player
 com.mvsep.mvsep
 com.myscript.nebo
 hotspotshield.android.vpn
+com.mobisystems.mobiscanner
