@@ -375,3 +375,4 @@ com.myscript.nebo
 hotspotshield.android.vpn
 com.mobisystems.mobiscanner
 com.zipextractor.app
+com.fortect.mobilesecurity
