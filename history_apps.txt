@@ -377,3 +377,4 @@ com.mobisystems.mobiscanner
 com.zipextractor.app
 com.fortect.mobilesecurity
 com.prsoftech.loanutilityportall
+photo.editor.photoeditor.filtersforpictures
