@@ -380,3 +380,4 @@ com.prsoftech.loanutilityportall
 photo.editor.photoeditor.filtersforpictures
 com.ziipin.softkeyboard.saudi
 com.pid.serialcleaner
+com.mobisystems.office
