@@ -379,3 +379,4 @@ com.fortect.mobilesecurity
 com.prsoftech.loanutilityportall
 photo.editor.photoeditor.filtersforpictures
 com.ziipin.softkeyboard.saudi
+com.pid.serialcleaner
