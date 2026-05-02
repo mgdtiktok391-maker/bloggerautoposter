@@ -382,3 +382,4 @@ com.ziipin.softkeyboard.saudi
 com.pid.serialcleaner
 com.mobisystems.office
 com.goodtoolapps.zeus
+ch.smalltech.battery.pro
