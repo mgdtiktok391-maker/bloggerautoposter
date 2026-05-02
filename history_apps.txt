@@ -383,3 +383,4 @@ com.pid.serialcleaner
 com.mobisystems.office
 com.goodtoolapps.zeus
 ch.smalltech.battery.pro
+com.bigwinepot.nwdn.international
