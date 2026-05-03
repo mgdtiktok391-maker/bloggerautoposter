@@ -386,3 +386,4 @@ ch.smalltech.battery.pro
 com.bigwinepot.nwdn.international
 br.com.naoinviabilize.podcast
 com.shanga.walli
+de.sfr.calctape
