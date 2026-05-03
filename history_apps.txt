@@ -387,3 +387,4 @@ com.bigwinepot.nwdn.international
 br.com.naoinviabilize.podcast
 com.shanga.walli
 de.sfr.calctape
+com.microsoft.translator
