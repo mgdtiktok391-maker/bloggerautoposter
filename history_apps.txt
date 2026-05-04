@@ -389,3 +389,4 @@ com.shanga.walli
 de.sfr.calctape
 com.microsoft.translator
 com.glgjing.thor
+simple.battery.alarm
