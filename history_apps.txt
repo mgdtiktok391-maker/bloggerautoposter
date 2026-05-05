@@ -392,3 +392,4 @@ com.glgjing.thor
 simple.battery.alarm
 com.mt.mtxx.mtxx
 com.dubox.drive
+com.dreamingspanish.app
