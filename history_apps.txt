@@ -394,3 +394,4 @@ com.mt.mtxx.mtxx
 com.dubox.drive
 com.dreamingspanish.app
 com.clevertype.ai.keyboard
+com.myvocab.smartwords
