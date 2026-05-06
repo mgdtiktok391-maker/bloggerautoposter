@@ -395,3 +395,4 @@ com.dubox.drive
 com.dreamingspanish.app
 com.clevertype.ai.keyboard
 com.myvocab.smartwords
+in.sweatco.app
