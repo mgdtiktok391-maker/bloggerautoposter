@@ -397,3 +397,4 @@ com.clevertype.ai.keyboard
 com.myvocab.smartwords
 in.sweatco.app
 com.garmin.android.apps.connectmobile
+com.microsoft.copilot
