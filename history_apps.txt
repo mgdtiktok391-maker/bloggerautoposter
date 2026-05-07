@@ -396,3 +396,4 @@ com.dreamingspanish.app
 com.clevertype.ai.keyboard
 com.myvocab.smartwords
 in.sweatco.app
+com.garmin.android.apps.connectmobile
