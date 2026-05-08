@@ -402,3 +402,4 @@ com.facebook.stella
 org.adblockplus.browser
 com.filemanager.managefile.fileexplorer.smartfiles.pro
 io.stellio.music
+ru.execbit.aiolauncher
