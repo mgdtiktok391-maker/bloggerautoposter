@@ -400,3 +400,4 @@ com.garmin.android.apps.connectmobile
 com.microsoft.copilot
 com.facebook.stella
 org.adblockplus.browser
+com.filemanager.managefile.fileexplorer.smartfiles.pro
