@@ -399,3 +399,4 @@ in.sweatco.app
 com.garmin.android.apps.connectmobile
 com.microsoft.copilot
 com.facebook.stella
+org.adblockplus.browser
