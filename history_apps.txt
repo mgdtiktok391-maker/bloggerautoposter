@@ -404,3 +404,4 @@ com.filemanager.managefile.fileexplorer.smartfiles.pro
 io.stellio.music
 ru.execbit.aiolauncher
 ai.perplexity.app.android
+mindnotes.note.notepad.notebook.memo.stickynotes
