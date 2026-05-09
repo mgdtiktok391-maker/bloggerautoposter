@@ -406,3 +406,4 @@ ru.execbit.aiolauncher
 ai.perplexity.app.android
 mindnotes.note.notepad.notebook.memo.stickynotes
 io.cleanfox.android
+com.adamrocker.android.input.simeji
