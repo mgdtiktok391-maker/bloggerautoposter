@@ -409,3 +409,4 @@ io.cleanfox.android
 com.adamrocker.android.input.simeji
 com.alkesa.toolspro
 com.vincent.battery
+com.glority.everlens
