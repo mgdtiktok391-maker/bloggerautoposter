@@ -410,3 +410,4 @@ com.adamrocker.android.input.simeji
 com.alkesa.toolspro
 com.vincent.battery
 com.glority.everlens
+com.mi.android.globallauncher
