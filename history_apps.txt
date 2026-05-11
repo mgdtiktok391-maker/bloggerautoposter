@@ -412,3 +412,4 @@ com.vincent.battery
 com.glority.everlens
 com.mi.android.globallauncher
 net.tandem
+com.scientificcalculator.mathcalculator.aimathsolver
