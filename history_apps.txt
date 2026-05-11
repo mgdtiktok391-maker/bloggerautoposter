@@ -411,3 +411,4 @@ com.alkesa.toolspro
 com.vincent.battery
 com.glority.everlens
 com.mi.android.globallauncher
+net.tandem
