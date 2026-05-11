@@ -414,3 +414,4 @@ com.mi.android.globallauncher
 net.tandem
 com.scientificcalculator.mathcalculator.aimathsolver
 com.ks.utility_log
+com.trendmobile.metering
