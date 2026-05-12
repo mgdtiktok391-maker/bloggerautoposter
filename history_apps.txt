@@ -415,3 +415,4 @@ net.tandem
 com.scientificcalculator.mathcalculator.aimathsolver
 com.ks.utility_log
 com.trendmobile.metering
+com.gen.workoutme
