@@ -416,3 +416,4 @@ com.scientificcalculator.mathcalculator.aimathsolver
 com.ks.utility_log
 com.trendmobile.metering
 com.gen.workoutme
+com.sec.android.app.voicenote
