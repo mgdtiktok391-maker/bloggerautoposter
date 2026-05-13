@@ -418,3 +418,4 @@ com.trendmobile.metering
 com.gen.workoutme
 com.sec.android.app.voicenote
 ru.yandex.translate
+com.qianfan.aihomework
