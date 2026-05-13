@@ -419,3 +419,4 @@ com.gen.workoutme
 com.sec.android.app.voicenote
 ru.yandex.translate
 com.qianfan.aihomework
+com.rhmsoft.pulsar.pro
