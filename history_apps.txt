@@ -423,3 +423,4 @@ com.rhmsoft.pulsar.pro
 ai.storage.cleaner.app
 com.wot.security
 io.consalad.creatormaker
+com.pronunciatorllc.bluebird
