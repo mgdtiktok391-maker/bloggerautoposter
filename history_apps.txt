@@ -424,3 +424,4 @@ ai.storage.cleaner.app
 com.wot.security
 io.consalad.creatormaker
 com.pronunciatorllc.bluebird
+md.obsidian
