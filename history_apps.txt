@@ -425,3 +425,4 @@ com.wot.security
 io.consalad.creatormaker
 com.pronunciatorllc.bluebird
 md.obsidian
+com.gopro.smarty
