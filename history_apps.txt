@@ -429,3 +429,4 @@ com.gopro.smarty
 com.vri.digital.labs.batterygo
 flar2.appdashboard
 com.quentinrg.tooliz
+io.faceapp
