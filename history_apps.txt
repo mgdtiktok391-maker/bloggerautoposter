@@ -431,3 +431,4 @@ flar2.appdashboard
 com.quentinrg.tooliz
 io.faceapp
 com.dencreak.dlcalculator
+es.monkimun.lingokids
