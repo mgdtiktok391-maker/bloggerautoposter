@@ -434,3 +434,4 @@ com.dencreak.dlcalculator
 es.monkimun.lingokids
 com.ss.squarehome2
 com.yandex.browser
+mymusic.offlinemusicplayer.mp3player.playmusic
