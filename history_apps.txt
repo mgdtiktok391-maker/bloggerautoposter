@@ -433,3 +433,4 @@ io.faceapp
 com.dencreak.dlcalculator
 es.monkimun.lingokids
 com.ss.squarehome2
+com.yandex.browser
