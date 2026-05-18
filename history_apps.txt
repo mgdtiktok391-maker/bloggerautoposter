@@ -437,3 +437,4 @@ com.yandex.browser
 mymusic.offlinemusicplayer.mp3player.playmusic
 com.sillens.shapeupclub
 com.mobireactor.signlanguage
+com.softissimo.reverso.context
