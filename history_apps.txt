@@ -436,3 +436,4 @@ com.ss.squarehome2
 com.yandex.browser
 mymusic.offlinemusicplayer.mp3player.playmusic
 com.sillens.shapeupclub
+com.mobireactor.signlanguage
