@@ -442,3 +442,4 @@ com.ilovepdf.www
 com.naver.labs.translator
 free.vpn.unblock.proxy.vpn.master.pro
 com.google.android.apps.searchlite
+com.mango.android
