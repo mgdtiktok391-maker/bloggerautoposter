@@ -444,3 +444,4 @@ free.vpn.unblock.proxy.vpn.master.pro
 com.google.android.apps.searchlite
 com.mango.android
 python.programming.coding.python3.development
+com.totalcleaner.android
