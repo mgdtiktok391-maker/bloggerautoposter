@@ -446,3 +446,4 @@ com.mango.android
 python.programming.coding.python3.development
 com.totalcleaner.android
 com.iconchanger.widget.theme.shortcut
+com.eset.ems2.gp
