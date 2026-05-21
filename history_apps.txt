@@ -445,3 +445,4 @@ com.google.android.apps.searchlite
 com.mango.android
 python.programming.coding.python3.development
 com.totalcleaner.android
+com.iconchanger.widget.theme.shortcut
