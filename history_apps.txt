@@ -450,3 +450,4 @@ com.eset.ems2.gp
 com.freezingblue.remarkableutil
 com.musicplayer.playermusic
 com.zhiliao.musically.livewallpaper
+com.linguist
