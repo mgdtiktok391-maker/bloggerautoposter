@@ -452,3 +452,4 @@ com.musicplayer.playermusic
 com.zhiliao.musically.livewallpaper
 com.linguist
 com.huami.watch.hmwatchmanager
+com.simpler.backup
