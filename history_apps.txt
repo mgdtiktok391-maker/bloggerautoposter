@@ -454,3 +454,4 @@ com.linguist
 com.huami.watch.hmwatchmanager
 com.simpler.backup
 com.idrive.photos.android
+com.nearix.smart_bms_utility
