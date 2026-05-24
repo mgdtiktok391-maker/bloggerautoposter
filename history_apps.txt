@@ -457,3 +457,4 @@ com.idrive.photos.android
 com.nearix.smart_bms_utility
 co.tools
 com.eatos.onedarkpro
+cz.hipercalc.pro
