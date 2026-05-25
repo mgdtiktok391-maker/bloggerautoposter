@@ -461,3 +461,4 @@ cz.hipercalc.pro
 com.creativepixels.wispdark.iconpack.app
 com.coolmobilesolution.fastscannerfree
 com.magisto
+com.minimaa.minimal.detox.launcher
