@@ -460,3 +460,4 @@ com.eatos.onedarkpro
 cz.hipercalc.pro
 com.creativepixels.wispdark.iconpack.app
 com.coolmobilesolution.fastscannerfree
+com.magisto
