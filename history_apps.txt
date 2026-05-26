@@ -465,3 +465,4 @@ com.minimaa.minimal.detox.launcher
 my.android.calc
 com.calm.android
 media.music.musicplayer
+com.kmo.pdf.editor
