@@ -463,3 +463,4 @@ com.coolmobilesolution.fastscannerfree
 com.magisto
 com.minimaa.minimal.detox.launcher
 my.android.calc
+com.calm.android
