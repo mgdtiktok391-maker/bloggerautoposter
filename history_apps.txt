@@ -469,3 +469,4 @@ com.kmo.pdf.editor
 com.avrapps.pdfviewer
 com.microsoft.office.word
 com.aiphone.secondphonenumber
+com.lin.duo.speak.languages
