@@ -467,3 +467,4 @@ com.calm.android
 media.music.musicplayer
 com.kmo.pdf.editor
 com.avrapps.pdfviewer
+com.microsoft.office.word
