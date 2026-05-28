@@ -472,3 +472,4 @@ com.aiphone.secondphonenumber
 com.lin.duo.speak.languages
 me.proton.android.drive
 com.prismtree.sponge
+com.music.player.simple
