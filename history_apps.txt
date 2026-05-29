@@ -475,3 +475,4 @@ com.prismtree.sponge
 com.music.player.simple
 com.otp.octopilauncher
 python.learnpython.learn.pythonx.coding.programming.python3.tutorials.codingx
+com.ntrack.studio.demo
