@@ -474,3 +474,4 @@ me.proton.android.drive
 com.prismtree.sponge
 com.music.player.simple
 com.otp.octopilauncher
+python.learnpython.learn.pythonx.coding.programming.python3.tutorials.codingx
