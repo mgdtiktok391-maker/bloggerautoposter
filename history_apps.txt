@@ -481,3 +481,4 @@ com.tashila.neomusic
 com.ppn.backuprestore
 com.photomyne
 org.mozilla.focus
+com.skyjos.apps.fileexplorerfree
