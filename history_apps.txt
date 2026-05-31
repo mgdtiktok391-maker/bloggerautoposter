@@ -479,3 +479,4 @@ com.ntrack.studio.demo
 com.maxdevlab.cleaner.security
 com.tashila.neomusic
 com.ppn.backuprestore
+com.photomyne
