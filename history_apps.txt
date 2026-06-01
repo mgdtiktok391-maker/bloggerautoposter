@@ -482,3 +482,4 @@ com.ppn.backuprestore
 com.photomyne
 org.mozilla.focus
 com.skyjos.apps.fileexplorerfree
+mega.privacy.android.app
