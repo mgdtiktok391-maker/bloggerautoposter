@@ -484,3 +484,4 @@ org.mozilla.focus
 com.skyjos.apps.fileexplorerfree
 mega.privacy.android.app
 journal.notes.planner.starnest
+com.vblast.flipaclip
