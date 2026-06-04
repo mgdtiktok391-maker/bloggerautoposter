@@ -487,3 +487,4 @@ journal.notes.planner.starnest
 com.vblast.flipaclip
 com.chrome.beta
 redpi.apps.batteryhero
+com.fatsecret.android
