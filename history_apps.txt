@@ -489,3 +489,4 @@ com.chrome.beta
 redpi.apps.batteryhero
 com.fatsecret.android
 com.alphaone.beeline.iconpack
+com.surfshark.vpnclient.android
