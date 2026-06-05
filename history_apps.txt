@@ -490,3 +490,4 @@ redpi.apps.batteryhero
 com.fatsecret.android
 com.alphaone.beeline.iconpack
 com.surfshark.vpnclient.android
+com.calculator.unitconverter.calcapp.calclauncher
