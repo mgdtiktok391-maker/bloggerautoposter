@@ -493,3 +493,4 @@ com.surfshark.vpnclient.android
 com.calculator.unitconverter.calcapp.calclauncher
 com.yygg.note.app
 com.codewaystudios.scannerplus
+com.guruswarupa.launch
