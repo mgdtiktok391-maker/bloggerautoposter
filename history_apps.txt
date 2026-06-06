@@ -494,3 +494,4 @@ com.calculator.unitconverter.calcapp.calclauncher
 com.yygg.note.app
 com.codewaystudios.scannerplus
 com.guruswarupa.launch
+com.aloha.browser
