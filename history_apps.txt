@@ -495,3 +495,4 @@ com.yygg.note.app
 com.codewaystudios.scannerplus
 com.guruswarupa.launch
 com.aloha.browser
+com.adobe.spark.post
