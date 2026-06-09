@@ -499,3 +499,4 @@ com.adobe.spark.post
 com.linecorp.b612.android
 org.futo.inputmethod.latin.playstore
 com.pingsecure.client.app
+com.adobe.photoshop.retail
