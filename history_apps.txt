@@ -497,3 +497,4 @@ com.guruswarupa.launch
 com.aloha.browser
 com.adobe.spark.post
 com.linecorp.b612.android
+org.futo.inputmethod.latin.playstore
