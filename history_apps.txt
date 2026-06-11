@@ -502,3 +502,4 @@ com.pingsecure.client.app
 com.adobe.photoshop.retail
 com.alltrails.alltrails
 com.piksoft.turboscan.free
+com.fitnow.loseit
