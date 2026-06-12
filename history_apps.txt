@@ -504,3 +504,4 @@ com.alltrails.alltrails
 com.piksoft.turboscan.free
 com.fitnow.loseit
 com.overlook.android.fing
+com.musicplayer.player.mp3player.white
