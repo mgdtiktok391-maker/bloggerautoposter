@@ -509,3 +509,4 @@ com.csa.utilitynexus.humboldtutilities
 one4studio.iconpack.lena
 com.funcamerastudio.videomaker
 com.tools.battery.vitals
+photocollage.photoeditor.collagemaker
