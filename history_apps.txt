@@ -512,3 +512,4 @@ com.tools.battery.vitals
 photocollage.photoeditor.collagemaker
 com.supervpn.vpn.free.proxy
 com.microsoft.office.officehubrow
+com.segitiga.fc10bapro
