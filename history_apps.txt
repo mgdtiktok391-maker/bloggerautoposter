@@ -515,3 +515,4 @@ com.microsoft.office.officehubrow
 com.segitiga.fc10bapro
 ru.mail.cloud
 com.wakdev.wdnfc
+com.studymusictheory.app
