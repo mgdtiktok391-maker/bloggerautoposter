@@ -516,3 +516,4 @@ com.segitiga.fc10bapro
 ru.mail.cloud
 com.wakdev.wdnfc
 com.studymusictheory.app
+mydiary.journal.diary.diarywithlock.diaryjournal.secretdiary
