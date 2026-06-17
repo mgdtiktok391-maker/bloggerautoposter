@@ -519,3 +519,4 @@ com.studymusictheory.app
 mydiary.journal.diary.diarywithlock.diaryjournal.secretdiary
 com.heytap.browser
 com.wecenergygroup.mgu
+com.utility.cam
