@@ -522,3 +522,4 @@ com.wecenergygroup.mgu
 com.utility.cam
 com.cloudflare.onedotonedotonedotone
 daily.planner.routine.habits
+video.editor.videomaker.effects.fx
