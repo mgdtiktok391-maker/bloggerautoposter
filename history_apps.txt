@@ -521,3 +521,4 @@ com.heytap.browser
 com.wecenergygroup.mgu
 com.utility.cam
 com.cloudflare.onedotonedotonedotone
+daily.planner.routine.habits
