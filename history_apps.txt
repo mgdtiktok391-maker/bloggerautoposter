@@ -524,3 +524,4 @@ com.cloudflare.onedotonedotonedotone
 daily.planner.routine.habits
 video.editor.videomaker.effects.fx
 com.windscribe.vpn
+com.audiomack.creators
