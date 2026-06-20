@@ -528,3 +528,4 @@ com.audiomack.creators
 com.fitbod.fitbod
 com.search.music.mp3.musicplayer
 net.learnmatch.app
+io.mygroove
