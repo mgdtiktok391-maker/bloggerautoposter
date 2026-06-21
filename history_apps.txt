@@ -530,3 +530,4 @@ com.search.music.mp3.musicplayer
 net.learnmatch.app
 io.mygroove
 com.devstudioworks.powerBattery.pro
+com.kinemaster.app.spring
