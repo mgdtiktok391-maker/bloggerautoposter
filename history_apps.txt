@@ -531,3 +531,4 @@ net.learnmatch.app
 io.mygroove
 com.devstudioworks.powerBattery.pro
 com.kinemaster.app.spring
+com.dijital42.aitranslate
