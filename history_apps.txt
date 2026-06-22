@@ -533,3 +533,4 @@ com.devstudioworks.powerBattery.pro
 com.kinemaster.app.spring
 com.dijital42.aitranslate
 com.jrzheng.supervpnfree
+com.aimp.player
