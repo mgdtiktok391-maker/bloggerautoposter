@@ -536,3 +536,4 @@ com.jrzheng.supervpnfree
 com.aimp.player
 xyz.kinnu
 club.incendiarypigs.mur
+com.microblink.photomath
