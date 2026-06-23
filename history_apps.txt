@@ -535,3 +535,4 @@ com.dijital42.aitranslate
 com.jrzheng.supervpnfree
 com.aimp.player
 xyz.kinnu
+club.incendiarypigs.mur
