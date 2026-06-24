@@ -538,3 +538,4 @@ xyz.kinnu
 club.incendiarypigs.mur
 com.microblink.photomath
 com.a0soft.gphone.acc.pro
+com.rhmsoft.edit.pro
