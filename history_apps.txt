@@ -542,3 +542,4 @@ com.rhmsoft.edit.pro
 com.ciaostudio.pixeliconpack
 com.numworks.calculator
 com.microsoft.todos
+com.kaerosduplicatescleaner
