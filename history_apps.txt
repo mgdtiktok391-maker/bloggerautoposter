@@ -546,3 +546,4 @@ com.kaerosduplicatescleaner
 com.utilitywarehouse.clubhouse
 com.lended.neocalc
 com.github.anrimian.musicplayer
+com.gymdone.gymworkouttrainer
