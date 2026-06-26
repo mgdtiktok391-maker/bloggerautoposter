@@ -543,3 +543,4 @@ com.ciaostudio.pixeliconpack
 com.numworks.calculator
 com.microsoft.todos
 com.kaerosduplicatescleaner
+com.utilitywarehouse.clubhouse
