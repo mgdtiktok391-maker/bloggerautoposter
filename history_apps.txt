@@ -550,3 +550,4 @@ com.gymdone.gymworkouttrainer
 plus.scan.android
 com.metergroup.dataloggerutility
 com.ai.language.learning.tutor
+uk.co.randomvector.outline
