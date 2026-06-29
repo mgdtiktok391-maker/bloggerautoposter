@@ -554,3 +554,4 @@ uk.co.randomvector.outline
 com.trendmicro.tmmspersonal
 dash.lingard
 com.microsoft.emmx.canary
+com.ekia.files.farchiver
