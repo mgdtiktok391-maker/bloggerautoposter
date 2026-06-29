@@ -555,3 +555,4 @@ com.trendmicro.tmmspersonal
 dash.lingard
 com.microsoft.emmx.canary
 com.ekia.files.farchiver
+glitchvideoeditor.videoeffects.glitchvideoeffect
