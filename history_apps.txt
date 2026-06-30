@@ -558,3 +558,4 @@ com.ekia.files.farchiver
 glitchvideoeditor.videoeffects.glitchvideoeffect
 com.hellochinese
 com.totalav.android
+com.digitalchemy.calculator.freefraction
