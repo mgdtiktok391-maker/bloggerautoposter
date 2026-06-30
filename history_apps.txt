@@ -557,3 +557,4 @@ com.microsoft.emmx.canary
 com.ekia.files.farchiver
 glitchvideoeditor.videoeffects.glitchvideoeffect
 com.hellochinese
+com.totalav.android
