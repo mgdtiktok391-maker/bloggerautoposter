@@ -562,3 +562,4 @@ com.digitalchemy.calculator.freefraction
 com.nike.ntc
 com.motorola.aitranslation
 com.wsl.noom
+musicplayer.playmusic.audioplayer
