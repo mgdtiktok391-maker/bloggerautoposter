@@ -565,3 +565,4 @@ com.wsl.noom
 musicplayer.playmusic.audioplayer
 com.fujifilm.fb.printutility
 com.hydrix.laurene
+com.zipextractor.unzip
