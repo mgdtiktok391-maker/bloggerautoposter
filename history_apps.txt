@@ -567,3 +567,4 @@ com.fujifilm.fb.printutility
 com.hydrix.laurene
 com.zipextractor.unzip
 com.xvideostudio.videoeditor
+com.youmusic.magictiles
