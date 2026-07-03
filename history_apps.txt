@@ -568,3 +568,4 @@ com.hydrix.laurene
 com.zipextractor.unzip
 com.xvideostudio.videoeditor
 com.youmusic.magictiles
+com.razorlabs.cpumeter
