@@ -573,3 +573,4 @@ com.wbd.stream
 org.khankids.android
 com.tophatch.concepts
 com.snowcorp.vita
+com.manateeworks.barcodescanners
