@@ -572,3 +572,4 @@ com.razorlabs.cpumeter
 com.wbd.stream
 org.khankids.android
 com.tophatch.concepts
+com.snowcorp.vita
