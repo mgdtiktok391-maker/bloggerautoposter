@@ -577,3 +577,4 @@ com.manateeworks.barcodescanners
 hd.uhd.live.wallpapers.topwallpapers
 com.wondershare.filmorago
 com.learnapp
+com.jndapp.dove.iconpack
