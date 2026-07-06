@@ -579,3 +579,4 @@ com.wondershare.filmorago
 com.learnapp
 com.jndapp.dove.iconpack
 com.google.android.apps.docs.editors.docs
+com.ttxapps.drivesync
