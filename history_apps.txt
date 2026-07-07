@@ -581,3 +581,4 @@ com.jndapp.dove.iconpack
 com.google.android.apps.docs.editors.docs
 com.ttxapps.drivesync
 com.launcher.hype
+com.microsoft.emmx.beta
