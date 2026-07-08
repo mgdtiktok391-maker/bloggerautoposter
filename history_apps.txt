@@ -587,3 +587,4 @@ com.ocv.a926
 com.deepblue.si.deeptools
 com.flyersoft.moonreaderp
 com.coreclean.storage.ram.booster
+com.transsion.notebook
