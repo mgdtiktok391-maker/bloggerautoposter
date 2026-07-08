@@ -585,3 +585,4 @@ com.microsoft.emmx.beta
 com.tss.omnitools
 com.ocv.a926
 com.deepblue.si.deeptools
+com.flyersoft.moonreaderp
