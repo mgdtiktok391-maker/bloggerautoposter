@@ -588,3 +588,4 @@ com.deepblue.si.deeptools
 com.flyersoft.moonreaderp
 com.coreclean.storage.ram.booster
 com.transsion.notebook
+com.fitness22.workout
