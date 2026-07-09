@@ -589,3 +589,4 @@ com.flyersoft.moonreaderp
 com.coreclean.storage.ram.booster
 com.transsion.notebook
 com.fitness22.workout
+kling.ai.video.chat
