@@ -593,3 +593,4 @@ kling.ai.video.chat
 com.aisense.otter
 io.speedtop.app
 com.darkempire78.opencalculator
+io.wallpaperengine.weclient
