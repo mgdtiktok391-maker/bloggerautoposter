@@ -592,3 +592,4 @@ com.fitness22.workout
 kling.ai.video.chat
 com.aisense.otter
 io.speedtop.app
+com.darkempire78.opencalculator
