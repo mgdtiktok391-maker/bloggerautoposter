@@ -591,3 +591,4 @@ com.transsion.notebook
 com.fitness22.workout
 kling.ai.video.chat
 com.aisense.otter
+io.speedtop.app
