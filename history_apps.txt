@@ -595,3 +595,4 @@ io.speedtop.app
 com.darkempire78.opencalculator
 io.wallpaperengine.weclient
 com.fapp.translate.language.translator.fasttranslation
+videoeditor.videorecorder.screenrecorder
