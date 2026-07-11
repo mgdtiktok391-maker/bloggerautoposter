@@ -598,3 +598,4 @@ com.fapp.translate.language.translator.fasttranslation
 videoeditor.videorecorder.screenrecorder
 com.gilapps.smsshare2
 com.king_sley.FaithFund
+app.pellaworks.aikeyboard
