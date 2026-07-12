@@ -601,3 +601,4 @@ com.king_sley.FaithFund
 app.pellaworks.aikeyboard
 org.n277.lynxlauncher
 iloan.chinstudio.iloan
+com.homeaglow
