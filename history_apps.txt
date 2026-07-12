@@ -602,3 +602,4 @@ app.pellaworks.aikeyboard
 org.n277.lynxlauncher
 iloan.chinstudio.iloan
 com.homeaglow
+com.wsandroid.suite.tmobile
