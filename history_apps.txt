@@ -605,3 +605,4 @@ com.homeaglow
 com.wsandroid.suite.tmobile
 com.aceclean.com
 com.smp.musicspeed
+com.eScan.main
