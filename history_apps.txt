@@ -607,3 +607,4 @@ com.aceclean.com
 com.smp.musicspeed
 com.eScan.main
 gallery.hidepictures.photovault.lockgallery
+smart.cleaner.clean.master.booster.free
