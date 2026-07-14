@@ -608,3 +608,4 @@ com.smp.musicspeed
 com.eScan.main
 gallery.hidepictures.photovault.lockgallery
 smart.cleaner.clean.master.booster.free
+com.tranvision.ai.voice.translator
