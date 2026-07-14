@@ -609,3 +609,4 @@ com.eScan.main
 gallery.hidepictures.photovault.lockgallery
 smart.cleaner.clean.master.booster.free
 com.tranvision.ai.voice.translator
+pro.gif.videotogif.gifeditor.gifmaker
