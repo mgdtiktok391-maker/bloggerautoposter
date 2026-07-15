@@ -612,3 +612,4 @@ com.tranvision.ai.voice.translator
 pro.gif.videotogif.gifeditor.gifmaker
 com.eco.note
 com.cardinalblue.piccollage.google
+colorwidgets.ios.widget.topwidgets
