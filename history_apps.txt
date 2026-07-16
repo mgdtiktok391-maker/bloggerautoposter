@@ -617,3 +617,4 @@ com.JindoBlu.FourPlayers
 com.downdogapp
 com.veriklabs.cutonce
 com.snapchat.android
+com.genie9.intelli
