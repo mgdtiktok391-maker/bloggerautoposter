@@ -616,3 +616,4 @@ colorwidgets.ios.widget.topwidgets
 com.JindoBlu.FourPlayers
 com.downdogapp
 com.veriklabs.cutonce
+com.snapchat.android
