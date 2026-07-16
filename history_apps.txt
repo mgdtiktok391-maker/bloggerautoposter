@@ -614,3 +614,4 @@ com.eco.note
 com.cardinalblue.piccollage.google
 colorwidgets.ios.widget.topwidgets
 com.JindoBlu.FourPlayers
+com.downdogapp
