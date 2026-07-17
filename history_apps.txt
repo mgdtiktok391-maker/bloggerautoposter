@@ -620,3 +620,4 @@ com.snapchat.android
 com.genie9.intelli
 com.app.hdwallpaper.live.walls.background
 com.google.android.apps.cloudconsole
+com.wwsmind.unrar.unzip.extractfile.fileexplorer.filemanager.zarchiver
