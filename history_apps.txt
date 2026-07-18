@@ -624,3 +624,4 @@ com.wwsmind.unrar.unzip.extractfile.fileexplorer.filemanager.zarchiver
 com.digitalcosmos.shimeji
 teaching_com.reading_com
 com.bulkar.safecleaning
+com.creativepixels.fireflyneon.iconpack.app
