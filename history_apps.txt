@@ -626,3 +626,4 @@ teaching_com.reading_com
 com.bulkar.safecleaning
 com.creativepixels.fireflyneon.iconpack.app
 co.elfie.app
+com.studzone.zip.unzip
