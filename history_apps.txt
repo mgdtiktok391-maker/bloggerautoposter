@@ -628,3 +628,4 @@ com.creativepixels.fireflyneon.iconpack.app
 co.elfie.app
 com.studzone.zip.unzip
 com.commsource.beautyplus
+com.lasta
