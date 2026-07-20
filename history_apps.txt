@@ -629,3 +629,4 @@ co.elfie.app
 com.studzone.zip.unzip
 com.commsource.beautyplus
 com.lasta
+co.appnation.phonecleaner
