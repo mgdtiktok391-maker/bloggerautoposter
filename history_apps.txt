@@ -631,3 +631,4 @@ com.commsource.beautyplus
 com.lasta
 co.appnation.phonecleaner
 simple.batttery.alarm
+com.jndapp.depth.live.wallpaper
