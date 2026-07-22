@@ -636,3 +636,4 @@ com.google.android.apps.youtube.creator
 com.ludev.threedlauncherm
 com.qr.code.reader.scanner.qrscan.android
 com.wonderfull.sway.music
+com.now.vpn
