@@ -642,3 +642,4 @@ co.appnation.aivoicetranslator
 pilatesworkout.yogaworkout.loseweight.workoutapps
 net.daylio
 com.maplesoft.companion
+com.iudesk.android.photo.editor
