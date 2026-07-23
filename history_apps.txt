@@ -640,3 +640,4 @@ com.now.vpn
 com.protectstar.firewall.android
 co.appnation.aivoicetranslator
 pilatesworkout.yogaworkout.loseweight.workoutapps
+net.daylio
