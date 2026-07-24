@@ -644,3 +644,4 @@ net.daylio
 com.maplesoft.companion
 com.iudesk.android.photo.editor
 ai.junk.cleaner
+com.photoaffections.freeprints
