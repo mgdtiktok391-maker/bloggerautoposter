@@ -650,3 +650,4 @@ com.pasta.ziply
 com.onyx.galaxy.global.note
 com.simyasolutions.ling.universal
 one4studio.iconpack.lenawhite
+app.ninjavpn.android
