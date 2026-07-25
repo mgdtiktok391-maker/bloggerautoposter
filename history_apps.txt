@@ -648,3 +648,4 @@ com.photoaffections.freeprints
 increaseheightworkout.heightincreaseexercise.tallerexercise
 com.pasta.ziply
 com.onyx.galaxy.global.note
+com.simyasolutions.ling.universal
