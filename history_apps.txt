@@ -652,3 +652,4 @@ com.simyasolutions.ling.universal
 one4studio.iconpack.lenawhite
 app.ninjavpn.android
 com.prosoftnet.android.ibackup.activity
+com.klevico.monet
