@@ -654,3 +654,4 @@ app.ninjavpn.android
 com.prosoftnet.android.ibackup.activity
 com.klevico.monet
 com.live.translator.ai
+com.inclinometter.bubblelevel.clinometer.level.ruler
