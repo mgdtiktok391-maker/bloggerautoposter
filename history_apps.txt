@@ -658,3 +658,4 @@ com.inclinometter.bubblelevel.clinometer.level.ruler
 com.google.android.apps.youtube.producer
 com.express.phone.cleaner
 com.alecdev.quickcalc
+mobi.appplus.calculator.plus
