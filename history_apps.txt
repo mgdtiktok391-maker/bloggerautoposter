@@ -661,3 +661,4 @@ com.alecdev.quickcalc
 mobi.appplus.calculator.plus
 digifit.virtuagym.client.android
 com.onepeloton.callisto
+com.flow.mobile
