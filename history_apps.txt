@@ -659,3 +659,4 @@ com.google.android.apps.youtube.producer
 com.express.phone.cleaner
 com.alecdev.quickcalc
 mobi.appplus.calculator.plus
+digifit.virtuagym.client.android
