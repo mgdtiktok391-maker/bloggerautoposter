@@ -660,3 +660,4 @@ com.express.phone.cleaner
 com.alecdev.quickcalc
 mobi.appplus.calculator.plus
 digifit.virtuagym.client.android
+com.onepeloton.callisto
