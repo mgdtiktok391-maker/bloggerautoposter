@@ -662,3 +662,4 @@ mobi.appplus.calculator.plus
 digifit.virtuagym.client.android
 com.onepeloton.callisto
 com.flow.mobile
+cleaner.photo.clean.up.gallery.delete.image.space.duplicate.sweep.memory
