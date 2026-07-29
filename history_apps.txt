@@ -665,3 +665,4 @@ com.flow.mobile
 cleaner.photo.clean.up.gallery.delete.image.space.duplicate.sweep.memory
 com.transsion.phoenix
 app.intent.android
+com.david.android.languageswitch
