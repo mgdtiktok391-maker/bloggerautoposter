@@ -667,3 +667,4 @@ com.transsion.phoenix
 app.intent.android
 com.david.android.languageswitch
 com.transsion.filemanagerx
+com.wallpapers.wallpaper4k.livewallpaper
