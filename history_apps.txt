@@ -672,3 +672,4 @@ com.honeywell.installer
 cleaner.clean.booster
 com.todoist
 com.transgull.translator
+com.axcedeee.theftcalculator
