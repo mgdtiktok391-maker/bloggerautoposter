@@ -673,3 +673,4 @@ cleaner.clean.booster
 com.todoist
 com.transgull.translator
 com.axcedeee.theftcalculator
+com.cloud.backup.restore.data
