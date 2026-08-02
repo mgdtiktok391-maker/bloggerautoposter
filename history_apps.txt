@@ -680,3 +680,4 @@ ee.simplesoft.security
 com.arawastudios.keyboard.rgb.themes
 appmania.launcher.opus
 cs14.pixelperfect.iconpack.vera
+com.fluidtouch.noteshelf3
