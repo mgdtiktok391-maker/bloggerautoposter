@@ -677,3 +677,4 @@ com.cloud.backup.restore.data
 com.mi.globalbrowser
 com.phonewalls.stockwallpapers
 ee.simplesoft.security
+com.arawastudios.keyboard.rgb.themes
