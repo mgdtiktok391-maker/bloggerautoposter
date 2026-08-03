@@ -682,3 +682,4 @@ appmania.launcher.opus
 cs14.pixelperfect.iconpack.vera
 com.fluidtouch.noteshelf3
 com.xstudios.fastscan
+com.bytesculptor.batterymonitor
