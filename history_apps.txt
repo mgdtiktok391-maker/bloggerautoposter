@@ -687,3 +687,4 @@ com.newleaf.app.android.victor
 com.qqlabs.minimalistlauncher
 com.omnicalculator.app
 app.moertel.retro.iconpack.light
+sandhills.utilitytrailerstoday.app
