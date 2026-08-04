@@ -685,3 +685,4 @@ com.xstudios.fastscan
 com.bytesculptor.batterymonitor
 com.newleaf.app.android.victor
 com.qqlabs.minimalistlauncher
+com.omnicalculator.app
