@@ -694,3 +694,4 @@ net.hubalek.android.apps.reborn.pro
 eu.darken.sdmse
 com.apps10x.scannerapp
 ee.simplesoft.securitymonitor
+tr.com.chomar.mobilesecurity
