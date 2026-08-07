@@ -696,3 +696,4 @@ com.apps10x.scannerapp
 ee.simplesoft.securitymonitor
 tr.com.chomar.mobilesecurity
 com.piyush.music
+com.notvpn2
