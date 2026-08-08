@@ -699,3 +699,4 @@ com.piyush.music
 com.notvpn2
 com.gingerlabs.notability
 com.voyagerx.scanner
+com.backupify.cloudbackup
