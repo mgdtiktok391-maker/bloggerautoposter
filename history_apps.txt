@@ -700,3 +700,4 @@ com.notvpn2
 com.gingerlabs.notability
 com.voyagerx.scanner
 com.backupify.cloudbackup
+app.pinya.mango
