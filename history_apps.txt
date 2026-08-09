@@ -704,3 +704,4 @@ app.pinya.mango
 com.alison.mobile.flutter
 com.live.translator
 net.bitdynamic.bitdynamicapp
+scanner.app.documents.scanshot
