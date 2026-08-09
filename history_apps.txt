@@ -703,3 +703,4 @@ com.backupify.cloudbackup
 app.pinya.mango
 com.alison.mobile.flutter
 com.live.translator
+net.bitdynamic.bitdynamicapp
