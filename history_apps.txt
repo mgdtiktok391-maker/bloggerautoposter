@@ -708,3 +708,4 @@ scanner.app.documents.scanshot
 com.italiano.iglass
 com.notebloc.app
 si.topapp.myscansfree
+com.anthropic.claude
