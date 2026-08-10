@@ -709,3 +709,4 @@ com.italiano.iglass
 com.notebloc.app
 si.topapp.myscansfree
 com.anthropic.claude
+com.InternityLabs.Launcher.WinX
