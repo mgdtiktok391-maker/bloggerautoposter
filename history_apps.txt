@@ -711,3 +711,4 @@ si.topapp.myscansfree
 com.anthropic.claude
 com.InternityLabs.Launcher.WinX
 com.avcrbt.funimate
+com.emoji.keyboard.soundtheme
