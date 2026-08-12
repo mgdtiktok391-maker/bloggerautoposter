@@ -714,3 +714,4 @@ com.avcrbt.funimate
 com.emoji.keyboard.soundtheme
 com.netflix.mediaclient
 com.utilityhub.aicleaner
+com.maturix.devutil
