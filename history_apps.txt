@@ -717,3 +717,4 @@ com.utilityhub.aicleaner
 com.maturix.devutil
 com.creativepixels.irislight.iconpack.app
 com.anyzip.sevenz.rar.tar.extractor
+com.utility_hub
