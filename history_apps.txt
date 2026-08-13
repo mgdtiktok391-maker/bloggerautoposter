@@ -719,3 +719,4 @@ com.creativepixels.irislight.iconpack.app
 com.anyzip.sevenz.rar.tar.extractor
 com.utility_hub
 com.looploop.tody
+com.lucky.zootchi
