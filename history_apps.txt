@@ -720,3 +720,4 @@ com.anyzip.sevenz.rar.tar.extractor
 com.utility_hub
 com.looploop.tody
 com.lucky.zootchi
+com.wsandroid.suite.metropcs
