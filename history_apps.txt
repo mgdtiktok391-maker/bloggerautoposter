@@ -727,3 +727,4 @@ cn.xender
 com.funeasylearn.languages
 com.spaceship.screen.textcopy
 kr.aboy.mini
+dev.aitutor.languagelearning
