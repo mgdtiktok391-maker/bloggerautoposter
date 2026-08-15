@@ -726,3 +726,4 @@ co.exploreapps.aimusic
 cn.xender
 com.funeasylearn.languages
 com.spaceship.screen.textcopy
+kr.aboy.mini
