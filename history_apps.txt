@@ -729,3 +729,4 @@ com.spaceship.screen.textcopy
 kr.aboy.mini
 dev.aitutor.languagelearning
 com.ssd.android.vipre
+com.vednovak.flutter_tip_calculator
