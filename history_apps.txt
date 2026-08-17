@@ -732,3 +732,4 @@ com.ssd.android.vipre
 com.vednovak.flutter_tip_calculator
 phone.storage.cleaner.photo.cleanup
 com.creativepixels.camodark.iconpack.app
+com.ekia.files.manager
