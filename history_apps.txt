@@ -735,3 +735,4 @@ com.creativepixels.camodark.iconpack.app
 com.ekia.files.manager
 com.theaccessgroup.accesslmsmobile
 com.lightricks.facetune.free
+com.themes.neonlovethemekeyboard
