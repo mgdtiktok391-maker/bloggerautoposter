@@ -734,3 +734,4 @@ phone.storage.cleaner.photo.cleanup
 com.creativepixels.camodark.iconpack.app
 com.ekia.files.manager
 com.theaccessgroup.accesslmsmobile
+com.lightricks.facetune.free
