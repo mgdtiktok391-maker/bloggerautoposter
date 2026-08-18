@@ -738,3 +738,4 @@ com.lightricks.facetune.free
 com.themes.neonlovethemekeyboard
 com.phone.junk.app
 com.waqaslabs.all_in_one_tools
+com.sirius
