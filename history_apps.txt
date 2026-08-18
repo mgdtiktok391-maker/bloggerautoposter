@@ -736,3 +736,4 @@ com.ekia.files.manager
 com.theaccessgroup.accesslmsmobile
 com.lightricks.facetune.free
 com.themes.neonlovethemekeyboard
+com.phone.junk.app
