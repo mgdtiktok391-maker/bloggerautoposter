@@ -741,3 +741,4 @@ com.waqaslabs.all_in_one_tools
 com.sirius
 losebellyfat.flatstomach.absworkout.fatburning
 org.coursera.android
+com.dropouts.easy_unzip
