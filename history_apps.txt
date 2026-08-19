@@ -742,3 +742,4 @@ com.sirius
 losebellyfat.flatstomach.absworkout.fatburning
 org.coursera.android
 com.dropouts.easy_unzip
+appmania.launcher.orbitui.prime
