@@ -745,3 +745,4 @@ com.dropouts.easy_unzip
 appmania.launcher.orbitui.prime
 ro.rkh.utilitati
 com.speedy.vpn
+com.netshort.abroad
