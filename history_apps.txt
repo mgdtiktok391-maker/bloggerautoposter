@@ -746,3 +746,4 @@ appmania.launcher.orbitui.prime
 ro.rkh.utilitati
 com.speedy.vpn
 com.netshort.abroad
+com.yugongkeji.podstool
