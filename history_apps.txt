@@ -751,3 +751,4 @@ com.wonder
 com.kindroid.app
 com.ddm.iptools
 com.niksoftware.snapseed
+com.brave.browser_beta
