@@ -750,3 +750,4 @@ com.yugongkeji.podstool
 com.wonder
 com.kindroid.app
 com.ddm.iptools
+com.niksoftware.snapseed
