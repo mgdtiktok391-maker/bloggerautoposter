@@ -755,3 +755,4 @@ com.brave.browser_beta
 com.xiaomi.wearable
 vStudio.Android.Camera360
 com.snapwood.smugfolio
+com.hiro.vpn
