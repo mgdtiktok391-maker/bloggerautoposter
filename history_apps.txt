@@ -753,3 +753,4 @@ com.ddm.iptools
 com.niksoftware.snapseed
 com.brave.browser_beta
 com.xiaomi.wearable
+vStudio.Android.Camera360
