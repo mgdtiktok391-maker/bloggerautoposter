@@ -757,3 +757,4 @@ vStudio.Android.Camera360
 com.snapwood.smugfolio
 com.hiro.vpn
 com.lumina.wallpapers
+com.cybear.vpn.proxy.connect
