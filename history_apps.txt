@@ -759,3 +759,4 @@ com.hiro.vpn
 com.lumina.wallpapers
 com.cybear.vpn.proxy.connect
 com.police.scanner.radio.pro
+com.gen.bettermeditation
