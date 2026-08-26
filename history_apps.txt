@@ -764,3 +764,4 @@ com.brave.browser_nightly
 com.studiolaganne.lengendarylens
 cz.scamera.securitycamera
 com.cronometer.android.gold
+com.dragonnest.drawnote
