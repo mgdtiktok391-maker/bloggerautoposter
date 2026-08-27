@@ -766,3 +766,4 @@ cz.scamera.securitycamera
 com.cronometer.android.gold
 com.dragonnest.drawnote
 com.yinyang.launcher
+com.mediamushroom.copymydata
