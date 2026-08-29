@@ -769,3 +769,4 @@ com.yinyang.launcher
 com.mediamushroom.copymydata
 com.nike.plusgps
 com.hugogarza.englishlearning1
+com.bilingualpages.app
