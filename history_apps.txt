@@ -776,3 +776,4 @@ com.italiano.whitemoonlight
 com.nianticlabs.pikmin
 com.ilivedata.viitor
 pl.example.bateria
+com.appuplabs.zip
