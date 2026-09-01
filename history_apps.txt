@@ -775,3 +775,4 @@ com.magicv.airbrush
 com.italiano.whitemoonlight
 com.nianticlabs.pikmin
 com.ilivedata.viitor
+pl.example.bateria
