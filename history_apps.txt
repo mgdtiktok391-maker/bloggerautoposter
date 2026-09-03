@@ -782,3 +782,4 @@ com.kalypsomusic.app
 ai.leonardo.leonardo
 com.nibble.lesson
 com.akustom15.glasswave
+com.meitu.wink
