@@ -781,3 +781,4 @@ homeworkoutapp.homeworkout.fitness.workout.loseweight
 com.kalypsomusic.app
 ai.leonardo.leonardo
 com.nibble.lesson
+com.akustom15.glasswave
