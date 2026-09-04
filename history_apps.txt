@@ -786,3 +786,4 @@ com.meitu.wink
 com.occ.miss
 tech.butterfly.app
 ak.alizandro.smartaudiobookplayer
+com.lstudios.mymath
