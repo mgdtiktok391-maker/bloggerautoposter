@@ -793,3 +793,4 @@ ro.rkh.utilitatipro
 com.walley.ai.wallpapers
 com.ss.android.ttmd.video
 com.qobuz.music
+com.diy.wallpaper.maker.collage
