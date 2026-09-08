@@ -797,3 +797,4 @@ com.diy.wallpaper.maker.collage
 com.appcanopy.batteryvitals
 com.yocto.wenote
 com.beforesoft.launcher
+com.jhaservices.calculatorforca
