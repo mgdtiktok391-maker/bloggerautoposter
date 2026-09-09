@@ -798,3 +798,4 @@ com.appcanopy.batteryvitals
 com.yocto.wenote
 com.beforesoft.launcher
 com.jhaservices.calculatorforca
+com.gymbros.app
