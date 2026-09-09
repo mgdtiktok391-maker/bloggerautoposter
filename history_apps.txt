@@ -799,3 +799,4 @@ com.yocto.wenote
 com.beforesoft.launcher
 com.jhaservices.calculatorforca
 com.gymbros.app
+dev.the1ux.oneuifluffy.app
