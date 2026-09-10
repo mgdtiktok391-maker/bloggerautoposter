@@ -803,3 +803,4 @@ dev.the1ux.oneuifluffy.app
 com.rvappstudios.sight.words.phonics.reading.kids.games
 mobile.app.tools.translate
 com.grammarly.android.keyboard
+com.pautility.flutter
