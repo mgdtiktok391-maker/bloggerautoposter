@@ -806,3 +806,4 @@ com.grammarly.android.keyboard
 com.pautility.flutter
 com.clean.ai.cleanduplicated.cleanstorage
 com.ng_labs.dateandtime
+com.delgeo.desygner
