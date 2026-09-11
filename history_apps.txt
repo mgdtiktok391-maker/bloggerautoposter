@@ -804,3 +804,4 @@ com.rvappstudios.sight.words.phonics.reading.kids.games
 mobile.app.tools.translate
 com.grammarly.android.keyboard
 com.pautility.flutter
+com.clean.ai.cleanduplicated.cleanstorage
