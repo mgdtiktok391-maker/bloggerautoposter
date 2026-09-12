@@ -808,3 +808,4 @@ com.clean.ai.cleanduplicated.cleanstorage
 com.ng_labs.dateandtime
 com.delgeo.desygner
 hd.uhd.wallpapers.best.quality
+io.iftech.bistrobridge
