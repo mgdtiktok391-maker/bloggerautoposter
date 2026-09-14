@@ -811,3 +811,4 @@ hd.uhd.wallpapers.best.quality
 io.iftech.bistrobridge
 com.amaze.fileutilities
 com.danfoss.koolapp
+us.nobarriers.elsa
