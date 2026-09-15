@@ -812,3 +812,4 @@ io.iftech.bistrobridge
 com.amaze.fileutilities
 com.danfoss.koolapp
 us.nobarriers.elsa
+com.piccollage.photo.editor.livewallpaper.layout.sticker.grid.licowa
