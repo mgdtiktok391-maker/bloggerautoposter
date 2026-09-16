@@ -814,3 +814,4 @@ com.danfoss.koolapp
 us.nobarriers.elsa
 com.piccollage.photo.editor.livewallpaper.layout.sticker.grid.licowa
 com.musicplayer.arcmusic
+com.lyfta
