@@ -819,3 +819,4 @@ app.moertel.retro.iconpack.neon
 documentscanning.app
 com.toolboxpro.app
 com.ivuu
+com.hyperclean.ai
