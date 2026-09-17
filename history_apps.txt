@@ -817,3 +817,4 @@ com.musicplayer.arcmusic
 com.lyfta
 app.moertel.retro.iconpack.neon
 documentscanning.app
+com.toolboxpro.app
