@@ -820,3 +820,4 @@ documentscanning.app
 com.toolboxpro.app
 com.ivuu
 com.hyperclean.ai
+com.aicleaner.phone.storagecleanup
