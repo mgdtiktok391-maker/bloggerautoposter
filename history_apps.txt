@@ -821,3 +821,4 @@ com.toolboxpro.app
 com.ivuu
 com.hyperclean.ai
 com.aicleaner.phone.storagecleanup
+net.quetta.browser
