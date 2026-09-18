@@ -822,3 +822,4 @@ com.ivuu
 com.hyperclean.ai
 com.aicleaner.phone.storagecleanup
 net.quetta.browser
+far.munexa.zipgame
