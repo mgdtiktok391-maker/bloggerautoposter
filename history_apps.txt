@@ -828,3 +828,4 @@ app.traced
 com.solocode.anton
 com.rhmsoft.omnia
 ai.seatunes.com
+com.funeasylearn.english
