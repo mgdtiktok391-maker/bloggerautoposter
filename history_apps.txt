@@ -831,3 +831,4 @@ ai.seatunes.com
 com.funeasylearn.english
 com.chilllive.chillwallpaperproject
 com.transyncai.app
+com.weartools.phonebattcomp
