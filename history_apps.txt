@@ -830,3 +830,4 @@ com.rhmsoft.omnia
 ai.seatunes.com
 com.funeasylearn.english
 com.chilllive.chillwallpaperproject
+com.transyncai.app
