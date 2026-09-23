@@ -834,3 +834,4 @@ com.transyncai.app
 com.weartools.phonebattcomp
 net.smartlauncher.wallpaperstudio
 pdfscanner.scan.pdf.scanner.free
+com.siv
