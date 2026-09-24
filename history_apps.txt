@@ -835,3 +835,4 @@ com.weartools.phonebattcomp
 net.smartlauncher.wallpaperstudio
 pdfscanner.scan.pdf.scanner.free
 com.siv
+com.pixsterstudio.cleaner
