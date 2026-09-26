@@ -838,3 +838,4 @@ com.siv
 com.pixsterstudio.cleaner
 com.math.bmi.scientific.calculator.converter.android
 io.github.ifa.glancewidget
+com.transsion.healthlife
