@@ -842,3 +842,4 @@ com.transsion.healthlife
 com.dssoft.cajaherramientas
 com.poe.android
 fm.castbox.audiobook.radio.podcast
+my.android.procalc
