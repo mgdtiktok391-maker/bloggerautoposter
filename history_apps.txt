@@ -847,3 +847,4 @@ com.sgiggle.production
 com.dating.ai
 com.ixolit.ipvanish
 jrbeetroots.phonebackup
+com.splash.kids.education.learning.games.free.multiplication.reading.math.grade.app.splashmath
