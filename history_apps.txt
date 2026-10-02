@@ -851,3 +851,4 @@ com.splash.kids.education.learning.games.free.multiplication.reading.math.grade.
 com.ukashaanwar.smartutility
 com.spotlightsix.zentimerlite2
 com.androcyborg.simplebackup
+com.aeroloom.fylofilemanager
