@@ -855,3 +855,4 @@ com.aeroloom.fylofilemanager
 com.x.batterysaver.healthmonitor
 com.toolyaar.app
 com.geka000.digitron
+com.avg.android.vpn
