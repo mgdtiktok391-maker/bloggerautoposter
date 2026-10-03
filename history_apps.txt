@@ -853,3 +853,4 @@ com.spotlightsix.zentimerlite2
 com.androcyborg.simplebackup
 com.aeroloom.fylofilemanager
 com.x.batterysaver.healthmonitor
+com.toolyaar.app
