@@ -857,3 +857,4 @@ com.toolyaar.app
 com.geka000.digitron
 com.avg.android.vpn
 com.cycleai.android
+tech.networknation.myutilitymanager
