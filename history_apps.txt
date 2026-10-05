@@ -859,3 +859,4 @@ com.avg.android.vpn
 com.cycleai.android
 tech.networknation.myutilitymanager
 com.beko.tvcleaner
+dinith.zipextractor.zip_extractor
