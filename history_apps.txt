@@ -860,3 +860,4 @@ com.cycleai.android
 tech.networknation.myutilitymanager
 com.beko.tvcleaner
 dinith.zipextractor.zip_extractor
+com.pinterest
