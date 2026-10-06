@@ -862,3 +862,4 @@ com.beko.tvcleaner
 dinith.zipextractor.zip_extractor
 com.pinterest
 tunein.player
+com.franco.kernel
