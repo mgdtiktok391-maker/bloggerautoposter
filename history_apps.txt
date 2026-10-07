@@ -863,3 +863,4 @@ dinith.zipextractor.zip_extractor
 com.pinterest
 tunein.player
 com.franco.kernel
+com.oceangalaxy.camera.new
