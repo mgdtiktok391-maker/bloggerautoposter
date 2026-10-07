@@ -864,3 +864,4 @@ com.pinterest
 tunein.player
 com.franco.kernel
 com.oceangalaxy.camera.new
+calculatorapp.calculator.allinonecalculator.calculate.calc
