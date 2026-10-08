@@ -866,3 +866,4 @@ com.franco.kernel
 com.oceangalaxy.camera.new
 calculatorapp.calculator.allinonecalculator.calculate.calc
 com.free.tiptop.vpn.proxy
+com.pashapuma.pix.wallpapers
