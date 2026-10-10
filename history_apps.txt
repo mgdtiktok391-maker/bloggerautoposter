@@ -869,3 +869,4 @@ com.free.tiptop.vpn.proxy
 com.pashapuma.pix.wallpapers
 com.darkopd.iconpack
 com.italiano.darkshapeless
+com.GameCoaster.DungeonMaker
