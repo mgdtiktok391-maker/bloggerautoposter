@@ -870,3 +870,4 @@ com.pashapuma.pix.wallpapers
 com.darkopd.iconpack
 com.italiano.darkshapeless
 com.GameCoaster.DungeonMaker
+com.simonandschuster.pimsleur.unified.android
