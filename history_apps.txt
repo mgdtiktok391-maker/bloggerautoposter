@@ -874,3 +874,4 @@ com.simonandschuster.pimsleur.unified.android
 com.pdf.allinone
 com.widgify.worldroid
 com.glgjing.marvel
+com.kagi.translate
