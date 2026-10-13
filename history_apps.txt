@@ -875,3 +875,4 @@ com.pdf.allinone
 com.widgify.worldroid
 com.glgjing.marvel
 com.kagi.translate
+com.pdfscanner.pdfscannerandroid
