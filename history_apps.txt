@@ -878,3 +878,4 @@ com.kagi.translate
 com.pdfscanner.pdfscannerandroid
 ringtonesforandroidphonefree.ringtones.ringtonessongs.ringtonesapp
 com.gaminik.i18n
+com.om.calculator
