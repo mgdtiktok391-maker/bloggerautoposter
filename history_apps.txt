@@ -888,3 +888,4 @@ com.italiano.simplyyou
 com.pons.onlinedictionary
 com.digitalchemy.calculator.decimal
 net.devemperor.dictate
+com.pcloud.pcloud
