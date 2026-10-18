@@ -887,3 +887,4 @@ me.rapchat.rapchat
 com.italiano.simplyyou
 com.pons.onlinedictionary
 com.digitalchemy.calculator.decimal
+net.devemperor.dictate
