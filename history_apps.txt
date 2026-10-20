@@ -891,3 +891,4 @@ net.devemperor.dictate
 com.pcloud.pcloud
 com.gm.top1.zip.unzip.filemanager
 com.natewren.lines
+com.lbrc.PeriodCalendar
