@@ -893,3 +893,4 @@ com.gm.top1.zip.unzip.filemanager
 com.natewren.lines
 com.lbrc.PeriodCalendar
 com.vokki.retrodroidlauncher
+com.batteryhealth.monitor
