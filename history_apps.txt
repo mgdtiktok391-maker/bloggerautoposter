@@ -894,3 +894,4 @@ com.natewren.lines
 com.lbrc.PeriodCalendar
 com.vokki.retrodroidlauncher
 com.batteryhealth.monitor
+com.timer.check
