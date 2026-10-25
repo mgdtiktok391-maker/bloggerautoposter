@@ -900,3 +900,4 @@ com.ewa.ewaapp
 com.amazon.mp3
 com.one4studio.one4icons
 com.trainerize.Trainerize
+com.ikame.ai.language.learning
