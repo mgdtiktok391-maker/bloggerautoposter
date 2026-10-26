@@ -902,3 +902,4 @@ com.one4studio.one4icons
 com.trainerize.Trainerize
 com.ikame.ai.language.learning
 com.pg.freememory
+com.stepsappgmbh.stepsapp
