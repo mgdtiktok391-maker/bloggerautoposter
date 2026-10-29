@@ -906,3 +906,4 @@ com.stepsappgmbh.stepsapp
 com.apperslab.spacecleaner
 dev.km.android.chargemeter
 jp.pokemon.pokemonsleep
+com.ajaxsystems
