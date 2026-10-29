@@ -907,3 +907,4 @@ com.apperslab.spacecleaner
 dev.km.android.chargemeter
 jp.pokemon.pokemonsleep
 com.ajaxsystems
+com.ghisler.android.TotalCommander
