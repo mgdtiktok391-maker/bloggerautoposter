@@ -909,3 +909,4 @@ jp.pokemon.pokemonsleep
 com.ajaxsystems
 com.ghisler.android.TotalCommander
 com.langblitz
+com.plio.app
