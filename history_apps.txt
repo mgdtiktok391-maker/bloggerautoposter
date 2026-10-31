@@ -910,3 +910,4 @@ com.ajaxsystems
 com.ghisler.android.TotalCommander
 com.langblitz
 com.plio.app
+ua.com.streamsoft.pingtools
