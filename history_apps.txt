@@ -912,3 +912,4 @@ com.langblitz
 com.plio.app
 ua.com.streamsoft.pingtools
 com.themezy.theme.iconwidgets
+com.ai.venice
