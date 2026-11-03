@@ -916,3 +916,4 @@ com.ai.venice
 com.adobe.premiere
 com.docusign.ink
 io.ente.photos
+scientific.graphing.calculator.t84.t36.t83
