@@ -919,3 +919,4 @@ io.ente.photos
 scientific.graphing.calculator.t84.t36.t83
 com.divineworld.bixlearn
 com.kursx.smartbook
+de.goork.songflip
