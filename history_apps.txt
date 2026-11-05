@@ -921,3 +921,4 @@ com.divineworld.bixlearn
 com.kursx.smartbook
 de.goork.songflip
 com.squats.fittr
+com.hingehealth.phoenix
