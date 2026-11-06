@@ -922,3 +922,4 @@ com.kursx.smartbook
 de.goork.songflip
 com.squats.fittr
 com.hingehealth.phoenix
+io.x1tko0.battlab
