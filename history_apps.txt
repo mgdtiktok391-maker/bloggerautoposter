@@ -927,3 +927,4 @@ org.aospstudio.files
 com.pearmobile.ziparchiver
 com.allbillmanagement.billmanage
 com.runtastic.android
+calculatorapp.simplecalculator.scientificcalculator.currencyconverter
