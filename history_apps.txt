@@ -928,3 +928,4 @@ com.pearmobile.ziparchiver
 com.allbillmanagement.billmanage
 com.runtastic.android
 calculatorapp.simplecalculator.scientificcalculator.currencyconverter
+ai.mybuddy.talkingflashcards_new
